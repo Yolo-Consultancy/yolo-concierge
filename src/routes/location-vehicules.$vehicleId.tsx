@@ -113,7 +113,7 @@ function VehicleDetail() {
               </div>
             </div>
             <div className="grid grid-cols-5 gap-2">
-              {vehicle.gallery.map((src, i) => (
+              {vehicle.gallery.map((src: string, i: number) => (
                 <button
                   key={i}
                   onClick={() => setActiveImg(i)}
