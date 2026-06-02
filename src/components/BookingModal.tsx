@@ -56,6 +56,18 @@ export function BookingModal({
           <button onClick={onClose} className="text-white/50 hover:text-white text-2xl leading-none">×</button>
         </div>
 
+        {selectedVehicle && (
+          <div className="flex items-center gap-4 px-6 py-4 bg-[#7dd3fc]/5 border-b border-[#7dd3fc]/20">
+            <img src={selectedVehicle.image} alt={selectedVehicle.name} className="w-16 h-12 object-cover rounded-lg" />
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] uppercase tracking-widest text-[#7dd3fc]">Véhicule sélectionné</p>
+              <p className="font-display text-lg text-white truncate">{selectedVehicle.brand} {selectedVehicle.name}</p>
+            </div>
+            <p className="text-sm text-white/70 hidden sm:block">{formatPrice(selectedVehicle.pricePerDay)} FCFA/jour</p>
+          </div>
+        )}
+
+
         <div className="p-6 md:p-8 text-white">
           <ol className="flex items-center justify-between mb-8 overflow-x-auto gap-2">
             {STEPS.map((label, i) => (
