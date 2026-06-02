@@ -9,8 +9,26 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ServicesSurMesureRouteImport } from './routes/services-sur-mesure'
+import { Route as LocationVehiculesRouteImport } from './routes/location-vehicules'
+import { Route as DemenagementRouteImport } from './routes/demenagement'
 import { Route as IndexRouteImport } from './routes/index'
 
+const ServicesSurMesureRoute = ServicesSurMesureRouteImport.update({
+  id: '/services-sur-mesure',
+  path: '/services-sur-mesure',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LocationVehiculesRoute = LocationVehiculesRouteImport.update({
+  id: '/location-vehicules',
+  path: '/location-vehicules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemenagementRoute = DemenagementRouteImport.update({
+  id: '/demenagement',
+  path: '/demenagement',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +37,70 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/demenagement': typeof DemenagementRoute
+  '/location-vehicules': typeof LocationVehiculesRoute
+  '/services-sur-mesure': typeof ServicesSurMesureRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/demenagement': typeof DemenagementRoute
+  '/location-vehicules': typeof LocationVehiculesRoute
+  '/services-sur-mesure': typeof ServicesSurMesureRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/demenagement': typeof DemenagementRoute
+  '/location-vehicules': typeof LocationVehiculesRoute
+  '/services-sur-mesure': typeof ServicesSurMesureRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/demenagement'
+    | '/location-vehicules'
+    | '/services-sur-mesure'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/demenagement' | '/location-vehicules' | '/services-sur-mesure'
+  id:
+    | '__root__'
+    | '/'
+    | '/demenagement'
+    | '/location-vehicules'
+    | '/services-sur-mesure'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DemenagementRoute: typeof DemenagementRoute
+  LocationVehiculesRoute: typeof LocationVehiculesRoute
+  ServicesSurMesureRoute: typeof ServicesSurMesureRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/services-sur-mesure': {
+      id: '/services-sur-mesure'
+      path: '/services-sur-mesure'
+      fullPath: '/services-sur-mesure'
+      preLoaderRoute: typeof ServicesSurMesureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/location-vehicules': {
+      id: '/location-vehicules'
+      path: '/location-vehicules'
+      fullPath: '/location-vehicules'
+      preLoaderRoute: typeof LocationVehiculesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demenagement': {
+      id: '/demenagement'
+      path: '/demenagement'
+      fullPath: '/demenagement'
+      preLoaderRoute: typeof DemenagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,7 +113,20 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DemenagementRoute: DemenagementRoute,
+  LocationVehiculesRoute: LocationVehiculesRoute,
+  ServicesSurMesureRoute: ServicesSurMesureRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
