@@ -3,7 +3,7 @@ import { useState } from "react";
 import { getVehicle, formatPrice, type Vehicle } from "@/lib/vehicles";
 import { BookingModal } from "@/components/BookingModal";
 
-export const Route = createFileRoute("/location-vehicules/$vehicleId")({
+export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
   loader: ({ params }): { vehicle: Vehicle } => {
     const vehicle = getVehicle(params.vehicleId);
     if (!vehicle) throw notFound();

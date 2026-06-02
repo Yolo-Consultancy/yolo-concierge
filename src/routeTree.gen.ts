@@ -13,7 +13,7 @@ import { Route as ServicesSurMesureRouteImport } from './routes/services-sur-mes
 import { Route as LocationVehiculesRouteImport } from './routes/location-vehicules'
 import { Route as DemenagementRouteImport } from './routes/demenagement'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as LocationVehiculesVehicleIdRouteImport } from './routes/location-vehicules.$vehicleId'
+import { Route as LocationVehiculesVehicleIdRouteImport } from './routes/location-vehicules_.$vehicleId'
 
 const ServicesSurMesureRoute = ServicesSurMesureRouteImport.update({
   id: '/services-sur-mesure',
@@ -37,22 +37,22 @@ const IndexRoute = IndexRouteImport.update({
 } as any)
 const LocationVehiculesVehicleIdRoute =
   LocationVehiculesVehicleIdRouteImport.update({
-    id: '/$vehicleId',
-    path: '/$vehicleId',
-    getParentRoute: () => LocationVehiculesRoute,
+    id: '/location-vehicules_/$vehicleId',
+    path: '/location-vehicules/$vehicleId',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demenagement': typeof DemenagementRoute
-  '/location-vehicules': typeof LocationVehiculesRouteWithChildren
+  '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demenagement': typeof DemenagementRoute
-  '/location-vehicules': typeof LocationVehiculesRouteWithChildren
+  '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
 }
@@ -60,9 +60,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/demenagement': typeof DemenagementRoute
-  '/location-vehicules': typeof LocationVehiculesRouteWithChildren
+  '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
-  '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/location-vehicules_/$vehicleId': typeof LocationVehiculesVehicleIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -85,14 +85,15 @@ export interface FileRouteTypes {
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
-    | '/location-vehicules/$vehicleId'
+    | '/location-vehicules_/$vehicleId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemenagementRoute: typeof DemenagementRoute
-  LocationVehiculesRoute: typeof LocationVehiculesRouteWithChildren
+  LocationVehiculesRoute: typeof LocationVehiculesRoute
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
+  LocationVehiculesVehicleIdRoute: typeof LocationVehiculesVehicleIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -125,33 +126,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/location-vehicules/$vehicleId': {
-      id: '/location-vehicules/$vehicleId'
-      path: '/$vehicleId'
+    '/location-vehicules_/$vehicleId': {
+      id: '/location-vehicules_/$vehicleId'
+      path: '/location-vehicules/$vehicleId'
       fullPath: '/location-vehicules/$vehicleId'
       preLoaderRoute: typeof LocationVehiculesVehicleIdRouteImport
-      parentRoute: typeof LocationVehiculesRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
 
-interface LocationVehiculesRouteChildren {
-  LocationVehiculesVehicleIdRoute: typeof LocationVehiculesVehicleIdRoute
-}
-
-const LocationVehiculesRouteChildren: LocationVehiculesRouteChildren = {
-  LocationVehiculesVehicleIdRoute: LocationVehiculesVehicleIdRoute,
-}
-
-const LocationVehiculesRouteWithChildren =
-  LocationVehiculesRoute._addFileChildren(LocationVehiculesRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemenagementRoute: DemenagementRoute,
-  LocationVehiculesRoute: LocationVehiculesRouteWithChildren,
+  LocationVehiculesRoute: LocationVehiculesRoute,
   ServicesSurMesureRoute: ServicesSurMesureRoute,
+  LocationVehiculesVehicleIdRoute: LocationVehiculesVehicleIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
