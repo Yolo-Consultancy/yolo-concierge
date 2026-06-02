@@ -1,7 +1,15 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
+import { Menu } from "lucide-react";
 import { useState } from "react";
 import { getVehicle, formatPrice, type Vehicle } from "@/lib/vehicles";
 import { BookingModal } from "@/components/BookingModal";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
   loader: ({ params }): { vehicle: Vehicle } => {
@@ -60,6 +68,34 @@ function VehicleDetail() {
             <Link to="/" className="hover:text-white">Accueil</Link>
             <Link to="/location-vehicules" className="hover:text-white">Flotte</Link>
           </nav>
+          <Sheet>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-white/5 text-white transition hover:bg-white/10"
+                aria-label="Ouvrir le menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="border-white/10 bg-[#0f0f0f] text-white">
+              <SheetTitle className="font-display text-2xl text-white">
+                YOLO<span className="text-[#7dd3fc]">.</span>
+              </SheetTitle>
+              <nav className="mt-10 flex flex-col gap-3">
+                <SheetClose asChild>
+                  <Link to="/" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
+                    Accueil
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link to="/location-vehicules" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
+                    Flotte
+                  </Link>
+                </SheetClose>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </header>
 

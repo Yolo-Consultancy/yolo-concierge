@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Menu } from "lucide-react";
 import { useState } from "react";
 import carHero from "@/assets/car-hero.jpg";
 import destDakar from "@/assets/dest-dakar.jpg";
@@ -6,6 +7,13 @@ import destAbidjan from "@/assets/dest-abidjan.jpg";
 import destSaly from "@/assets/dest-saly.jpg";
 import { vehicles, formatPrice } from "@/lib/vehicles";
 import { BookingModal } from "@/components/BookingModal";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/location-vehicules")({
   head: () => ({
@@ -58,6 +66,53 @@ function LocationVehicules() {
             <a href="#pourquoi" className="hover:text-white">À propos</a>
             <button onClick={() => openBooking()} className="hover:text-white">Contact</button>
           </nav>
+          <Sheet>
+            <SheetTrigger asChild>
+              <button
+                type="button"
+                className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/25 text-white backdrop-blur transition hover:bg-white/10"
+                aria-label="Ouvrir le menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </SheetTrigger>
+            <SheetContent side="right" className="border-white/10 bg-[#0f0f0f] text-white">
+              <SheetTitle className="font-display text-2xl text-white">
+                YOLO<span className="text-[#7dd3fc]">.</span>
+              </SheetTitle>
+              <nav className="mt-10 flex flex-col gap-3">
+                <SheetClose asChild>
+                  <Link to="/" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
+                    Accueil
+                  </Link>
+                </SheetClose>
+                <SheetClose asChild>
+                  <a href="#flotte" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
+                    Flotte
+                  </a>
+                </SheetClose>
+                <SheetClose asChild>
+                  <a href="#destinations" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
+                    Destinations
+                  </a>
+                </SheetClose>
+                <SheetClose asChild>
+                  <a href="#pourquoi" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
+                    À propos
+                  </a>
+                </SheetClose>
+                <SheetClose asChild>
+                  <button
+                    type="button"
+                    onClick={() => openBooking()}
+                    className="rounded-lg px-3 py-3 text-left text-base text-white/80 hover:bg-white/10 hover:text-white"
+                  >
+                    Contact
+                  </button>
+                </SheetClose>
+              </nav>
+            </SheetContent>
+          </Sheet>
         </div>
       </header>
 
