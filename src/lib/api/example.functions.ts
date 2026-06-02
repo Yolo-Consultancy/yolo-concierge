@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 

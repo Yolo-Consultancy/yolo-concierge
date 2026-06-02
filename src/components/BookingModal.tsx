@@ -1,7 +1,14 @@
+/* eslint-disable prettier/prettier */
 import { useMemo, useState } from "react";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
+import type { DateRange } from "react-day-picker";
 import { vehicles as defaultVehicles, formatPrice, type Vehicle } from "@/lib/vehicles";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 const WHATSAPP_NUMBER = "243828863897"; // sans le +
+const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
 
 const STEPS = [
   "Sélectionner les Dates",
@@ -20,6 +27,7 @@ export function BookingModal({
   vehicles?: Vehicle[];
 }) {
   const [step, setStep] = useState(0);
+  const [selectedDateRange, setSelectedDateRange] = useState<DateRange | undefined>();
   const [form, setForm] = useState({
     vehicleId: initialVehicle,
     dateRange: "",
@@ -39,9 +47,22 @@ export function BookingModal({
 
   const inputCls =
     "w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#7dd3fc]";
+  const selectCls = `${inputCls} bg-[#0f0f0f] text-white [color-scheme:dark]`;
+
+  const formatDateRange = (range?: DateRange) => {
+    if (!range?.from) return "";
+    const from = format(range.from, "dd/MM/yyyy");
+    if (!range.to) return from;
+    return `${from} – ${format(range.to, "dd/MM/yyyy")}`;
+  };
+
+  const handleDateRangeSelect = (range?: DateRange) => {
+    setSelectedDateRange(range);
+    setForm({ ...form, dateRange: formatDateRange(range) });
+  };
 
   const canNext = () => {
-    if (step === 0) return !!form.dateRange;
+    if (step === 0) return !!selectedDateRange?.from && !!selectedDateRange?.to;
     if (step === 1) return !!form.pickupLocation && (form.sameDropoff || !!form.dropoffLocation);
     if (step === 2) return !!form.firstName && !!form.lastName && !!form.email;
     return true;
@@ -157,22 +178,46 @@ export function BookingModal({
             <div className="space-y-5">
               <div>
                 <label className="block text-sm font-medium mb-2">Sélectionnez vos dates de location *</label>
-                <div className="relative">
-                  <svg
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40"
-                    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button type="button" className={`${inputCls} pl-11 text-left relative`}>
+                      <svg
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40"
+                        width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                      >
+                        <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
+                      </svg>
+                      <span className={form.dateRange ? "text-white" : "text-white/30"}>
+                        {form.dateRange || "Sélectionner la Plage de Dates"}
+                      </span>
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    align="start"
+                    className="w-auto border-white/10 bg-[#0f0f0f] p-0 text-white shadow-2xl"
                   >
-                    <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-                  </svg>
-                  <input
-                    type="text"
-                    value={form.dateRange}
-                    onChange={(e) => setForm({ ...form, dateRange: e.target.value })}
-                    placeholder="Sélectionner la Plage de Dates"
-                    onFocus={(e) => (e.currentTarget.type = "text")}
-                    className={`${inputCls} pl-11`}
-                  />
-                </div>
+                    <Calendar
+                      mode="range"
+                      selected={selectedDateRange}
+                      onSelect={handleDateRangeSelect}
+                      numberOfMonths={1}
+                      locale={fr}
+                      disabled={{ before: new Date() }}
+                      className="bg-[#0f0f0f] text-white"
+                      classNames={{
+                        caption_label: "text-white",
+                        day: "text-white",
+                        weekday: "text-white/50",
+                        outside: "text-white/25",
+                        disabled: "text-white/20",
+                        today: "bg-white/10 text-white",
+                        range_start: "bg-[#7dd3fc] text-black rounded-l-md",
+                        range_middle: "bg-[#7dd3fc]/20 text-white rounded-none",
+                        range_end: "bg-[#7dd3fc] text-black rounded-r-md",
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
                 <p className="text-xs text-white/40 mt-2 flex items-center gap-1.5">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="4" width="18" height="18" rx="2" />
@@ -181,13 +226,13 @@ export function BookingModal({
                 </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Heure de Prise en Charge</label>
                   <select
                     value={form.pickupTime}
                     onChange={(e) => setForm({ ...form, pickupTime: e.target.value })}
-                    className={inputCls}
+                    className={selectCls}
                   >
                     {timeOptions()}
                   </select>
@@ -197,7 +242,7 @@ export function BookingModal({
                   <select
                     value={form.returnTime}
                     onChange={(e) => setForm({ ...form, returnTime: e.target.value })}
-                    className={inputCls}
+                    className={selectCls}
                   >
                     {timeOptions()}
                   </select>
@@ -292,14 +337,14 @@ export function BookingModal({
                   <select
                     value={form.countryCode}
                     onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
-                    className={`${inputCls} w-32`}
+                    className={`${selectCls} w-32`}
                   >
-                    <option value="+243">🇨🇩 +243</option>
-                    <option value="+221">🇸🇳 +221</option>
-                    <option value="+225">🇨🇮 +225</option>
-                    <option value="+33">🇫🇷 +33</option>
-                    <option value="+32">🇧🇪 +32</option>
-                    <option value="+1">🇺🇸 +1</option>
+                    <option className={SELECT_OPTION_CLS} value="+243">🇨🇩 +243</option>
+                    <option className={SELECT_OPTION_CLS} value="+221">🇸🇳 +221</option>
+                    <option className={SELECT_OPTION_CLS} value="+225">🇨🇮 +225</option>
+                    <option className={SELECT_OPTION_CLS} value="+33">🇫🇷 +33</option>
+                    <option className={SELECT_OPTION_CLS} value="+32">🇧🇪 +32</option>
+                    <option className={SELECT_OPTION_CLS} value="+1">🇺🇸 +1</option>
                   </select>
                   <input
                     value={form.phone}
@@ -445,7 +490,7 @@ function timeOptions() {
   for (let h = 0; h < 24; h++) {
     for (const m of ["00", "30"]) {
       const v = `${String(h).padStart(2, "0")}:${m}`;
-      opts.push(<option key={v} value={v}>{v}</option>);
+      opts.push(<option className={SELECT_OPTION_CLS} key={v} value={v}>{v}</option>);
     }
   }
   return opts;

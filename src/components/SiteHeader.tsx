@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { Link } from "@tanstack/react-router";
 
 export function SiteHeader() {
