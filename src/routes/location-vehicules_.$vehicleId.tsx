@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { useState } from "react";

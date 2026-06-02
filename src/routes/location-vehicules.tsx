@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { useState } from "react";
@@ -19,7 +20,7 @@ export const Route = createFileRoute("/location-vehicules")({
   head: () => ({
     meta: [
       { title: "Location de Véhicules de Luxe — YOLO Le Concierge" },
-      { name: "description", content: "Ferrari, Lamborghini, Porsche, Mercedes et plus. Livrés à votre porte partout en Afrique de l'Ouest." },
+      { name: "description", content: "Ferrari, Lamborghini, Porsche, Mercedes et plus. Livrés à votre porte partout à Kinshasa." },
       { property: "og:title", content: "Location de Véhicules — YOLO Le Concierge" },
       { property: "og:description", content: "Supercars et véhicules premium, avec ou sans chauffeur, livrés où vous êtes." },
     ],
@@ -118,12 +119,12 @@ function LocationVehicules() {
 
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <img src={carHero} alt="Supercar de luxe" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1080} />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/40 to-black" />
         <div className="relative z-10 text-center px-6 max-w-4xl">
           <p className="text-xs md:text-sm uppercase tracking-[0.5em] text-white/70 mb-8">YOLO Line</p>
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-normal leading-[1.05]">
             Location de Supercars<br />
-            <span className="italic">en Afrique de l'Ouest</span>
+            <span className="italic">en Afrique</span>
           </h1>
           <p className="mt-8 text-base md:text-lg text-white/80 max-w-2xl mx-auto">
             Ferrari, Lamborghini, Porsche, Mercedes et plus, livrées à votre porte
@@ -152,7 +153,7 @@ function LocationVehicules() {
             {vehicles.map((v) => (
               <article key={v.id} className="group bg-[#111] rounded-2xl overflow-hidden border border-white/5 hover:border-[#7dd3fc]/40 transition">
                 <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }} className="block">
-                  <div className="aspect-[4/3] overflow-hidden bg-black">
+                  <div className="aspect-4/3 overflow-hidden bg-black">
                     <img src={v.image} alt={`${v.brand} ${v.name}`} width={1280} height={896} loading="lazy" className="h-full w-full object-cover group-hover:scale-105 transition duration-700" />
                   </div>
                 </Link>
@@ -193,9 +194,9 @@ function LocationVehicules() {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {destinations.map((d) => (
-              <button key={d.name} onClick={() => openBooking()} className="relative aspect-[3/4] rounded-2xl overflow-hidden group">
+              <button key={d.name} onClick={() => openBooking()} className="relative aspect-3/4 rounded-2xl overflow-hidden group">
                 <img src={d.image} alt={d.name} width={960} height={1280} loading="lazy" className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition duration-700" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-7 text-left">
                   <p className="text-[10px] uppercase tracking-[0.3em] text-[#7dd3fc] mb-2">Location Premium</p>
                   <p className="font-display text-3xl">{d.name}</p>

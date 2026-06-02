@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import vehiculesImg from "@/assets/portal-vehicules.jpg";
 import demenagementImg from "@/assets/portal-demenagement.jpg";

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -26,10 +27,10 @@ function SurMesure() {
 
   return (
     <main className="min-h-screen bg-background">
-      <section className="relative h-[60vh] min-h-[480px] overflow-hidden">
+      <section className="relative h-[60vh] min-h-120 overflow-hidden">
         <SiteHeader />
         <img src={servicesImg} alt="Conciergerie" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/70" />
         <div className="relative z-10 mx-auto max-w-7xl px-6 h-full flex flex-col justify-end pb-16 text-white">
           <p className="text-xs uppercase tracking-[0.4em] text-gold mb-4">Portail 03</p>
           <h1 className="font-display text-5xl md:text-6xl font-semibold max-w-3xl">Services Sur Mesure</h1>
