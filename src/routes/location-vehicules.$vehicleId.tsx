@@ -4,7 +4,7 @@ import { getVehicle, formatPrice, type Vehicle } from "@/lib/vehicles";
 import { BookingModal } from "@/components/BookingModal";
 
 export const Route = createFileRoute("/location-vehicules/$vehicleId")({
-  loader: ({ params }) => {
+  loader: ({ params }): { vehicle: Vehicle } => {
     const vehicle = getVehicle(params.vehicleId);
     if (!vehicle) throw notFound();
     return { vehicle };
