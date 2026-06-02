@@ -13,6 +13,7 @@ import { Route as ServicesSurMesureRouteImport } from './routes/services-sur-mes
 import { Route as LocationVehiculesRouteImport } from './routes/location-vehicules'
 import { Route as DemenagementRouteImport } from './routes/demenagement'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LocationVehiculesVehicleIdRouteImport } from './routes/location-vehicules.$vehicleId'
 
 const ServicesSurMesureRoute = ServicesSurMesureRouteImport.update({
   id: '/services-sur-mesure',
@@ -34,25 +35,34 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LocationVehiculesVehicleIdRoute =
+  LocationVehiculesVehicleIdRouteImport.update({
+    id: '/$vehicleId',
+    path: '/$vehicleId',
+    getParentRoute: () => LocationVehiculesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/demenagement': typeof DemenagementRoute
-  '/location-vehicules': typeof LocationVehiculesRoute
+  '/location-vehicules': typeof LocationVehiculesRouteWithChildren
   '/services-sur-mesure': typeof ServicesSurMesureRoute
+  '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demenagement': typeof DemenagementRoute
-  '/location-vehicules': typeof LocationVehiculesRoute
+  '/location-vehicules': typeof LocationVehiculesRouteWithChildren
   '/services-sur-mesure': typeof ServicesSurMesureRoute
+  '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/demenagement': typeof DemenagementRoute
-  '/location-vehicules': typeof LocationVehiculesRoute
+  '/location-vehicules': typeof LocationVehiculesRouteWithChildren
   '/services-sur-mesure': typeof ServicesSurMesureRoute
+  '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -61,20 +71,27 @@ export interface FileRouteTypes {
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
+    | '/location-vehicules/$vehicleId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/demenagement' | '/location-vehicules' | '/services-sur-mesure'
+  to:
+    | '/'
+    | '/demenagement'
+    | '/location-vehicules'
+    | '/services-sur-mesure'
+    | '/location-vehicules/$vehicleId'
   id:
     | '__root__'
     | '/'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
+    | '/location-vehicules/$vehicleId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DemenagementRoute: typeof DemenagementRoute
-  LocationVehiculesRoute: typeof LocationVehiculesRoute
+  LocationVehiculesRoute: typeof LocationVehiculesRouteWithChildren
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
 }
 
@@ -108,13 +125,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/location-vehicules/$vehicleId': {
+      id: '/location-vehicules/$vehicleId'
+      path: '/$vehicleId'
+      fullPath: '/location-vehicules/$vehicleId'
+      preLoaderRoute: typeof LocationVehiculesVehicleIdRouteImport
+      parentRoute: typeof LocationVehiculesRoute
+    }
   }
 }
+
+interface LocationVehiculesRouteChildren {
+  LocationVehiculesVehicleIdRoute: typeof LocationVehiculesVehicleIdRoute
+}
+
+const LocationVehiculesRouteChildren: LocationVehiculesRouteChildren = {
+  LocationVehiculesVehicleIdRoute: LocationVehiculesVehicleIdRoute,
+}
+
+const LocationVehiculesRouteWithChildren =
+  LocationVehiculesRoute._addFileChildren(LocationVehiculesRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DemenagementRoute: DemenagementRoute,
-  LocationVehiculesRoute: LocationVehiculesRoute,
+  LocationVehiculesRoute: LocationVehiculesRouteWithChildren,
   ServicesSurMesureRoute: ServicesSurMesureRoute,
 }
 export const routeTree = rootRouteImport
