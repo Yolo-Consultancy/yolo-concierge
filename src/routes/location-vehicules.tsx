@@ -150,23 +150,40 @@ function LocationVehicules() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vehicles.map((v) => (
-              <article key={v.id} className="group bg-[#111] rounded-2xl overflow-hidden border border-white/5 hover:border-[#7dd3fc]/40 transition">
-                <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }} className="block">
-                  <div className="aspect-4/3 overflow-hidden bg-black">
-                    <img src={v.image} alt={`${v.brand} ${v.name}`} width={1280} height={896} loading="lazy" className="h-full w-full object-cover group-hover:scale-105 transition duration-700" />
+            {vehicles.map((v, idx) => (
+              <article
+                key={v.id}
+                style={{ animationDelay: `${idx * 80}ms` }}
+                className="group vehicle-card animate-vehicle-in bg-[#111] rounded-2xl overflow-hidden border border-white/5 hover:border-[#7dd3fc]/50 hover:[--tw-shadow:0] hover:vehicle-card-hover"
+              >
+                <Link to="/location-vehicules_/$vehicleId" params={{ vehicleId: v.id }} className="block">
+                  <div className="relative aspect-4/3 overflow-hidden bg-black">
+                    <img
+                      src={v.image}
+                      alt={`${v.brand} ${v.name}`}
+                      width={1280}
+                      height={896}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-110"
+                    />
+                    {/* Shine overlay au hover */}
+                    <div className="pointer-events-none absolute inset-0 overflow-hidden">
+                      <div className="absolute top-0 -left-1/2 h-full w-1/3 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-[shine_1.1s_ease-out]" />
+                    </div>
+                    <div className="absolute top-3 left-3 bg-black/60 backdrop-blur px-3 py-1 rounded-full text-[10px] uppercase tracking-[0.25em] text-[#7dd3fc]">
+                      {v.category}
+                    </div>
                   </div>
                 </Link>
                 <div className="p-6">
-                  <p className="text-[10px] uppercase tracking-[0.3em] text-[#7dd3fc]">{v.category}</p>
-                  <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }}>
-                    <h3 className="font-display text-2xl mt-2 hover:text-[#7dd3fc] transition">{v.brand} <span className="text-white/70">{v.name}</span></h3>
+                  <Link to="/location-vehicules_/$vehicleId" params={{ vehicleId: v.id }}>
+                    <h3 className="font-display text-2xl hover:text-[#7dd3fc] transition">
+                      {v.brand} <span className="text-white/70">{v.name}</span>
+                    </h3>
                   </Link>
-                  <div className="mt-4 flex gap-4 text-xs text-white/60">
-                    <span>{v.specs.hp} HP</span>
-                    <span>·</span>
-                    <span>{v.specs.seats} places</span>
-                    <span>·</span>
+                  <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1 text-xs text-white/60">
+                    <span>{v.specs.hp} HP</span><span>·</span>
+                    <span>{v.specs.seats} places</span><span>·</span>
                     <span>{v.specs.transmission}</span>
                   </div>
                   <div className="mt-6 flex items-end justify-between border-t border-white/10 pt-5">
@@ -174,9 +191,21 @@ function LocationVehicules() {
                       <p className="text-[10px] uppercase tracking-widest text-white/40">À partir de</p>
                       <p className="font-display text-2xl">{formatPrice(v.pricePerDay)} <span className="text-xs text-white/60">FCFA/jour</span></p>
                     </div>
-                    <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }} className="text-xs uppercase tracking-widest text-[#7dd3fc] hover:text-white">
-                      Détails →
-                    </Link>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => openBooking(v.id)}
+                        className="text-xs uppercase tracking-widest bg-[#7dd3fc] text-black px-3 py-2 rounded-full hover:bg-white transition"
+                      >
+                        Réserver
+                      </button>
+                      <Link
+                        to="/location-vehicules_/$vehicleId"
+                        params={{ vehicleId: v.id }}
+                        className="text-xs uppercase tracking-widest text-[#7dd3fc] hover:text-white inline-flex items-center"
+                      >
+                        Détails →
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </article>
