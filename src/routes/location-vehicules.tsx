@@ -156,7 +156,7 @@ function LocationVehicules() {
                 style={{ animationDelay: `${idx * 80}ms` }}
                 className="group vehicle-card animate-vehicle-in bg-[#111] rounded-2xl overflow-hidden border border-white/5 hover:border-[#7dd3fc]/50 hover:[--tw-shadow:0] hover:vehicle-card-hover"
               >
-                <Link to="/location-vehicules_/$vehicleId" params={{ vehicleId: v.id }} className="block">
+                <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }} className="block">
                   <div className="relative aspect-4/3 overflow-hidden bg-black">
                     <img
                       src={v.image}
@@ -176,7 +176,7 @@ function LocationVehicules() {
                   </div>
                 </Link>
                 <div className="p-6">
-                  <Link to="/location-vehicules_/$vehicleId" params={{ vehicleId: v.id }}>
+                  <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }}>
                     <h3 className="font-display text-2xl hover:text-[#7dd3fc] transition">
                       {v.brand} <span className="text-white/70">{v.name}</span>
                     </h3>
@@ -199,7 +199,7 @@ function LocationVehicules() {
                         Réserver
                       </button>
                       <Link
-                        to="/location-vehicules_/$vehicleId"
+                        to="/location-vehicules/$vehicleId"
                         params={{ vehicleId: v.id }}
                         className="text-xs uppercase tracking-widest text-[#7dd3fc] hover:text-white inline-flex items-center"
                       >
