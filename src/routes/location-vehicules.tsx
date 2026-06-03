@@ -177,7 +177,7 @@ function LocationVehicules() {
                     <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
                       <div>
                         <p className="text-[10px] uppercase tracking-[0.35em] text-white/60">À partir de</p>
-                        <p className="font-display text-2xl text-white">${formatPrice(v.pricePerDay)} <span className="text-xs text-white/70">/jour</span></p>
+                        <p className="font-display text-2xl text-white">$ {formatPrice(v.pricePerDay)} <span className="text-xs text-white/70">/jour</span></p>
                       </div>
                       <span className="rounded-full border border-white/15 bg-black/50 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-[#7dd3fc] backdrop-blur">Disponible</span>
                     </div>
