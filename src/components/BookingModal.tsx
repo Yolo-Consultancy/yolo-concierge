@@ -115,7 +115,7 @@ interface LocationAutocompleteProps {
 
 function LocationAutocomplete({ value, onChange, placeholder, inputCls }: LocationAutocompleteProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [filteredSuggestions, setFilteredSuggestions] = useState<typeof KINSHASA_LOCATION_SUGGESTIONS>([]);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
