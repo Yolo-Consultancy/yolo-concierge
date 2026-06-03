@@ -157,17 +157,52 @@
   }
 
   html {
-    font-family: var(--font-sans);
+    font-family: var(--font-body-family);
+    font-size: var(--text-body);
+    line-height: var(--leading-normal);
   }
 
   body {
     background-color: var(--color-background);
     color: var(--color-foreground);
-    font-family: var(--font-sans);
+    font-family: var(--font-body-family);
   }
 
-  h1, h2, h3, .font-display {
-    font-family: var(--font-display);
-    letter-spacing: -0.02em;
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display-family);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+  }
+
+  p {
+    line-height: var(--leading-relaxed);
   }
 }
+
+/* ============================================================
+   Animations véhicules — fade-in séquencé + lift au survol
+   ============================================================ */
+@keyframes vehicle-card-in {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes shine {
+  0%   { transform: translateX(-100%) skewX(-12deg); }
+  100% { transform: translateX(250%)  skewX(-12deg); }
+}
+
+@utility animate-vehicle-in {
+  opacity: 0;
+  animation: vehicle-card-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@utility vehicle-card {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              box-shadow 0.5s ease, border-color 0.3s ease;
+}
+@utility vehicle-card-hover {
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px -20px rgba(125, 211, 252, 0.25);
+}
+
