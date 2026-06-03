@@ -121,7 +121,7 @@ function LocationVehicules() {
         <img src={carHero} alt="Supercar de luxe" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1080} />
         <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/40 to-black" />
         <div className="relative z-10 text-center px-6 max-w-4xl">
-          <p className="text-xs md:text-sm uppercase tracking-[0.5em] text-white/70 mb-8">YOLO Line</p>
+          <p className="text-xs md:text-sm uppercase tracking-[0.5em] text-white/70 mb-8">YOLO Le Concierge</p>
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-normal leading-[1.05]">
             Location de Supercars<br />
             <span className="italic">en Afrique</span>

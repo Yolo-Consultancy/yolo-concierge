@@ -164,7 +164,7 @@ function VehicleDetail() {
 
           <aside className="bg-[#111] border border-white/10 rounded-2xl p-6 h-fit">
             <p className="font-display text-4xl text-[#7dd3fc]">
-              {formatPrice(vehicle.pricePerDay)} <span className="text-base text-white/70 font-sans">USD/jour</span>
+              $ {formatPrice(vehicle.pricePerDay)} <span className="text-base text-white/70 font-sans">/jour</span>
             </p>
             <p className="text-xs text-white/50 mt-1">À partir de</p>
 
