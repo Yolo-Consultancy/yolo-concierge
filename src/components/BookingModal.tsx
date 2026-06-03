@@ -494,9 +494,16 @@ export function BookingModal({
                     <option className={SELECT_OPTION_CLS} value="+1">🇺🇸 +1</option>
                   </select>
                   <input
+                    type="tel"
+                    inputMode="numeric"
+                    pattern="[0-9]{9,10}"
+                    maxLength={10}
                     value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    placeholder="Numéro"
+                    onChange={(e) => {
+                      const onlyDigits = e.target.value.replace(/\D/g, "").slice(0, 10);
+                      setForm({ ...form, phone: onlyDigits });
+                    }}
+                    placeholder="9 à 10 chiffres"
                     className={inputCls}
                   />
                 </div>

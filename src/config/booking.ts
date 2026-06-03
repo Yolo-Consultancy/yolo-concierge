@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 // Configuration des options de réservation du BookingModal.
 // Modifiez ces valeurs pour changer le numéro WhatsApp ou les textes des boutons
 // sans avoir à toucher au composant BookingModal.
