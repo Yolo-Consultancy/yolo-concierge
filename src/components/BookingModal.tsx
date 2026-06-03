@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { useMemo, useState } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import type { DateRange } from "react-day-picker";
@@ -9,6 +9,93 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 
 const WHATSAPP_NUMBER = "243828863897"; // sans le +
 const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
+const KINSHASA_LOCATION_SUGGESTIONS = [
+  "Showroom YOLO - Gombe",
+  "Gombe",
+  "Boulevard du 30 Juin",
+  "Gare Centrale de Kinshasa",
+  "Aéroport International de N'djili",
+  "Aéroport de N'Dolo",
+  "Fleuve Congo Hotel - Gombe",
+  "Pullman Kinshasa Grand Hotel - Gombe",
+  "Hotel Memling - Gombe",
+  "Hilton Kinshasa - Gombe",
+  "Rotana Kin Plaza Arjaan - Gombe",
+  "Beatrice Hotel - Gombe",
+  "Palais de la Nation - Gombe",
+  "Cité de l'Union Africaine - Ngaliema",
+  "Ma Campagne - Ngaliema",
+  "Macampagne",
+  "Binza",
+  "Binza Ozone",
+  "Binza Pigeon",
+  "Météo - Ngaliema",
+  "UPN - Ngaliema",
+  "Kintambo",
+  "Kintambo Magasin",
+  "Bandalungwa",
+  "Bandal Molart",
+  "Bandal Bisengo",
+  "Lemba",
+  "Lemba Terminus",
+  "Université de Kinshasa - UNIKIN",
+  "Mont-Amba",
+  "Limete",
+  "Limete 7e Rue",
+  "Limete Industriel",
+  "Kingabwa",
+  "Matete",
+  "Marché de Matete",
+  "Ngaba",
+  "Kalamu",
+  "Yolo Nord",
+  "Yolo Sud",
+  "Kasa-Vubu",
+  "Lingwala",
+  "Barumbu",
+  "Kinshasa commune",
+  "Bumbu",
+  "Makala",
+  "Selembao",
+  "Ngiri-Ngiri",
+  "Masina",
+  "Masina Sans Fil",
+  "N'djili",
+  "N'djili Sainte-Thérèse",
+  "Kimbanseke",
+  "Kingasani",
+  "Mikondo",
+  "Mont-Ngafula",
+  "Cité Verte",
+  "Kisenso",
+  "Ndjili Brasserie",
+  "Pompage - Ngaliema",
+  "GB - Ngaliema",
+  "Socimat - Gombe",
+  "Texaf Bilembo - Ngaliema",
+  "Marché Central de Kinshasa",
+  "Marché de la Liberté",
+  "Stade des Martyrs",
+  "Stade Tata Raphaël",
+  "Place Victoire",
+  "Rond-point Huileries",
+  "Rond-point Ngaba",
+  "Rond-point Socimat",
+  "Rond-point Moulaert",
+  "Avenue Kasa-Vubu",
+  "Avenue Colonel Mondjiba",
+  "Avenue de la Justice",
+  "Avenue des Huileries",
+  "Avenue Lumumba",
+  "Avenue By-Pass",
+  "Route de Matadi",
+  "Route de l'Université",
+  "Centre Wallonie-Bruxelles - Gombe",
+  "Institut Français de Kinshasa - Halle de la Gombe",
+  "Congo Trade Center - Gombe",
+  "Kin Marché Gombe",
+  "City Market Gombe",
+] as const;
 
 const STEPS = [
   "Sélectionner les Dates",
@@ -16,6 +103,72 @@ const STEPS = [
   "Vos Coordonnées",
   "Vérifier et Envoyer",
 ] as const;
+
+interface LocationAutocompleteProps {
+  value: string;
+  onChange: (value: string) => void;
+  placeholder?: string;
+  inputCls: string;
+}
+
+function LocationAutocomplete({ value, onChange, placeholder, inputCls }: LocationAutocompleteProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [filteredSuggestions, setFilteredSuggestions] = useState<typeof KINSHASA_LOCATION_SUGGESTIONS>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const filtered = KINSHASA_LOCATION_SUGGESTIONS.filter((location) =>
+      location.toLowerCase().includes(value.toLowerCase())
+    );
+    setFilteredSuggestions(filtered.length > 0 ? filtered : Array.from(KINSHASA_LOCATION_SUGGESTIONS));
+  }, [value]);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  return (
+    <div className="relative" ref={containerRef}>
+      <svg
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 z-10"
+        width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+      >
+        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
+      </svg>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={() => setIsOpen(true)}
+        placeholder={placeholder || "Commencez à taper..."}
+        className={`${inputCls} pl-11`}
+      />
+      {isOpen && filteredSuggestions.length > 0 && (
+        <div className="absolute top-full left-0 right-0 mt-2 bg-[#0f0f0f] border border-white/15 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+          {filteredSuggestions.map((location) => (
+            <button
+              key={location}
+              type="button"
+              onClick={() => {
+                onChange(location);
+                setIsOpen(false);
+              }}
+              className="w-full px-4 py-3 text-left text-sm text-white hover:bg-white/5 border-b border-white/5 last:border-b-0 transition"
+            >
+              {location}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function BookingModal({
   onClose,
@@ -256,20 +409,12 @@ export function BookingModal({
             <div className="space-y-5">
               <div>
                 <label className="block text-sm font-medium mb-2">Lieu de Prise en Charge</label>
-                <div className="relative">
-                  <svg
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40"
-                    width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                  >
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
-                  </svg>
-                  <input
-                    value={form.pickupLocation}
-                    onChange={(e) => setForm({ ...form, pickupLocation: e.target.value })}
-                    placeholder="Commencez à taper une adresse ou sélectionnez le showroom"
-                    className={`${inputCls} pl-11`}
-                  />
-                </div>
+                <LocationAutocomplete
+                  value={form.pickupLocation}
+                  onChange={(value) => setForm({ ...form, pickupLocation: value })}
+                  placeholder="Commencez à taper une adresse ou sélectionnez le showroom"
+                  inputCls={inputCls}
+                />
               </div>
 
               <label className="flex items-center gap-3 cursor-pointer select-none">
@@ -285,11 +430,11 @@ export function BookingModal({
               {!form.sameDropoff && (
                 <div>
                   <label className="block text-sm font-medium mb-2">Lieu de Retour</label>
-                  <input
+                  <LocationAutocomplete
                     value={form.dropoffLocation}
-                    onChange={(e) => setForm({ ...form, dropoffLocation: e.target.value })}
+                    onChange={(value) => setForm({ ...form, dropoffLocation: value })}
                     placeholder="Adresse de retour"
-                    className={inputCls}
+                    inputCls={inputCls}
                   />
                 </div>
               )}

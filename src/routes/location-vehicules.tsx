@@ -29,9 +29,9 @@ export const Route = createFileRoute("/location-vehicules")({
 });
 
 const destinations = [
-  { name: "Dakar", image: destDakar },
-  { name: "Abidjan", image: destAbidjan },
-  { name: "Saly", image: destSaly },
+  { name: "Gombe", image: destDakar },
+  { name: "Aéroport de N'djili", image: destAbidjan },
+  { name: "Ngaliema / Ma Campagne", image: destSaly },
 ];
 
 const reasons = [
@@ -128,7 +128,7 @@ function LocationVehicules() {
           </h1>
           <p className="mt-8 text-base md:text-lg text-white/80 max-w-2xl mx-auto">
             Ferrari, Lamborghini, Porsche, Mercedes et plus, livrées à votre porte
-            partout au Sénégal, en Côte d'Ivoire et au-delà.
+            partout à Kinshasa et dans ses quartiers premium.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="#flotte" className="inline-flex items-center gap-2 bg-[#7dd3fc] text-black px-8 py-4 rounded-full text-sm font-medium hover:bg-white transition">
@@ -188,7 +188,7 @@ function LocationVehicules() {
       <section id="destinations" className="py-24 px-6 bg-black">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.4em] text-[#7dd3fc] mb-4">Où Conduire</p>
+            <p className="text-xs uppercase tracking-[0.4em] text-[#7dd3fc] mb-4">Kinshasa</p>
             <h2 className="font-display text-4xl md:text-6xl">Destinations Populaires</h2>
           </div>
 
