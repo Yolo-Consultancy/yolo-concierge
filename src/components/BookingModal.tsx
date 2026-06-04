@@ -229,7 +229,7 @@ export function BookingModal({
       `Bonjour, je souhaite réserver le véhicule suivant :`,
       ``,
       selectedVehicle ? `• Véhicule : ${selectedVehicle.brand} ${selectedVehicle.name} (${selectedVehicle.year})` : "",
-      selectedVehicle ? `• Tarif : ${formatPrice(selectedVehicle.pricePerDay)} FCFA/jour` : "",
+      selectedVehicle ? `• Tarif : ${formatPrice(selectedVehicle.pricePerDay)} /jour` : "",
       `• Dates : ${form.dateRange}`,
       `• Prise en charge : ${form.pickupTime} – ${form.pickupLocation}`,
       `• Retour : ${form.returnTime} – ${dropoff}`,
@@ -323,7 +323,7 @@ export function BookingModal({
                 <p className="text-xs text-white/50">
                   {selectedVehicle.brand} {selectedVehicle.name} ({selectedVehicle.year})
                 </p>
-                <p className="text-sm text-[#7dd3fc] mt-0.5">{formatPrice(selectedVehicle.pricePerDay)} FCFA/jour</p>
+                <p className="text-sm text-[#7dd3fc] mt-0.5">${formatPrice(selectedVehicle.pricePerDay)} /jour</p>
               </div>
             </div>
           )}
@@ -572,7 +572,7 @@ export function BookingModal({
                     </svg>
                     Montant estimé
                   </div>
-                  <p className="font-display text-xl text-[#7dd3fc]">{formatPrice(selectedVehicle.pricePerDay)} FCFA/jour</p>
+                  <p className="font-display text-xl text-[#7dd3fc]">$ {formatPrice(selectedVehicle.pricePerDay)} /jour</p>
                 </div>
               )}
             </div>
