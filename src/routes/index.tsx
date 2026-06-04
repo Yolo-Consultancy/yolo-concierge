@@ -2,7 +2,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import vehiculesImg from "@/assets/portal-vehicules.jpg";
 import demenagementImg from "@/assets/portal-demenagement.jpg";
-import servicesImg from "@/assets/portal-services.jpg";
+import servicesImg from "@/assets/portal-surmesure.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -66,8 +66,8 @@ function Index() {
 
       {/* Intro */}
       <section className="mx-auto max-w-7xl px-6 pt-16 pb-10">
-        <p className="text-xs uppercase tracking-[0.4em] text-gold mb-4">Choisissez votre portail</p>
-        <h1 className="font-display text-5xl md:text-7xl font-semibold leading-[0.95] max-w-4xl">
+        <p className="text-xs text-center uppercase tracking-[0.4em] text-gold mb-4">Choisissez votre portail</p>
+        <h1 className="font-display text-5xl text-center md:text-7xl font-semibold leading-[0.95] max-w-4xl">
           Une seule plateforme,<br />
           <span className="italic text-muted-foreground">tous vos services.</span>
         </h1>
@@ -80,7 +80,7 @@ function Index() {
             <Link
               key={p.to}
               to={p.to}
-              className="group relative overflow-hidden rounded-2xl bg-card border border-border aspect-[3/4] flex flex-col justify-end p-7 transition-all hover:-translate-y-1 hover:shadow-2xl"
+              className="group relative overflow-hidden rounded-2xl bg-card border border-border aspect-3/4 flex flex-col justify-end p-7 transition-all hover:-translate-y-1 hover:shadow-2xl"
             >
               <img
                 src={p.image}
@@ -90,7 +90,7 @@ function Index() {
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10" />
+              <div className="absolute inset-0 bg-linear-to-t from-black/90 via-black/40 to-black/10" />
               <div className="relative z-10 text-white">
                 <p className="text-[10px] uppercase tracking-[0.35em] text-gold mb-3">{p.eyebrow}</p>
                 <h2 className="font-display text-3xl font-semibold mb-3">{p.title}</h2>
