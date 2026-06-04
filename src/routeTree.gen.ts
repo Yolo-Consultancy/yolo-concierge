@@ -12,8 +12,16 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesSurMesureRouteImport } from './routes/services-sur-mesure'
 import { Route as LocationVehiculesRouteImport } from './routes/location-vehicules'
 import { Route as DemenagementRouteImport } from './routes/demenagement'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as LocationVehiculesVehicleIdRouteImport } from './routes/location-vehicules_.$vehicleId'
+import { Route as AdminVehiculesRouteImport } from './routes/admin.vehicules'
+import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
+import { Route as AdminReservationsRouteImport } from './routes/admin.reservations'
+import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
+import { Route as AdminMissionsRouteImport } from './routes/admin.missions'
+import { Route as AdminClientsRouteImport } from './routes/admin.clients'
 
 const ServicesSurMesureRoute = ServicesSurMesureRouteImport.update({
   id: '/services-sur-mesure',
@@ -30,10 +38,20 @@ const DemenagementRoute = DemenagementRouteImport.update({
   path: '/demenagement',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AdminRoute,
 } as any)
 const LocationVehiculesVehicleIdRoute =
   LocationVehiculesVehicleIdRouteImport.update({
@@ -41,55 +59,132 @@ const LocationVehiculesVehicleIdRoute =
     path: '/location-vehicules/$vehicleId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const AdminVehiculesRoute = AdminVehiculesRouteImport.update({
+  id: '/vehicules',
+  path: '/vehicules',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
+  id: '/utilisateurs',
+  path: '/utilisateurs',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminReservationsRoute = AdminReservationsRouteImport.update({
+  id: '/reservations',
+  path: '/reservations',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminParametresRoute = AdminParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminMissionsRoute = AdminMissionsRouteImport.update({
+  id: '/missions',
+  path: '/missions',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminClientsRoute = AdminClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
+  '/admin/clients': typeof AdminClientsRoute
+  '/admin/missions': typeof AdminMissionsRoute
+  '/admin/parametres': typeof AdminParametresRoute
+  '/admin/reservations': typeof AdminReservationsRoute
+  '/admin/utilisateurs': typeof AdminUtilisateursRoute
+  '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
+  '/admin/clients': typeof AdminClientsRoute
+  '/admin/missions': typeof AdminMissionsRoute
+  '/admin/parametres': typeof AdminParametresRoute
+  '/admin/reservations': typeof AdminReservationsRoute
+  '/admin/utilisateurs': typeof AdminUtilisateursRoute
+  '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/admin': typeof AdminIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
+  '/admin/clients': typeof AdminClientsRoute
+  '/admin/missions': typeof AdminMissionsRoute
+  '/admin/parametres': typeof AdminParametresRoute
+  '/admin/reservations': typeof AdminReservationsRoute
+  '/admin/utilisateurs': typeof AdminUtilisateursRoute
+  '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules_/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/admin/': typeof AdminIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/admin'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
+    | '/admin/clients'
+    | '/admin/missions'
+    | '/admin/parametres'
+    | '/admin/reservations'
+    | '/admin/utilisateurs'
+    | '/admin/vehicules'
     | '/location-vehicules/$vehicleId'
+    | '/admin/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
+    | '/admin/clients'
+    | '/admin/missions'
+    | '/admin/parametres'
+    | '/admin/reservations'
+    | '/admin/utilisateurs'
+    | '/admin/vehicules'
     | '/location-vehicules/$vehicleId'
+    | '/admin'
   id:
     | '__root__'
     | '/'
+    | '/admin'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
+    | '/admin/clients'
+    | '/admin/missions'
+    | '/admin/parametres'
+    | '/admin/reservations'
+    | '/admin/utilisateurs'
+    | '/admin/vehicules'
     | '/location-vehicules_/$vehicleId'
+    | '/admin/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AdminRoute: typeof AdminRouteWithChildren
   DemenagementRoute: typeof DemenagementRoute
   LocationVehiculesRoute: typeof LocationVehiculesRoute
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
@@ -119,12 +214,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemenagementRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/admin/': {
+      id: '/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof AdminRoute
     }
     '/location-vehicules_/$vehicleId': {
       id: '/location-vehicules_/$vehicleId'
@@ -133,11 +242,76 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocationVehiculesVehicleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/vehicules': {
+      id: '/admin/vehicules'
+      path: '/vehicules'
+      fullPath: '/admin/vehicules'
+      preLoaderRoute: typeof AdminVehiculesRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/utilisateurs': {
+      id: '/admin/utilisateurs'
+      path: '/utilisateurs'
+      fullPath: '/admin/utilisateurs'
+      preLoaderRoute: typeof AdminUtilisateursRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/reservations': {
+      id: '/admin/reservations'
+      path: '/reservations'
+      fullPath: '/admin/reservations'
+      preLoaderRoute: typeof AdminReservationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/parametres': {
+      id: '/admin/parametres'
+      path: '/parametres'
+      fullPath: '/admin/parametres'
+      preLoaderRoute: typeof AdminParametresRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/missions': {
+      id: '/admin/missions'
+      path: '/missions'
+      fullPath: '/admin/missions'
+      preLoaderRoute: typeof AdminMissionsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/clients': {
+      id: '/admin/clients'
+      path: '/clients'
+      fullPath: '/admin/clients'
+      preLoaderRoute: typeof AdminClientsRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
+interface AdminRouteChildren {
+  AdminClientsRoute: typeof AdminClientsRoute
+  AdminMissionsRoute: typeof AdminMissionsRoute
+  AdminParametresRoute: typeof AdminParametresRoute
+  AdminReservationsRoute: typeof AdminReservationsRoute
+  AdminUtilisateursRoute: typeof AdminUtilisateursRoute
+  AdminVehiculesRoute: typeof AdminVehiculesRoute
+  AdminIndexRoute: typeof AdminIndexRoute
+}
+
+const AdminRouteChildren: AdminRouteChildren = {
+  AdminClientsRoute: AdminClientsRoute,
+  AdminMissionsRoute: AdminMissionsRoute,
+  AdminParametresRoute: AdminParametresRoute,
+  AdminReservationsRoute: AdminReservationsRoute,
+  AdminUtilisateursRoute: AdminUtilisateursRoute,
+  AdminVehiculesRoute: AdminVehiculesRoute,
+  AdminIndexRoute: AdminIndexRoute,
+}
+
+const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AdminRoute: AdminRouteWithChildren,
   DemenagementRoute: DemenagementRoute,
   LocationVehiculesRoute: LocationVehiculesRoute,
   ServicesSurMesureRoute: ServicesSurMesureRoute,
@@ -146,13 +320,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
