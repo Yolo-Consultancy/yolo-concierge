@@ -124,7 +124,7 @@ function LocationVehicules() {
           <p className="text-xs md:text-sm uppercase tracking-[0.5em] text-white/70 mb-8">YOLO Le Concierge</p>
           <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-normal leading-[1.05]">
             Location de Supercars<br />
-            <span className="italic">en Afrique</span>
+            <span className="italic">à Kinshasa</span>
           </h1>
           <p className="mt-8 text-base md:text-lg text-white/80 max-w-2xl mx-auto">
             Ferrari, Lamborghini, Porsche, Mercedes et plus, livrées à votre porte
