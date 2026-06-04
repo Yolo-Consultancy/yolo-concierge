@@ -8,7 +8,8 @@ import { useState, type ReactNode } from "react";
 import { adminConfig } from "@/config/admin";
 import { logout } from "@/lib/admin/auth";
 
-const nav = [
+type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+const nav: NavItem[] = [
   { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { to: "/admin/vehicules", label: "Véhicules", icon: Car },
   { to: "/admin/reservations", label: "Réservations", icon: CalendarCheck },
@@ -16,7 +17,7 @@ const nav = [
   { to: "/admin/missions", label: "Missions", icon: ClipboardList },
   { to: "/admin/utilisateurs", label: "Équipe YOLO", icon: UserCog },
   { to: "/admin/parametres", label: "Paramètres", icon: Settings },
-] as const;
+];
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
