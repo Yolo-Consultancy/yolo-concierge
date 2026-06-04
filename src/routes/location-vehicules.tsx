@@ -1,12 +1,13 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import carHero from "@/assets/car-hero.jpg";
 import destDakar from "@/assets/dest-dakar.jpg";
 import destAbidjan from "@/assets/dest-abidjan.jpg";
 import destSaly from "@/assets/dest-saly.jpg";
-import { vehicles, formatPrice } from "@/lib/vehicles";
+import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehicles";
+import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
 import {
   Sheet,
@@ -46,6 +47,11 @@ const reasons = [
 function LocationVehicules() {
   const [bookingOpen, setBookingOpen] = useState(false);
   const [prefilledVehicle, setPrefilledVehicle] = useState<string>("");
+  const [vehicles, setVehicles] = useState<Vehicle[]>(seedVehicles);
+
+  useEffect(() => {
+    setVehicles(listVehicles());
+  }, []);
 
   const openBooking = (vehicleId?: string) => {
     setPrefilledVehicle(vehicleId ?? "");
