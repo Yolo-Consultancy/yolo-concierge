@@ -65,8 +65,12 @@ export type Booking = {
   clientPhone: string;
   startDate: string;
   endDate: string;
+  days: number;
   pickupLocation: string;
   totalPrice: number;
+  withChauffeur: boolean;
+  driverId: string;
+  driverName: string;
   status: BookingStatus;
   createdAt: string;
 };
@@ -74,22 +78,25 @@ const seedBookings: Booking[] = [
   {
     id: "b-001", vehicleId: "ferrari-488", vehicleName: "Ferrari 488 GTB",
     clientName: "Patrick Mwamba", clientPhone: "+243 81 234 5678",
-    startDate: "2026-06-10", endDate: "2026-06-12",
-    pickupLocation: "Aéroport de N'djili", totalPrice: 9000,
+    startDate: "2026-06-10", endDate: "2026-06-12", days: 2,
+    pickupLocation: "Aéroport de N'djili", totalPrice: 900,
+    withChauffeur: false, driverId: "", driverName: "",
     status: "confirmee", createdAt: "2026-06-01T10:00:00Z",
   },
   {
     id: "b-002", vehicleId: "mercedes-g63", vehicleName: "Mercedes AMG G 63",
     clientName: "Sarah Lukumu", clientPhone: "+243 99 876 5432",
-    startDate: "2026-06-15", endDate: "2026-06-18",
-    pickupLocation: "Hôtel Pullman", totalPrice: 12600,
+    startDate: "2026-06-15", endDate: "2026-06-18", days: 3,
+    pickupLocation: "Hôtel Pullman", totalPrice: 1500,
+    withChauffeur: true, driverId: "u-003", driverName: "Joseph Mbaya",
     status: "payee", createdAt: "2026-06-02T14:30:00Z",
   },
   {
     id: "b-003", vehicleId: "rolls-cullinan", vehicleName: "Rolls-Royce Cullinan",
     clientName: "Jean-Paul Tshibanda", clientPhone: "+243 82 111 2233",
-    startDate: "2026-06-20", endDate: "2026-06-21",
-    pickupLocation: "Villa Gombe", totalPrice: 8500,
+    startDate: "2026-06-20", endDate: "2026-06-21", days: 1,
+    pickupLocation: "Villa Gombe", totalPrice: 850,
+    withChauffeur: false, driverId: "", driverName: "",
     status: "en_attente", createdAt: "2026-06-03T09:15:00Z",
   },
 ];
