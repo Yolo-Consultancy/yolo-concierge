@@ -234,6 +234,68 @@ export function getSettings(): SiteSettings { return read<SiteSettings>(KEYS.set
 export function saveSettings(s: SiteSettings) { write(KEYS.settings, s); }
 
 /* ============================================================
+   CHAUFFEURS (catalogue dédié — distinct de l'équipe interne)
+   ============================================================ */
+export type DriverAvailability = "disponible" | "occupe" | "indisponible";
+export type Driver = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  photo: string;           // URL de la photo
+  pricePerDay: number;     // tarif jour (en devise du site)
+  availability: DriverAvailability;
+  active: boolean;         // false = désactivé (n'apparaît plus côté client)
+  experienceYears: number;
+  languages: string;       // ex: "Français, Lingala"
+  notes: string;
+  createdAt: string;
+};
+const seedDrivers: Driver[] = [
+  {
+    id: "d-001", firstName: "Joseph", lastName: "Mbaya",
+    phone: "+243 81 555 1122",
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+    pricePerDay: 80, availability: "disponible", active: true,
+    experienceYears: 8, languages: "Français, Lingala, Anglais",
+    notes: "Chauffeur VIP, expérience véhicules de luxe.", createdAt: "2026-01-10",
+  },
+  {
+    id: "d-002", firstName: "Pascal", lastName: "Kalonji",
+    phone: "+243 99 222 3344",
+    photo: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=400&q=80",
+    pricePerDay: 70, availability: "disponible", active: true,
+    experienceYears: 5, languages: "Français, Lingala",
+    notes: "Spécialisé SUV et longues distances.", createdAt: "2026-02-14",
+  },
+  {
+    id: "d-003", firstName: "André", lastName: "Bwanga",
+    phone: "+243 82 777 8899",
+    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
+    pricePerDay: 95, availability: "occupe", active: true,
+    experienceYears: 12, languages: "Français, Lingala, Swahili",
+    notes: "Chauffeur protocole / officiels.", createdAt: "2026-03-02",
+  },
+];
+export function listDrivers(): Driver[] { return read<Driver[]>(KEYS.drivers, seedDrivers); }
+export function listActiveDrivers(): Driver[] {
+  return listDrivers().filter((d) => d.active);
+}
+export function saveDrivers(list: Driver[]) { write(KEYS.drivers, list); }
+export function upsertDriver(d: Driver) {
+  const list = listDrivers();
+  const i = list.findIndex((x) => x.id === d.id);
+  if (i >= 0) list[i] = d; else list.unshift(d);
+  saveDrivers(list);
+}
+export function deleteDriver(id: string) {
+  saveDrivers(listDrivers().filter((d) => d.id !== id));
+}
+export function toggleDriverActive(id: string) {
+  saveDrivers(listDrivers().map((d) => (d.id === id ? { ...d, active: !d.active } : d)));
+}
+
+/* ============================================================
    UTIL
    ============================================================ */
 export function newId(prefix: string) {
