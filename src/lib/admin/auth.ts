@@ -1,7 +1,4 @@
 /* eslint-disable prettier/prettier */
-// Authentification simple (côté client uniquement) en attendant le backend Express.
-// À remplacer par une vraie auth (JWT, sessions, etc.) côté API.
-
 import { adminConfig } from "@/config/admin";
 
 const SESSION_KEY = "yolo.admin.session";
@@ -11,8 +8,11 @@ export function isAuthenticated(): boolean {
   return window.localStorage.getItem(SESSION_KEY) === "1";
 }
 
-export function login(password: string): boolean {
-  if (password === adminConfig.password) {
+export function login(username: string, password: string): boolean {
+  if (
+    username.trim().toLowerCase() === adminConfig.username.toLowerCase() &&
+    password === adminConfig.password
+  ) {
     window.localStorage.setItem(SESSION_KEY, "1");
     return true;
   }
