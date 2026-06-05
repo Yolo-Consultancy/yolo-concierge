@@ -100,10 +100,11 @@ const KINSHASA_LOCATION_SUGGESTIONS = [
 ] as const;
 
 const STEPS = [
-  "Sélectionner les Dates",
-  "Choisir le Lieu",
-  "Vos Coordonnées",
-  "Vérifier et Envoyer",
+  "Dates & Durée",
+  "Lieu",
+  "Chauffeur",
+  "Coordonnées",
+  "Vérifier",
 ] as const;
 
 interface LocationAutocompleteProps {
@@ -220,7 +221,8 @@ export function BookingModal({
   const canNext = () => {
     if (step === 0) return !!selectedDateRange?.from && !!selectedDateRange?.to;
     if (step === 1) return !!form.pickupLocation && (form.sameDropoff || !!form.dropoffLocation);
-    if (step === 2) return !!form.firstName && !!form.lastName && !!form.email;
+    if (step === 2) return true; // chauffeur step (optionnel)
+    if (step === 3) return !!form.firstName && !!form.lastName && !!form.email;
     return true;
   };
 
@@ -457,34 +459,71 @@ export function BookingModal({
                 </div>
               )}
 
-              {bookingConfig.chauffeur.enabled && (
-                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
-                  <label className="flex items-start gap-3 cursor-pointer select-none">
-                    <input
-                      type="checkbox"
-                      checked={form.withChauffeur}
-                      onChange={(e) => setForm({ ...form, withChauffeur: e.target.checked })}
-                      className="mt-1 w-4 h-4 accent-[#7dd3fc]"
-                    />
-                    <span className="flex-1">
-                      <span className="text-sm font-medium text-white">
-                        {bookingConfig.chauffeur.label}
-                      </span>
-                      <span className="block text-xs text-white/50 mt-0.5">
-                        {bookingConfig.chauffeur.helper}
-                      </span>
-                      <span className="block text-xs text-[#7dd3fc] mt-1">
-                        +{C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} /jour
-                      </span>
-                    </span>
-                  </label>
-                </div>
+            </div>
+          )}
+
+          {/* Step 3 — Chauffeur (dédié) */}
+          {step === 2 && (
+            <div className="space-y-5">
+              <div>
+                <p className="text-sm font-medium text-white">
+                  Souhaitez-vous un chauffeur YOLO ?
+                </p>
+                <p className="text-xs text-white/50 mt-1">
+                  Choisissez « Avec chauffeur » si vous ne souhaitez pas conduire vous-même.
+                </p>
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, withChauffeur: false })}
+                  className={`text-left rounded-xl border p-4 transition ${
+                    !form.withChauffeur
+                      ? "border-[#7dd3fc] bg-[#7dd3fc]/10 ring-2 ring-[#7dd3fc]/30"
+                      : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                  }`}
+                >
+                  <p className="font-medium text-white">Je conduis</p>
+                  <p className="text-xs text-white/60 mt-1">
+                    Vous récupérez le véhicule et conduisez vous-même.
+                  </p>
+                  <p className="text-xs text-white/40 mt-2">Aucun frais supplémentaire</p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setForm({ ...form, withChauffeur: true })}
+                  className={`text-left rounded-xl border p-4 transition ${
+                    form.withChauffeur
+                      ? "border-[#7dd3fc] bg-[#7dd3fc]/10 ring-2 ring-[#7dd3fc]/30"
+                      : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                  }`}
+                >
+                  <p className="font-medium text-white">Avec chauffeur</p>
+                  <p className="text-xs text-white/60 mt-1">
+                    Un chauffeur professionnel YOLO assure vos trajets.
+                  </p>
+                  <p className="text-xs text-[#7dd3fc] mt-2">
+                    +{C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} /jour
+                    {days > 0 && form.withChauffeur ? ` · Total chauffeur ${C}${formatPrice(chauffeurTotal)}` : ""}
+                  </p>
+                </button>
+              </div>
+
+              {form.withChauffeur && (
+                <p className="text-xs text-white/50 flex items-start gap-2 rounded-lg bg-[#7dd3fc]/5 border border-[#7dd3fc]/20 p-3">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 shrink-0 text-[#7dd3fc]">
+                    <circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" />
+                  </svg>
+                  Nous vous attribuerons un chauffeur expérimenté selon vos dates. Vous pouvez préciser vos préférences en commentaire WhatsApp.
+                </p>
               )}
             </div>
           )}
 
-          {/* Step 3 — Coordonnées */}
-          {step === 2 && (
+          {/* Step 4 — Coordonnées */}
+          {step === 3 && (
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -551,8 +590,8 @@ export function BookingModal({
             </div>
           )}
 
-          {/* Step 4 — Vérification */}
-          {step === 3 && (
+          {/* Step 5 — Vérification */}
+          {step === 4 && (
             <div className="space-y-4">
               <SummaryCard
                 icon={
@@ -560,10 +599,12 @@ export function BookingModal({
                     <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
                   </svg>
                 }
-                title="Sélectionner les Dates"
+                title="Dates & Durée"
                 onEdit={() => setStep(0)}
               >
-                <p className="text-sm text-white/70">{form.dateRange}</p>
+                <p className="text-sm text-white/70">
+                  {form.dateRange} {days > 0 && <span className="text-white/90">({days} jour{days > 1 ? "s" : ""})</span>}
+                </p>
                 <p className="text-sm text-white/70">
                   Heure de Prise en Charge: <span className="text-white">{form.pickupTime}</span> · Heure de Retour:{" "}
                   <span className="text-white">{form.returnTime}</span>
@@ -576,16 +617,35 @@ export function BookingModal({
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
                   </svg>
                 }
-                title="Choisir le Lieu"
+                title="Lieu"
                 onEdit={() => setStep(1)}
               >
                 <p className="text-sm text-white/70">
-                  Lieu de Prise en Charge: <span className="text-white">{form.pickupLocation}</span>
+                  Prise en Charge: <span className="text-white">{form.pickupLocation}</span>
                 </p>
                 <p className="text-sm text-white/70">
-                  Lieu de Retour:{" "}
+                  Retour:{" "}
                   <span className="text-white">{form.sameDropoff ? form.pickupLocation : form.dropoffLocation}</span>
                 </p>
+              </SummaryCard>
+
+              <SummaryCard
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="8" r="4" /><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" />
+                  </svg>
+                }
+                title="Chauffeur"
+                onEdit={() => setStep(2)}
+              >
+                <p className="text-sm text-white">
+                  {form.withChauffeur ? "Avec chauffeur YOLO" : "Je conduis moi-même"}
+                </p>
+                {form.withChauffeur && (
+                  <p className="text-sm text-white/60">
+                    +{C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} /jour · Total {C}{formatPrice(chauffeurTotal)}
+                  </p>
+                )}
               </SummaryCard>
 
               <SummaryCard
@@ -595,7 +655,7 @@ export function BookingModal({
                   </svg>
                 }
                 title="Vos Coordonnées"
-                onEdit={() => setStep(2)}
+                onEdit={() => setStep(3)}
               >
                 <p className="text-sm text-white">
                   {form.firstName} {form.lastName}
