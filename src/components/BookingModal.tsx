@@ -191,6 +191,7 @@ export function BookingModal({
     pickupLocation: "",
     dropoffLocation: "",
     sameDropoff: true,
+    withChauffeur: false,
     firstName: "",
     lastName: "",
     email: "",
@@ -223,16 +224,31 @@ export function BookingModal({
     return true;
   };
 
+  const days = useMemo(() => {
+    if (!selectedDateRange?.from || !selectedDateRange?.to) return 0;
+    const ms = selectedDateRange.to.getTime() - selectedDateRange.from.getTime();
+    return Math.max(1, Math.round(ms / 86400000));
+  }, [selectedDateRange]);
+
+  const chauffeurTotal = form.withChauffeur ? days * bookingConfig.chauffeur.pricePerDay : 0;
+  const vehicleTotal = selectedVehicle ? days * selectedVehicle.pricePerDay : 0;
+  const grandTotal = vehicleTotal + chauffeurTotal;
+  const C = bookingConfig.currencySymbol;
+
   const summary = useMemo(() => {
     const dropoff = form.sameDropoff ? form.pickupLocation : form.dropoffLocation;
     const lines = [
       `Bonjour, je souhaite réserver le véhicule suivant :`,
       ``,
       selectedVehicle ? `• Véhicule : ${selectedVehicle.brand} ${selectedVehicle.name} (${selectedVehicle.year})` : "",
-      selectedVehicle ? `• Tarif : ${formatPrice(selectedVehicle.pricePerDay)} /jour` : "",
-      `• Dates : ${form.dateRange}`,
+      selectedVehicle ? `• Tarif : ${C}${formatPrice(selectedVehicle.pricePerDay)} /jour` : "",
+      `• Dates : ${form.dateRange}${days ? ` (${days} jour${days > 1 ? "s" : ""})` : ""}`,
       `• Prise en charge : ${form.pickupTime} – ${form.pickupLocation}`,
       `• Retour : ${form.returnTime} – ${dropoff}`,
+      form.withChauffeur
+        ? `• Chauffeur : oui (+${C}${formatPrice(bookingConfig.chauffeur.pricePerDay)} /jour)`
+        : `• Chauffeur : non`,
+      selectedVehicle ? `• Total estimé : ${C}${formatPrice(grandTotal)}` : "",
       ``,
       `Mes coordonnées :`,
       `• Nom : ${form.firstName} ${form.lastName}`,
@@ -240,7 +256,7 @@ export function BookingModal({
       form.phone ? `• Téléphone : ${form.countryCode} ${form.phone}` : "",
     ].filter(Boolean);
     return lines.join("\n");
-  }, [form, selectedVehicle]);
+  }, [form, selectedVehicle, days, grandTotal, C]);
 
   const handleWhatsApp = () => {
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
@@ -440,6 +456,30 @@ export function BookingModal({
                   />
                 </div>
               )}
+
+              {bookingConfig.chauffeur.enabled && (
+                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                  <label className="flex items-start gap-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={form.withChauffeur}
+                      onChange={(e) => setForm({ ...form, withChauffeur: e.target.checked })}
+                      className="mt-1 w-4 h-4 accent-[#7dd3fc]"
+                    />
+                    <span className="flex-1">
+                      <span className="text-sm font-medium text-white">
+                        {bookingConfig.chauffeur.label}
+                      </span>
+                      <span className="block text-xs text-white/50 mt-0.5">
+                        {bookingConfig.chauffeur.helper}
+                      </span>
+                      <span className="block text-xs text-[#7dd3fc] mt-1">
+                        +{C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} /jour
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              )}
             </div>
           )}
 
@@ -565,14 +605,30 @@ export function BookingModal({
               </SummaryCard>
 
               {selectedVehicle && (
-                <div className="rounded-xl border border-[#7dd3fc]/30 bg-[#7dd3fc]/5 p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-[#7dd3fc] text-sm">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
-                    </svg>
-                    Montant estimé
+                <div className="rounded-xl border border-[#7dd3fc]/30 bg-[#7dd3fc]/5 p-4 space-y-2">
+                  <div className="flex items-center justify-between text-sm text-white/70">
+                    <span>
+                      {C}{formatPrice(selectedVehicle.pricePerDay)} × {days} jour{days > 1 ? "s" : ""}
+                    </span>
+                    <span className="text-white">{C}{formatPrice(vehicleTotal)}</span>
                   </div>
-                  <p className="font-display text-xl text-[#7dd3fc]">$ {formatPrice(selectedVehicle.pricePerDay)} /jour</p>
+                  {form.withChauffeur && (
+                    <div className="flex items-center justify-between text-sm text-white/70">
+                      <span>
+                        Chauffeur · {C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} × {days}
+                      </span>
+                      <span className="text-white">{C}{formatPrice(chauffeurTotal)}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-[#7dd3fc]/20 pt-2 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-[#7dd3fc] text-sm">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
+                      </svg>
+                      Total estimé
+                    </div>
+                    <p className="font-display text-xl text-[#7dd3fc]">{C}{formatPrice(grandTotal)}</p>
+                  </div>
                 </div>
               )}
             </div>
