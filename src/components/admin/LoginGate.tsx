@@ -1,17 +1,18 @@
 /* eslint-disable prettier/prettier */
 import { useState, type FormEvent } from "react";
-import { Lock } from "lucide-react";
+import { Lock, User } from "lucide-react";
 import { login } from "@/lib/admin/auth";
 import { adminConfig } from "@/config/admin";
 
 export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (login(password)) onSuccess();
-    else setError("Mot de passe incorrect.");
+    if (login(username, password)) onSuccess();
+    else setError("Identifiants incorrects.");
   };
 
   return (
@@ -32,14 +33,35 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
           </div>
         </div>
 
+        <p className="text-sm text-muted-foreground mb-5">
+          Accès réservé à l'équipe YOLO. Connectez-vous avec votre identifiant administrateur.
+        </p>
+
+        <label className="block text-sm font-medium mb-2">Identifiant</label>
+        <div className="relative mb-4">
+          <User className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            autoComplete="username"
+            value={username}
+            onChange={(e) => { setUsername(e.target.value); setError(""); }}
+            placeholder="admin@yolo.cd"
+            autoFocus
+            className="w-full pl-9 pr-3 py-2 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
+
         <label className="block text-sm font-medium mb-2">Mot de passe</label>
-        <input
-          type="password"
-          value={password}
-          onChange={(e) => { setPassword(e.target.value); setError(""); }}
-          autoFocus
-          className="w-full px-3 py-2 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-        />
+        <div className="relative">
+          <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => { setPassword(e.target.value); setError(""); }}
+            className="w-full pl-9 pr-3 py-2 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+          />
+        </div>
         {error && <p className="text-destructive text-xs mt-2">{error}</p>}
 
         <button

@@ -22,6 +22,7 @@ import { Route as AdminReservationsRouteImport } from './routes/admin.reservatio
 import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
 import { Route as AdminMissionsRouteImport } from './routes/admin.missions'
 import { Route as AdminClientsRouteImport } from './routes/admin.clients'
+import { Route as AdminChauffeursRouteImport } from './routes/admin.chauffeurs'
 
 const ServicesSurMesureRoute = ServicesSurMesureRouteImport.update({
   id: '/services-sur-mesure',
@@ -89,6 +90,11 @@ const AdminClientsRoute = AdminClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminChauffeursRoute = AdminChauffeursRouteImport.update({
+  id: '/chauffeurs',
+  path: '/chauffeurs',
+  getParentRoute: () => AdminRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -96,6 +102,7 @@ export interface FileRoutesByFullPath {
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
+  '/admin/chauffeurs': typeof AdminChauffeursRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/missions': typeof AdminMissionsRoute
   '/admin/parametres': typeof AdminParametresRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
+  '/admin/chauffeurs': typeof AdminChauffeursRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/missions': typeof AdminMissionsRoute
   '/admin/parametres': typeof AdminParametresRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
+  '/admin/chauffeurs': typeof AdminChauffeursRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/missions': typeof AdminMissionsRoute
   '/admin/parametres': typeof AdminParametresRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
+    | '/admin/chauffeurs'
     | '/admin/clients'
     | '/admin/missions'
     | '/admin/parametres'
@@ -157,6 +167,7 @@ export interface FileRouteTypes {
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
+    | '/admin/chauffeurs'
     | '/admin/clients'
     | '/admin/missions'
     | '/admin/parametres'
@@ -172,6 +183,7 @@ export interface FileRouteTypes {
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
+    | '/admin/chauffeurs'
     | '/admin/clients'
     | '/admin/missions'
     | '/admin/parametres'
@@ -284,10 +296,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminClientsRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/chauffeurs': {
+      id: '/admin/chauffeurs'
+      path: '/chauffeurs'
+      fullPath: '/admin/chauffeurs'
+      preLoaderRoute: typeof AdminChauffeursRouteImport
+      parentRoute: typeof AdminRoute
+    }
   }
 }
 
 interface AdminRouteChildren {
+  AdminChauffeursRoute: typeof AdminChauffeursRoute
   AdminClientsRoute: typeof AdminClientsRoute
   AdminMissionsRoute: typeof AdminMissionsRoute
   AdminParametresRoute: typeof AdminParametresRoute
@@ -298,6 +318,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminChauffeursRoute: AdminChauffeursRoute,
   AdminClientsRoute: AdminClientsRoute,
   AdminMissionsRoute: AdminMissionsRoute,
   AdminParametresRoute: AdminParametresRoute,
@@ -320,13 +341,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

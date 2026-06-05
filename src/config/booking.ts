@@ -7,6 +7,17 @@ export const bookingConfig = {
   // Numéro WhatsApp au format international SANS le "+" (ex: "243828863897")
   whatsappNumber: "243828863897",
 
+  // Devise affichée (symbole)
+  currencySymbol: "$",
+
+  // Option "Chauffeur" (proposée au client s'il ne sait pas conduire)
+  chauffeur: {
+    enabled: true,
+    label: "Ajouter un chauffeur",
+    helper: "Recommandé si vous ne souhaitez pas conduire vous-même.",
+    pricePerDay: 80, // tarif additionnel /jour
+  },
+
   // Bouton WhatsApp
   whatsapp: {
     label: "Envoyer sur WhatsApp",
@@ -15,7 +26,6 @@ export const bookingConfig = {
   // Bouton "Payer en ligne"
   payOnline: {
     label: "Payer en ligne",
-    // Message affiché quand le paiement en ligne n'est pas encore disponible
     unavailableMessage:
       "Le paiement en ligne sera disponible prochainement. Veuillez utiliser WhatsApp pour finaliser votre réservation.",
   },

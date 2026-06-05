@@ -12,6 +12,7 @@ const KEYS = {
   clients: "yolo.admin.clients",
   users: "yolo.admin.users",
   missions: "yolo.admin.missions",
+  drivers: "yolo.admin.drivers",
   settings: "yolo.admin.settings",
 } as const;
 
@@ -65,8 +66,12 @@ export type Booking = {
   clientPhone: string;
   startDate: string;
   endDate: string;
+  days: number;
   pickupLocation: string;
   totalPrice: number;
+  withChauffeur: boolean;
+  driverId: string;
+  driverName: string;
   status: BookingStatus;
   createdAt: string;
 };
@@ -74,22 +79,25 @@ const seedBookings: Booking[] = [
   {
     id: "b-001", vehicleId: "ferrari-488", vehicleName: "Ferrari 488 GTB",
     clientName: "Patrick Mwamba", clientPhone: "+243 81 234 5678",
-    startDate: "2026-06-10", endDate: "2026-06-12",
-    pickupLocation: "Aéroport de N'djili", totalPrice: 9000,
+    startDate: "2026-06-10", endDate: "2026-06-12", days: 2,
+    pickupLocation: "Aéroport de N'djili", totalPrice: 900,
+    withChauffeur: false, driverId: "", driverName: "",
     status: "confirmee", createdAt: "2026-06-01T10:00:00Z",
   },
   {
     id: "b-002", vehicleId: "mercedes-g63", vehicleName: "Mercedes AMG G 63",
     clientName: "Sarah Lukumu", clientPhone: "+243 99 876 5432",
-    startDate: "2026-06-15", endDate: "2026-06-18",
-    pickupLocation: "Hôtel Pullman", totalPrice: 12600,
+    startDate: "2026-06-15", endDate: "2026-06-18", days: 3,
+    pickupLocation: "Hôtel Pullman", totalPrice: 1500,
+    withChauffeur: true, driverId: "u-003", driverName: "Joseph Mbaya",
     status: "payee", createdAt: "2026-06-02T14:30:00Z",
   },
   {
     id: "b-003", vehicleId: "rolls-cullinan", vehicleName: "Rolls-Royce Cullinan",
     clientName: "Jean-Paul Tshibanda", clientPhone: "+243 82 111 2233",
-    startDate: "2026-06-20", endDate: "2026-06-21",
-    pickupLocation: "Villa Gombe", totalPrice: 8500,
+    startDate: "2026-06-20", endDate: "2026-06-21", days: 1,
+    pickupLocation: "Villa Gombe", totalPrice: 850,
+    withChauffeur: false, driverId: "", driverName: "",
     status: "en_attente", createdAt: "2026-06-03T09:15:00Z",
   },
 ];
@@ -99,6 +107,13 @@ export function listBookings(): Booking[] {
 export function saveBookings(list: Booking[]) { write(KEYS.bookings, list); }
 export function updateBookingStatus(id: string, status: BookingStatus) {
   saveBookings(listBookings().map((b) => (b.id === id ? { ...b, status } : b)));
+}
+export function assignBookingDriver(id: string, driverId: string, driverName: string) {
+  saveBookings(
+    listBookings().map((b) =>
+      b.id === id ? { ...b, driverId, driverName, withChauffeur: !!driverId } : b
+    )
+  );
 }
 export function deleteBooking(id: string) {
   saveBookings(listBookings().filter((b) => b.id !== id));
@@ -217,6 +232,68 @@ const defaultSettings: SiteSettings = {
 };
 export function getSettings(): SiteSettings { return read<SiteSettings>(KEYS.settings, defaultSettings); }
 export function saveSettings(s: SiteSettings) { write(KEYS.settings, s); }
+
+/* ============================================================
+   CHAUFFEURS (catalogue dédié — distinct de l'équipe interne)
+   ============================================================ */
+export type DriverAvailability = "disponible" | "occupe" | "indisponible";
+export type Driver = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  photo: string;           // URL de la photo
+  pricePerDay: number;     // tarif jour (en devise du site)
+  availability: DriverAvailability;
+  active: boolean;         // false = désactivé (n'apparaît plus côté client)
+  experienceYears: number;
+  languages: string;       // ex: "Français, Lingala"
+  notes: string;
+  createdAt: string;
+};
+const seedDrivers: Driver[] = [
+  {
+    id: "d-001", firstName: "Joseph", lastName: "Mbaya",
+    phone: "+243 81 555 1122",
+    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
+    pricePerDay: 80, availability: "disponible", active: true,
+    experienceYears: 8, languages: "Français, Lingala, Anglais",
+    notes: "Chauffeur VIP, expérience véhicules de luxe.", createdAt: "2026-01-10",
+  },
+  {
+    id: "d-002", firstName: "Pascal", lastName: "Kalonji",
+    phone: "+243 99 222 3344",
+    photo: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=400&q=80",
+    pricePerDay: 70, availability: "disponible", active: true,
+    experienceYears: 5, languages: "Français, Lingala",
+    notes: "Spécialisé SUV et longues distances.", createdAt: "2026-02-14",
+  },
+  {
+    id: "d-003", firstName: "André", lastName: "Bwanga",
+    phone: "+243 82 777 8899",
+    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
+    pricePerDay: 95, availability: "occupe", active: true,
+    experienceYears: 12, languages: "Français, Lingala, Swahili",
+    notes: "Chauffeur protocole / officiels.", createdAt: "2026-03-02",
+  },
+];
+export function listDrivers(): Driver[] { return read<Driver[]>(KEYS.drivers, seedDrivers); }
+export function listActiveDrivers(): Driver[] {
+  return listDrivers().filter((d) => d.active);
+}
+export function saveDrivers(list: Driver[]) { write(KEYS.drivers, list); }
+export function upsertDriver(d: Driver) {
+  const list = listDrivers();
+  const i = list.findIndex((x) => x.id === d.id);
+  if (i >= 0) list[i] = d; else list.unshift(d);
+  saveDrivers(list);
+}
+export function deleteDriver(id: string) {
+  saveDrivers(listDrivers().filter((d) => d.id !== id));
+}
+export function toggleDriverActive(id: string) {
+  saveDrivers(listDrivers().map((d) => (d.id === id ? { ...d, active: !d.active } : d)));
+}
 
 /* ============================================================
    UTIL
