@@ -12,6 +12,7 @@ const KEYS = {
   clients: "yolo.admin.clients",
   users: "yolo.admin.users",
   missions: "yolo.admin.missions",
+  drivers: "yolo.admin.drivers",
   settings: "yolo.admin.settings",
 } as const;
 
