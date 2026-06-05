@@ -224,16 +224,31 @@ export function BookingModal({
     return true;
   };
 
+  const days = useMemo(() => {
+    if (!selectedDateRange?.from || !selectedDateRange?.to) return 0;
+    const ms = selectedDateRange.to.getTime() - selectedDateRange.from.getTime();
+    return Math.max(1, Math.round(ms / 86400000));
+  }, [selectedDateRange]);
+
+  const chauffeurTotal = form.withChauffeur ? days * bookingConfig.chauffeur.pricePerDay : 0;
+  const vehicleTotal = selectedVehicle ? days * selectedVehicle.pricePerDay : 0;
+  const grandTotal = vehicleTotal + chauffeurTotal;
+  const C = bookingConfig.currencySymbol;
+
   const summary = useMemo(() => {
     const dropoff = form.sameDropoff ? form.pickupLocation : form.dropoffLocation;
     const lines = [
       `Bonjour, je souhaite réserver le véhicule suivant :`,
       ``,
       selectedVehicle ? `• Véhicule : ${selectedVehicle.brand} ${selectedVehicle.name} (${selectedVehicle.year})` : "",
-      selectedVehicle ? `• Tarif : ${formatPrice(selectedVehicle.pricePerDay)} /jour` : "",
-      `• Dates : ${form.dateRange}`,
+      selectedVehicle ? `• Tarif : ${C}${formatPrice(selectedVehicle.pricePerDay)} /jour` : "",
+      `• Dates : ${form.dateRange}${days ? ` (${days} jour${days > 1 ? "s" : ""})` : ""}`,
       `• Prise en charge : ${form.pickupTime} – ${form.pickupLocation}`,
       `• Retour : ${form.returnTime} – ${dropoff}`,
+      form.withChauffeur
+        ? `• Chauffeur : oui (+${C}${formatPrice(bookingConfig.chauffeur.pricePerDay)} /jour)`
+        : `• Chauffeur : non`,
+      selectedVehicle ? `• Total estimé : ${C}${formatPrice(grandTotal)}` : "",
       ``,
       `Mes coordonnées :`,
       `• Nom : ${form.firstName} ${form.lastName}`,
@@ -241,7 +256,7 @@ export function BookingModal({
       form.phone ? `• Téléphone : ${form.countryCode} ${form.phone}` : "",
     ].filter(Boolean);
     return lines.join("\n");
-  }, [form, selectedVehicle]);
+  }, [form, selectedVehicle, days, grandTotal, C]);
 
   const handleWhatsApp = () => {
     const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(summary)}`;
