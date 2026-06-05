@@ -590,8 +590,8 @@ export function BookingModal({
             </div>
           )}
 
-          {/* Step 4 — Vérification */}
-          {step === 3 && (
+          {/* Step 5 — Vérification */}
+          {step === 4 && (
             <div className="space-y-4">
               <SummaryCard
                 icon={
@@ -599,10 +599,12 @@ export function BookingModal({
                     <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
                   </svg>
                 }
-                title="Sélectionner les Dates"
+                title="Dates & Durée"
                 onEdit={() => setStep(0)}
               >
-                <p className="text-sm text-white/70">{form.dateRange}</p>
+                <p className="text-sm text-white/70">
+                  {form.dateRange} {days > 0 && <span className="text-white/90">({days} jour{days > 1 ? "s" : ""})</span>}
+                </p>
                 <p className="text-sm text-white/70">
                   Heure de Prise en Charge: <span className="text-white">{form.pickupTime}</span> · Heure de Retour:{" "}
                   <span className="text-white">{form.returnTime}</span>
@@ -615,16 +617,35 @@ export function BookingModal({
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
                   </svg>
                 }
-                title="Choisir le Lieu"
+                title="Lieu"
                 onEdit={() => setStep(1)}
               >
                 <p className="text-sm text-white/70">
-                  Lieu de Prise en Charge: <span className="text-white">{form.pickupLocation}</span>
+                  Prise en Charge: <span className="text-white">{form.pickupLocation}</span>
                 </p>
                 <p className="text-sm text-white/70">
-                  Lieu de Retour:{" "}
+                  Retour:{" "}
                   <span className="text-white">{form.sameDropoff ? form.pickupLocation : form.dropoffLocation}</span>
                 </p>
+              </SummaryCard>
+
+              <SummaryCard
+                icon={
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="8" r="4" /><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" />
+                  </svg>
+                }
+                title="Chauffeur"
+                onEdit={() => setStep(2)}
+              >
+                <p className="text-sm text-white">
+                  {form.withChauffeur ? "Avec chauffeur YOLO" : "Je conduis moi-même"}
+                </p>
+                {form.withChauffeur && (
+                  <p className="text-sm text-white/60">
+                    +{C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} /jour · Total {C}{formatPrice(chauffeurTotal)}
+                  </p>
+                )}
               </SummaryCard>
 
               <SummaryCard
@@ -634,7 +655,7 @@ export function BookingModal({
                   </svg>
                 }
                 title="Vos Coordonnées"
-                onEdit={() => setStep(2)}
+                onEdit={() => setStep(3)}
               >
                 <p className="text-sm text-white">
                   {form.firstName} {form.lastName}
