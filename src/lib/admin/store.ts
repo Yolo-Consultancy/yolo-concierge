@@ -107,6 +107,13 @@ export function saveBookings(list: Booking[]) { write(KEYS.bookings, list); }
 export function updateBookingStatus(id: string, status: BookingStatus) {
   saveBookings(listBookings().map((b) => (b.id === id ? { ...b, status } : b)));
 }
+export function assignBookingDriver(id: string, driverId: string, driverName: string) {
+  saveBookings(
+    listBookings().map((b) =>
+      b.id === id ? { ...b, driverId, driverName, withChauffeur: !!driverId } : b
+    )
+  );
+}
 export function deleteBooking(id: string) {
   saveBookings(listBookings().filter((b) => b.id !== id));
 }
