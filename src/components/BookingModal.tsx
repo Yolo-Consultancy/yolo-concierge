@@ -456,6 +456,30 @@ export function BookingModal({
                   />
                 </div>
               )}
+
+              {bookingConfig.chauffeur.enabled && (
+                <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+                  <label className="flex items-start gap-3 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={form.withChauffeur}
+                      onChange={(e) => setForm({ ...form, withChauffeur: e.target.checked })}
+                      className="mt-1 w-4 h-4 accent-[#7dd3fc]"
+                    />
+                    <span className="flex-1">
+                      <span className="text-sm font-medium text-white">
+                        {bookingConfig.chauffeur.label}
+                      </span>
+                      <span className="block text-xs text-white/50 mt-0.5">
+                        {bookingConfig.chauffeur.helper}
+                      </span>
+                      <span className="block text-xs text-[#7dd3fc] mt-1">
+                        +{C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} /jour
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              )}
             </div>
           )}
 
