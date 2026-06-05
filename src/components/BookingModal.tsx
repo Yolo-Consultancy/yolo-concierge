@@ -605,14 +605,30 @@ export function BookingModal({
               </SummaryCard>
 
               {selectedVehicle && (
-                <div className="rounded-xl border border-[#7dd3fc]/30 bg-[#7dd3fc]/5 p-4 flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-[#7dd3fc] text-sm">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
-                    </svg>
-                    Montant estimé
+                <div className="rounded-xl border border-[#7dd3fc]/30 bg-[#7dd3fc]/5 p-4 space-y-2">
+                  <div className="flex items-center justify-between text-sm text-white/70">
+                    <span>
+                      {C}{formatPrice(selectedVehicle.pricePerDay)} × {days} jour{days > 1 ? "s" : ""}
+                    </span>
+                    <span className="text-white">{C}{formatPrice(vehicleTotal)}</span>
                   </div>
-                  <p className="font-display text-xl text-[#7dd3fc]">$ {formatPrice(selectedVehicle.pricePerDay)} /jour</p>
+                  {form.withChauffeur && (
+                    <div className="flex items-center justify-between text-sm text-white/70">
+                      <span>
+                        Chauffeur · {C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} × {days}
+                      </span>
+                      <span className="text-white">{C}{formatPrice(chauffeurTotal)}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-[#7dd3fc]/20 pt-2 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-[#7dd3fc] text-sm">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
+                      </svg>
+                      Total estimé
+                    </div>
+                    <p className="font-display text-xl text-[#7dd3fc]">{C}{formatPrice(grandTotal)}</p>
+                  </div>
                 </div>
               )}
             </div>
