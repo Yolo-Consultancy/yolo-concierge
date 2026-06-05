@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Menu } from "lucide-react";
+import { Menu, Lock } from "lucide-react";
 import { useEffect, useState } from "react";
 import carHero from "@/assets/car-hero.jpg";
 import destDakar from "@/assets/dest-dakar.jpg";
@@ -74,6 +74,13 @@ function LocationVehicules() {
             <a href="#destinations" className="hover:text-white">Destinations</a>
             <a href="#pourquoi" className="hover:text-white">À propos</a>
             <button onClick={() => setContactOpen(true)} className="hover:text-white cursor-pointer">Contact</button>
+            <Link
+              to="/admin"
+              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-white hover:bg-white/15 transition-colors normal-case tracking-normal text-sm"
+            >
+              <Lock className="h-3.5 w-3.5" />
+              Login
+            </Link>
           </nav>
           <Sheet>
             <SheetTrigger asChild>
@@ -118,6 +125,11 @@ function LocationVehicules() {
                   >
                     Contact
                   </button>
+                </SheetClose>
+                <SheetClose asChild>
+                  <Link to="/admin" className="mt-2 inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base text-white hover:bg-white/10">
+                    <Lock className="h-4 w-4" /> Login admin
+                  </Link>
                 </SheetClose>
               </nav>
             </SheetContent>

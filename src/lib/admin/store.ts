@@ -108,13 +108,78 @@ export function saveBookings(list: Booking[]) { write(KEYS.bookings, list); }
 export function updateBookingStatus(id: string, status: BookingStatus) {
   saveBookings(listBookings().map((b) => (b.id === id ? { ...b, status } : b)));
 }
-export function assignBookingDriver(id: string, driverId: string, driverName: string) {
-  saveBookings(
-    listBookings().map((b) =>
-      b.id === id ? { ...b, driverId, driverName, withChauffeur: !!driverId } : b
-    )
+export function assignBookingDriver(id: string, driverId: string) {
+  const bookings = listBookings();
+  const driversList = listDrivers();
+  const vehiclesList = listVehicles();
+
+  const updatedBookings = bookings.map((b) => {
+    if (b.id !== id) return b;
+
+    const driver = driversList.find((d) => d.id === driverId);
+    const vehicle = vehiclesList.find((v) => v.id === b.vehicleId);
+
+    const vehiclePrice = vehicle ? vehicle.pricePerDay : Math.max(0, b.totalPrice - (b.withChauffeur ? b.days * 80 : 0));
+    const newWithChauffeur = !!driverId;
+    const newDriverId = driverId;
+    const newDriverName = driver ? `${driver.firstName} ${driver.lastName}` : "";
+    const newChauffeurTotal = newWithChauffeur && driver ? b.days * driver.pricePerDay : 0;
+    const newTotalPrice = (b.days * vehiclePrice) + newChauffeurTotal;
+
+    return {
+      ...b,
+      withChauffeur: newWithChauffeur,
+      driverId: newDriverId,
+      driverName: newDriverName,
+      totalPrice: newTotalPrice,
+    };
+  });
+
+  saveBookings(updatedBookings);
+}
+
+/* Vérifie si un chauffeur est libre pour une plage de dates donnée.
+   Une réservation est considérée bloquante si son statut est actif et
+   qu'elle chevauche [startDate, endDate]. */
+export function isDriverAvailableForDates(
+  driverId: string,
+  startDate: string,
+  endDate: string,
+  excludeBookingId?: string,
+): boolean {
+  const bookings = listBookings();
+  const activeStatuses: BookingStatus[] = ["en_attente", "confirmee", "payee"];
+  return !bookings.some(
+    (b) =>
+      b.driverId === driverId &&
+      b.id !== excludeBookingId &&
+      activeStatuses.includes(b.status) &&
+      b.startDate <= endDate &&
+      b.endDate >= startDate,
   );
 }
+
+/* Retourne les chauffeurs actifs et disponibles pour une plage de dates. */
+export function listAvailableDriversForDates(
+  startDate: string,
+  endDate: string,
+  excludeBookingId?: string,
+): Driver[] {
+  return listDrivers().filter(
+    (d) =>
+      d.active &&
+      d.availability !== "indisponible" &&
+      isDriverAvailableForDates(d.id, startDate, endDate, excludeBookingId),
+  );
+}
+
+export function upsertBooking(b: Booking) {
+  const list = listBookings();
+  const i = list.findIndex((x) => x.id === b.id);
+  if (i >= 0) list[i] = b; else list.unshift(b);
+  saveBookings(list);
+}
+
 export function deleteBooking(id: string) {
   saveBookings(listBookings().filter((b) => b.id !== id));
 }
@@ -248,6 +313,7 @@ export type Driver = {
   active: boolean;         // false = désactivé (n'apparaît plus côté client)
   experienceYears: number;
   languages: string;       // ex: "Français, Lingala"
+  city: string;            // Ville d'activité
   notes: string;
   createdAt: string;
 };
@@ -257,7 +323,7 @@ const seedDrivers: Driver[] = [
     phone: "+243 81 555 1122",
     photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
     pricePerDay: 80, availability: "disponible", active: true,
-    experienceYears: 8, languages: "Français, Lingala, Anglais",
+    experienceYears: 8, languages: "Français, Lingala, Anglais", city: "Kinshasa",
     notes: "Chauffeur VIP, expérience véhicules de luxe.", createdAt: "2026-01-10",
   },
   {
@@ -265,7 +331,7 @@ const seedDrivers: Driver[] = [
     phone: "+243 99 222 3344",
     photo: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=400&q=80",
     pricePerDay: 70, availability: "disponible", active: true,
-    experienceYears: 5, languages: "Français, Lingala",
+    experienceYears: 5, languages: "Français, Lingala", city: "Kinshasa",
     notes: "Spécialisé SUV et longues distances.", createdAt: "2026-02-14",
   },
   {
@@ -273,7 +339,7 @@ const seedDrivers: Driver[] = [
     phone: "+243 82 777 8899",
     photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
     pricePerDay: 95, availability: "occupe", active: true,
-    experienceYears: 12, languages: "Français, Lingala, Swahili",
+    experienceYears: 12, languages: "Français, Lingala, Swahili", city: "Lubumbashi",
     notes: "Chauffeur protocole / officiels.", createdAt: "2026-03-02",
   },
 ];

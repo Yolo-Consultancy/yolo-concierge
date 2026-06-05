@@ -8,9 +8,9 @@ export function isAuthenticated(): boolean {
   return window.localStorage.getItem(SESSION_KEY) === "1";
 }
 
-export function login(username: string, password: string): boolean {
+export function login(email: string, password: string): boolean {
   if (
-    username.trim().toLowerCase() === adminConfig.username.toLowerCase() &&
+    email.trim().toLowerCase() === adminConfig.username.toLowerCase() &&
     password === adminConfig.password
   ) {
     window.localStorage.setItem(SESSION_KEY, "1");
