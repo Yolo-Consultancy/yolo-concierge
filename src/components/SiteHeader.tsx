@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Link } from "@tanstack/react-router";
-import { Menu } from "lucide-react";
+import { Menu, Lock } from "lucide-react";
 import {
   Sheet,
   SheetClose,
@@ -25,6 +25,13 @@ export function SiteHeader() {
           <Link to="/location-vehicules" className="hover:text-gold transition-colors">Véhicules</Link>
           <Link to="/demenagement" className="hover:text-gold transition-colors">Déménagement</Link>
           <Link to="/services-sur-mesure" className="hover:text-gold transition-colors">Sur Mesure</Link>
+          <Link
+            to="/admin"
+            className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-white hover:bg-white/15 transition-colors"
+          >
+            <Lock className="h-3.5 w-3.5" />
+            Login
+          </Link>
         </nav>
         <Sheet>
           <SheetTrigger asChild>
@@ -61,6 +68,11 @@ export function SiteHeader() {
                   Sur Mesure
                 </Link>
               </SheetClose>
+              <SheetClose asChild>
+                <Link to="/admin" className="mt-2 inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base text-white hover:bg-white/10">
+                  <Lock className="h-4 w-4" /> Login admin
+                </Link>
+              </SheetClose>
             </nav>
           </SheetContent>
         </Sheet>
@@ -68,3 +80,4 @@ export function SiteHeader() {
     </header>
   );
 }
+
