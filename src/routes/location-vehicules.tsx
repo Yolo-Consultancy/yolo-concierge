@@ -9,6 +9,7 @@ import destSaly from "@/assets/dest-saly.jpg";
 import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehicles";
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
+import { ContactModal } from "@/components/ContactModal";
 import {
   Sheet,
   SheetClose,
@@ -46,6 +47,7 @@ const reasons = [
 
 function LocationVehicules() {
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const [prefilledVehicle, setPrefilledVehicle] = useState<string>("");
   const [vehicles, setVehicles] = useState<Vehicle[]>(seedVehicles);
 
@@ -71,7 +73,7 @@ function LocationVehicules() {
             <a href="#flotte" className="hover:text-white">Flotte</a>
             <a href="#destinations" className="hover:text-white">Destinations</a>
             <a href="#pourquoi" className="hover:text-white">À propos</a>
-            <button onClick={() => openBooking()} className="hover:text-white">Contact</button>
+            <button onClick={() => setContactOpen(true)} className="hover:text-white cursor-pointer">Contact</button>
           </nav>
           <Sheet>
             <SheetTrigger asChild>
@@ -111,8 +113,8 @@ function LocationVehicules() {
                 <SheetClose asChild>
                   <button
                     type="button"
-                    onClick={() => openBooking()}
-                    className="rounded-lg px-3 py-3 text-left text-base text-white/80 hover:bg-white/10 hover:text-white"
+                    onClick={() => setContactOpen(true)}
+                    className="rounded-lg px-3 py-3 text-left text-base text-white/80 hover:bg-white/10 hover:text-white w-full cursor-pointer"
                   >
                     Contact
                   </button>
@@ -141,7 +143,7 @@ function LocationVehicules() {
               Découvrir notre flotte
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
-            <button onClick={() => openBooking()} className="inline-flex items-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full text-sm font-medium hover:bg-white/10 transition">
+            <button onClick={() => setContactOpen(true)} className="inline-flex items-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full text-sm font-medium hover:bg-white/10 transition cursor-pointer">
               Parler au concierge
             </button>
           </div>
@@ -287,6 +289,7 @@ function LocationVehicules() {
       </footer>
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={prefilledVehicle} />}
+      {contactOpen && <ContactModal onClose={() => setContactOpen(false)} />}
     </div>
   );
 }

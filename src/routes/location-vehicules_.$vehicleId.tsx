@@ -4,6 +4,7 @@ import { Menu } from "lucide-react";
 import { useState } from "react";
 import { getVehicle, formatPrice, type Vehicle } from "@/lib/vehicles";
 import { BookingModal } from "@/components/BookingModal";
+import { ContactModal } from "@/components/ContactModal";
 import {
   Sheet,
   SheetClose,
@@ -56,6 +57,7 @@ function VehicleDetail() {
   const { vehicle } = Route.useLoaderData();
   const [activeImg, setActiveImg] = useState(0);
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
   const [tab, setTab] = useState<"performance" | "drivetrain" | "equipment">("performance");
 
   return (
@@ -129,7 +131,7 @@ function VehicleDetail() {
 
         <div className="grid lg:grid-cols-[1fr_380px] gap-8">
           <div>
-            <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-black mb-4">
+            <div className="relative aspect-16/10 rounded-2xl overflow-hidden bg-black mb-4">
               <img src={vehicle.gallery[activeImg]} alt={`${vehicle.brand} ${vehicle.name}`} className="absolute inset-0 h-full w-full object-cover" />
               <button
                 onClick={() => setActiveImg((i) => (i - 1 + vehicle.gallery.length) % vehicle.gallery.length)}
@@ -154,7 +156,7 @@ function VehicleDetail() {
                 <button
                   key={i}
                   onClick={() => setActiveImg(i)}
-                  className={`aspect-[4/3] rounded-lg overflow-hidden border-2 ${i === activeImg ? "border-[#7dd3fc]" : "border-transparent opacity-60 hover:opacity-100"}`}
+                  className={`aspect-4/3 rounded-lg overflow-hidden border-2 ${i === activeImg ? "border-[#7dd3fc]" : "border-transparent opacity-60 hover:opacity-100"}`}
                 >
                   <img src={src} alt="" className="h-full w-full object-cover" />
                 </button>
@@ -181,13 +183,13 @@ function VehicleDetail() {
 
             <button
               onClick={() => setBookingOpen(true)}
-              className="mt-6 w-full bg-[#7dd3fc] text-black py-3.5 rounded-xl font-medium text-sm hover:bg-white transition"
+              className="mt-6 w-full bg-[#7dd3fc] text-black py-3.5 rounded-xl font-medium text-sm hover:bg-white transition cursor-pointer"
             >
               Réserver Maintenant
             </button>
             <button
-              onClick={() => setBookingOpen(true)}
-              className="mt-3 w-full border border-white/20 py-3.5 rounded-xl text-sm hover:bg-white/5 transition"
+              onClick={() => setContactOpen(true)}
+              className="mt-3 w-full border border-white/20 py-3.5 rounded-xl text-sm hover:bg-white/5 transition cursor-pointer"
             >
               Envoyer une Demande
             </button>
@@ -273,6 +275,12 @@ function VehicleDetail() {
       </footer>
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={vehicle.id} />}
+      {contactOpen && (
+        <ContactModal
+          onClose={() => setContactOpen(false)}
+          prefilledVehicle={`${vehicle.brand} ${vehicle.name}`}
+        />
+      )}
     </div>
   );
 }

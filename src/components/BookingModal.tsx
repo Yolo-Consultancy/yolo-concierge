@@ -310,7 +310,7 @@ export function BookingModal({
         {/* Body */}
         <div className="p-6 text-white">
           {selectedVehicle && (
-            <div className="flex items-center gap-4 p-3 mb-6 rounded-xl border border-white/10 bg-white/[0.02]">
+            <div className="flex items-center gap-4 p-3 mb-6 rounded-xl border border-white/10 bg-white/2">
               <img
                 src={selectedVehicle.image}
                 alt={selectedVehicle.name}
@@ -662,7 +662,7 @@ function SummaryCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+    <div className="rounded-xl border border-white/10 bg-white/2 p-4">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2 text-[#7dd3fc] text-sm font-medium">
           {icon}

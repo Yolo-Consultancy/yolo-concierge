@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ContactModal } from "@/components/ContactModal";
 import demenagementImg from "@/assets/portal-demenagement.jpg";
 
 export const Route = createFileRoute("/demenagement")({
@@ -24,13 +26,14 @@ const services = [
 ];
 
 function Demenagement() {
+  const [contactOpen, setContactOpen] = useState(false);
   return (
     <main className="min-h-screen bg-background">
       {/* Hero */}
-      <section className="relative h-[60vh] min-h-[480px] overflow-hidden">
+      <section className="relative h-[60vh] min-h-120 overflow-hidden">
         <SiteHeader />
         <img src={demenagementImg} alt="Déménagement" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/70" />
         <div className="relative z-10 mx-auto max-w-7xl px-6 h-full flex flex-col justify-end pb-16 text-white">
           <p className="text-xs uppercase tracking-[0.4em] text-gold mb-4">Portail 02</p>
           <h1 className="font-display text-5xl md:text-6xl font-semibold max-w-3xl">Déménagement Assisté</h1>
@@ -59,7 +62,10 @@ function Demenagement() {
           <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">
             Évaluation du volume, réservation des équipes et suivi de l'intervention.
           </p>
-          <button className="inline-flex items-center gap-2 bg-gold text-gold-foreground px-7 py-3 rounded-md font-medium hover:opacity-90 transition">
+          <button
+            onClick={() => setContactOpen(true)}
+            className="inline-flex items-center gap-2 bg-gold text-gold-foreground px-7 py-3 rounded-md font-medium hover:opacity-90 transition cursor-pointer"
+          >
             Obtenir un devis
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
           </button>
@@ -67,6 +73,13 @@ function Demenagement() {
 
         <Link to="/" className="mt-12 inline-flex text-sm text-muted-foreground hover:text-foreground">← Retour à l'accueil</Link>
       </section>
+
+      {contactOpen && (
+        <ContactModal
+          onClose={() => setContactOpen(false)}
+          initialSubject="Devis Déménagement"
+        />
+      )}
     </main>
   );
 }
