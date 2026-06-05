@@ -100,10 +100,11 @@ const KINSHASA_LOCATION_SUGGESTIONS = [
 ] as const;
 
 const STEPS = [
-  "Sélectionner les Dates",
-  "Choisir le Lieu",
-  "Vos Coordonnées",
-  "Vérifier et Envoyer",
+  "Dates & Durée",
+  "Lieu",
+  "Chauffeur",
+  "Coordonnées",
+  "Vérifier",
 ] as const;
 
 interface LocationAutocompleteProps {
@@ -220,7 +221,8 @@ export function BookingModal({
   const canNext = () => {
     if (step === 0) return !!selectedDateRange?.from && !!selectedDateRange?.to;
     if (step === 1) return !!form.pickupLocation && (form.sameDropoff || !!form.dropoffLocation);
-    if (step === 2) return !!form.firstName && !!form.lastName && !!form.email;
+    if (step === 2) return true; // chauffeur step (optionnel)
+    if (step === 3) return !!form.firstName && !!form.lastName && !!form.email;
     return true;
   };
 
