@@ -191,6 +191,7 @@ export function BookingModal({
     pickupLocation: "",
     dropoffLocation: "",
     sameDropoff: true,
+    withChauffeur: false,
     firstName: "",
     lastName: "",
     email: "",
