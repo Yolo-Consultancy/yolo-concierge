@@ -23,7 +23,6 @@ import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
 import { Route as AdminMissionsRouteImport } from './routes/admin.missions'
 import { Route as AdminClientsRouteImport } from './routes/admin.clients'
 import { Route as AdminChauffeursRouteImport } from './routes/admin.chauffeurs'
-import { Route as AdminChauffeursRouteImport } from './routes/admin.chauffeurs'
 
 const ServicesSurMesureRoute = ServicesSurMesureRouteImport.update({
   id: '/services-sur-mesure',
@@ -89,11 +88,6 @@ const AdminMissionsRoute = AdminMissionsRouteImport.update({
 const AdminClientsRoute = AdminClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
-  getParentRoute: () => AdminRoute,
-} as any)
-const AdminChauffeursRoute = AdminChauffeursRouteImport.update({
-  id: '/chauffeurs',
-  path: '/chauffeurs',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminChauffeursRoute = AdminChauffeursRouteImport.update({
