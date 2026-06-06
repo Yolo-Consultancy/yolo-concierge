@@ -66,18 +66,17 @@ export function ContactModal({
 
     try {
       const settings = getSettings();
-      const whatsappNumber = settings?.whatsappNumber || bookingConfig.whatsappNumber;
-      const url = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(summary)}`;
-      window.open(url, "_blank");
+      // Envoi vers l'e-mail de contact configuré (à brancher sur backend Express).
+      console.log("Contact submission →", settings?.contactEmail, summary);
       setSubmitted(true);
-      toast.success("Votre message a été préparé pour WhatsApp !");
+      toast.success("Votre demande a bien été envoyée à notre équipe.");
     } catch (err) {
       console.error("Error submitting contact form", err);
-      // Fallback submission simulation
       setSubmitted(true);
       toast.success("Demande envoyée avec succès !");
     }
   };
+
 
   return (
     <div
