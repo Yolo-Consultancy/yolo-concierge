@@ -502,7 +502,7 @@ export function BookingModal({
                     className={`text-left rounded-xl border p-4 transition ${
                       !form.withChauffeur
                         ? "border-[#7dd3fc] bg-[#7dd3fc]/10 ring-2 ring-[#7dd3fc]/30"
-                        : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                        : "border-white/10 bg-white/2 hover:border-white/20"
                     }`}
                   >
                     <p className="font-medium text-white">Je conduis</p>
@@ -521,7 +521,7 @@ export function BookingModal({
                         ? "border-white/10 opacity-40 cursor-not-allowed"
                         : form.withChauffeur
                         ? "border-[#7dd3fc] bg-[#7dd3fc]/10 ring-2 ring-[#7dd3fc]/30"
-                        : "border-white/10 bg-white/[0.02] hover:border-white/20"
+                        : "border-white/10 bg-white/2 hover:border-white/20"
                     }`}
                   >
                     <p className="font-medium text-white">Avec chauffeur</p>
@@ -549,7 +549,7 @@ export function BookingModal({
                       {availableDrivers.map((driver) => (
                         <div
                           key={driver.id}
-                          className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3"
+                          className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/3 p-3"
                         >
                           <div className="h-10 w-10 rounded-full overflow-hidden bg-white/10 shrink-0">
                             {driver.photo ? (
