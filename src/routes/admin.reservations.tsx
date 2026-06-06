@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Trash2, TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { Trash2, TrendingUp, TrendingDown, Minus, Mail, X } from "lucide-react";
 import { PageHeader } from "@/components/admin/AdminLayout";
 import {
   listBookings, updateBookingStatus, deleteBooking, assignBookingDriver,
@@ -10,6 +10,7 @@ import {
 } from "@/lib/admin/store";
 import { formatPrice } from "@/lib/vehicles";
 import { bookingConfig } from "@/config/booking";
+import { buildAdminEmailHtml } from "@/lib/admin/notify";
 
 export const Route = createFileRoute("/admin/reservations")({ component: Reservations });
 
@@ -54,6 +55,8 @@ function Reservations() {
   const [items, setItems] = useState<Booking[]>([]);
   // Track pending driver selection before save (bookingId → driverId)
   const [pendingDriver, setPendingDriver] = useState<Record<string, string>>({});
+  // Email preview modal
+  const [emailPreview, setEmailPreview] = useState<Booking | null>(null);
 
   const refresh = () => setItems(listBookings());
   useEffect(refresh, []);
@@ -71,6 +74,48 @@ function Reservations() {
   return (
     <>
       <PageHeader title="Réservations & Paiements" subtitle={`${items.length} réservation(s)`} />
+
+      {/* ── Email Preview Modal ── */}
+      {emailPreview && (
+        <div
+          className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={() => setEmailPreview(null)}
+        >
+          <div
+            className="bg-white rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
+              <div>
+                <p className="font-semibold text-gray-900 flex items-center gap-2">
+                  <Mail className="h-4 w-4 text-blue-600" />
+                  Aperçu de l'e-mail admin
+                </p>
+                <p className="text-xs text-gray-500 mt-0.5">
+                  Destinataire : {bookingConfig.adminNotificationEmail}
+                  &nbsp;·&nbsp;
+                  Objet : [YOLO] Nouvelle réservation — {emailPreview.vehicleName} · {emailPreview.clientName}
+                </p>
+              </div>
+              <button
+                onClick={() => setEmailPreview(null)}
+                className="h-8 w-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center"
+              >
+                <X className="h-4 w-4 text-gray-600" />
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-1">
+              <iframe
+                title="Aperçu e-mail admin"
+                srcDoc={buildAdminEmailHtml(emailPreview)}
+                className="w-full h-full min-h-[600px] border-0"
+                sandbox="allow-same-origin"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="bg-card rounded-xl border border-border overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
@@ -83,6 +128,7 @@ function Reservations() {
                 <th className="text-left p-3">Chauffeur</th>
                 <th className="text-right p-3">Montant</th>
                 <th className="text-left p-3">Statut</th>
+                <th className="p-3 text-center">E-mail</th>
                 <th className="p-3"></th>
               </tr>
             </thead>
@@ -158,6 +204,17 @@ function Reservations() {
                       >
                         {Object.entries(statusLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
                       </select>
+                    </td>
+                    {/* Bouton aperçu e-mail */}
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => setEmailPreview(b)}
+                        title="Voir l'e-mail envoyé à l'admin"
+                        className="inline-flex items-center gap-1 px-2 py-1.5 rounded-md text-xs text-blue-600 hover:bg-blue-50 border border-blue-200 font-medium transition"
+                      >
+                        <Mail className="h-3.5 w-3.5" />
+                        E-mail
+                      </button>
                     </td>
                     <td className="p-3">
                       <button

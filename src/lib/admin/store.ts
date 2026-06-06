@@ -64,6 +64,7 @@ export type Booking = {
   vehicleName: string;
   clientName: string;
   clientPhone: string;
+  clientEmail?: string;
   startDate: string;
   endDate: string;
   days: number;

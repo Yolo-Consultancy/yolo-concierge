@@ -7,11 +7,12 @@ import { vehicles as defaultVehicles, formatPrice, type Vehicle } from "@/lib/ve
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { listAvailableDriversForDates, type Driver } from "@/lib/admin/store";
-
 import { bookingConfig } from "@/config/booking";
 import { upsertBooking, newId, type Booking } from "@/lib/admin/store";
 import { notifyAdminNewBooking, createCheckoutSession } from "@/lib/admin/notify";
 import { toast } from "sonner";
+import { ClientAuthModal } from "@/components/ClientAuthModal";
+import { getCurrentClient, type ClientAccount } from "@/lib/client/auth";
 
 const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
 const KINSHASA_LOCATION_SUGGESTIONS = [
@@ -185,8 +186,18 @@ export function BookingModal({
   initialVehicle?: string;
   vehicles?: Vehicle[];
 }) {
+  // ── Auth gate ────────────────────────────────────────────
+  // null = not yet decided, ClientAccount = logged in, "guest" = guest
+  const [clientAccount, setClientAccount] = useState<ClientAccount | "guest" | null>(() => {
+    const existing = getCurrentClient();
+    return existing ?? null; // auto-skip auth if already logged in
+  });
+
   const [step, setStep] = useState(0);
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange | undefined>();
+
+  // Pre-fill form from account if available
+  const account = clientAccount && clientAccount !== "guest" ? clientAccount : null;
   const [form, setForm] = useState({
     vehicleId: initialVehicle,
     dateRange: "",
@@ -196,12 +207,25 @@ export function BookingModal({
     dropoffLocation: "",
     sameDropoff: true,
     withChauffeur: false,
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    countryCode: "+243",
+    firstName: account?.firstName ?? "",
+    lastName: account?.lastName ?? "",
+    email: account?.email ?? "",
+    phone: account?.phone ?? "",
+    countryCode: account?.countryCode ?? "+243",
   });
+
+  // When auth resolves, pre-fill form if we got an account
+  const handleAuthSuccess = (acc: ClientAccount) => {
+    setClientAccount(acc);
+    setForm((prev) => ({
+      ...prev,
+      firstName: acc.firstName,
+      lastName: acc.lastName,
+      email: acc.email,
+      phone: acc.phone,
+      countryCode: acc.countryCode,
+    }));
+  };
 
   const selectedVehicle = vehicles.find((v) => v.id === form.vehicleId);
 
@@ -252,6 +276,7 @@ export function BookingModal({
       vehicleName: `${selectedVehicle.brand} ${selectedVehicle.name}`,
       clientName: `${form.firstName} ${form.lastName}`.trim(),
       clientPhone: form.phone ? `${form.countryCode} ${form.phone}` : "",
+      clientEmail: form.email || undefined,
       startDate,
       endDate,
       days,
@@ -290,6 +315,17 @@ export function BookingModal({
   };
 
 
+  // ── Auth gate — show ClientAuthModal if not yet decided ──────────────────
+  if (clientAccount === null) {
+    return (
+      <ClientAuthModal
+        onClose={onClose}
+        onSuccess={handleAuthSuccess}
+        onContinueAsGuest={() => setClientAccount("guest")}
+      />
+    );
+  }
+
   return (
     <div
       className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-start md:items-center justify-center p-4 overflow-y-auto"
@@ -301,7 +337,17 @@ export function BookingModal({
       >
         {/* Header */}
         <div className="flex items-center justify-between px-6 pt-6 pb-4">
-          <h3 className="font-display text-2xl text-white">Réservation</h3>
+          <div>
+            <h3 className="font-display text-2xl text-white">Réservation</h3>
+            {clientAccount && clientAccount !== "guest" ? (
+              <p className="text-xs text-[#7dd3fc] mt-0.5 flex items-center gap-1.5">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>
+                {clientAccount.firstName} {clientAccount.lastName}
+              </p>
+            ) : (
+              <p className="text-xs text-white/30 mt-0.5">Mode invité</p>
+            )}
+          </div>
           <button onClick={onClose} className="text-white/50 hover:text-white" aria-label="Fermer">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12" />
