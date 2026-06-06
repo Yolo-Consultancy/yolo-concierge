@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState, useMemo } from "react";
 import { getSettings } from "@/lib/admin/store";
-import { bookingConfig } from "@/config/booking";
+// (le contact passe désormais par l'e-mail admin configuré côté backend)
 import { toast } from "sonner";
 
 const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
