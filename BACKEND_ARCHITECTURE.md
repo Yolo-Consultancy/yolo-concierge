@@ -387,3 +387,70 @@ Mapping suggéré :
 5. **Sprint 5** — Stats / dashboard + tests + déploiement (Render / Railway / VPS + MongoDB Atlas).
 
 Bon dev ! 🚀
+
+---
+
+## Endpoints additionnels (paiement carte + notification admin)
+
+### POST `/api/payments/create-checkout-session`
+Crée une session Stripe Checkout pour une réservation et renvoie l'URL.
+
+**Body:**
+```json
+{
+  "booking": { /* objet Booking complet */ },
+  "successUrl": "https://site/admin",
+  "cancelUrl": "https://site/location-vehicules",
+  "currency": "usd"
+}
+```
+**Réponse:** `{ "url": "https://checkout.stripe.com/c/pay/..." }`
+
+Implémentation Express (Stripe SDK) :
+```js
+const session = await stripe.checkout.sessions.create({
+  mode: "payment",
+  line_items: [{
+    price_data: {
+      currency,
+      product_data: { name: booking.vehicleName },
+      unit_amount: Math.round(booking.totalPrice * 100),
+    },
+    quantity: 1,
+  }],
+  success_url: successUrl,
+  cancel_url: cancelUrl,
+  metadata: { bookingId: booking.id },
+});
+res.json({ url: session.url });
+```
+
+### POST `/api/notifications/new-booking`
+Envoie un e-mail à l'admin lorsqu'un client finalise une réservation/devis.
+
+**Body:**
+```json
+{ "to": "admin@yolo.cd", "booking": { /* Booking complet */ } }
+```
+
+Implémentation (Nodemailer/SendGrid/Resend) :
+```js
+await transporter.sendMail({
+  to,
+  from: process.env.MAIL_FROM,
+  subject: `Nouvelle réservation – ${booking.vehicleName}`,
+  html: `
+    <h2>Nouvelle réservation YOLO</h2>
+    <p>Client : ${booking.clientName} (${booking.clientPhone})</p>
+    <p>Véhicule : ${booking.vehicleName}</p>
+    <p>Dates : ${booking.startDate} → ${booking.endDate} (${booking.days} jours)</p>
+    <p>Lieu : ${booking.pickupLocation}</p>
+    <p>Chauffeur : ${booking.withChauffeur ? "Oui" : "Non"}</p>
+    <p><strong>Total : $${booking.totalPrice}</strong></p>
+    <p>Voir le détail dans l'espace admin : <a href="${process.env.ADMIN_URL}/admin/reservations">/admin/reservations</a></p>
+  `,
+});
+```
+
+### Configuration frontend
+Renseigner `adminConfig.apiBaseUrl` dans `src/config/admin.ts` (ex. `"https://api.yolo.cd"`) pour activer ces deux endpoints. Sans backend, la réservation reste enregistrée localement et visible dans `/admin/reservations`.
