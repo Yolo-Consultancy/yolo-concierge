@@ -15,6 +15,7 @@ import { Route as DemenagementRouteImport } from './routes/demenagement'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as PaiementSuccesRouteImport } from './routes/paiement.succes'
 import { Route as LocationVehiculesVehicleIdRouteImport } from './routes/location-vehicules_.$vehicleId'
 import { Route as AdminVehiculesRouteImport } from './routes/admin.vehicules'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
@@ -54,6 +55,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const PaiementSuccesRoute = PaiementSuccesRouteImport.update({
+  id: '/paiement/succes',
+  path: '/paiement/succes',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const LocationVehiculesVehicleIdRoute =
   LocationVehiculesVehicleIdRouteImport.update({
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/paiement/succes': typeof PaiementSuccesRoute
   '/admin/': typeof AdminIndexRoute
   '/api/payments/create-checkout-session': typeof ApiPaymentsCreateCheckoutSessionRoute
 }
@@ -133,6 +140,7 @@ export interface FileRoutesByTo {
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/paiement/succes': typeof PaiementSuccesRoute
   '/admin': typeof AdminIndexRoute
   '/api/payments/create-checkout-session': typeof ApiPaymentsCreateCheckoutSessionRoute
 }
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules_/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/paiement/succes': typeof PaiementSuccesRoute
   '/admin/': typeof AdminIndexRoute
   '/api/payments/create-checkout-session': typeof ApiPaymentsCreateCheckoutSessionRoute
 }
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/location-vehicules/$vehicleId'
+    | '/paiement/succes'
     | '/admin/'
     | '/api/payments/create-checkout-session'
   fileRoutesByTo: FileRoutesByTo
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/location-vehicules/$vehicleId'
+    | '/paiement/succes'
     | '/admin'
     | '/api/payments/create-checkout-session'
   id:
@@ -203,6 +214,7 @@ export interface FileRouteTypes {
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/location-vehicules_/$vehicleId'
+    | '/paiement/succes'
     | '/admin/'
     | '/api/payments/create-checkout-session'
   fileRoutesById: FileRoutesById
@@ -214,6 +226,7 @@ export interface RootRouteChildren {
   LocationVehiculesRoute: typeof LocationVehiculesRoute
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
   LocationVehiculesVehicleIdRoute: typeof LocationVehiculesVehicleIdRoute
+  PaiementSuccesRoute: typeof PaiementSuccesRoute
   ApiPaymentsCreateCheckoutSessionRoute: typeof ApiPaymentsCreateCheckoutSessionRoute
 }
 
@@ -260,6 +273,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/paiement/succes': {
+      id: '/paiement/succes'
+      path: '/paiement/succes'
+      fullPath: '/paiement/succes'
+      preLoaderRoute: typeof PaiementSuccesRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/location-vehicules_/$vehicleId': {
       id: '/location-vehicules_/$vehicleId'
@@ -358,6 +378,7 @@ const rootRouteChildren: RootRouteChildren = {
   LocationVehiculesRoute: LocationVehiculesRoute,
   ServicesSurMesureRoute: ServicesSurMesureRoute,
   LocationVehiculesVehicleIdRoute: LocationVehiculesVehicleIdRoute,
+  PaiementSuccesRoute: PaiementSuccesRoute,
   ApiPaymentsCreateCheckoutSessionRoute: ApiPaymentsCreateCheckoutSessionRoute,
 }
 export const routeTree = rootRouteImport
