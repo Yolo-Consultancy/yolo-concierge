@@ -23,6 +23,7 @@ import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
 import { Route as AdminMissionsRouteImport } from './routes/admin.missions'
 import { Route as AdminClientsRouteImport } from './routes/admin.clients'
 import { Route as AdminChauffeursRouteImport } from './routes/admin.chauffeurs'
+import { Route as ApiPaymentsCreateCheckoutSessionRouteImport } from './routes/api/payments/create-checkout-session'
 
 const ServicesSurMesureRoute = ServicesSurMesureRouteImport.update({
   id: '/services-sur-mesure',
@@ -95,6 +96,12 @@ const AdminChauffeursRoute = AdminChauffeursRouteImport.update({
   path: '/chauffeurs',
   getParentRoute: () => AdminRoute,
 } as any)
+const ApiPaymentsCreateCheckoutSessionRoute =
+  ApiPaymentsCreateCheckoutSessionRouteImport.update({
+    id: '/api/payments/create-checkout-session',
+    path: '/api/payments/create-checkout-session',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -111,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/payments/create-checkout-session': typeof ApiPaymentsCreateCheckoutSessionRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,6 +134,7 @@ export interface FileRoutesByTo {
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/admin': typeof AdminIndexRoute
+  '/api/payments/create-checkout-session': typeof ApiPaymentsCreateCheckoutSessionRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -143,6 +152,7 @@ export interface FileRoutesById {
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules_/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/payments/create-checkout-session': typeof ApiPaymentsCreateCheckoutSessionRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -161,6 +171,7 @@ export interface FileRouteTypes {
     | '/admin/vehicules'
     | '/location-vehicules/$vehicleId'
     | '/admin/'
+    | '/api/payments/create-checkout-session'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -176,6 +187,7 @@ export interface FileRouteTypes {
     | '/admin/vehicules'
     | '/location-vehicules/$vehicleId'
     | '/admin'
+    | '/api/payments/create-checkout-session'
   id:
     | '__root__'
     | '/'
@@ -192,6 +204,7 @@ export interface FileRouteTypes {
     | '/admin/vehicules'
     | '/location-vehicules_/$vehicleId'
     | '/admin/'
+    | '/api/payments/create-checkout-session'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -201,6 +214,7 @@ export interface RootRouteChildren {
   LocationVehiculesRoute: typeof LocationVehiculesRoute
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
   LocationVehiculesVehicleIdRoute: typeof LocationVehiculesVehicleIdRoute
+  ApiPaymentsCreateCheckoutSessionRoute: typeof ApiPaymentsCreateCheckoutSessionRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -303,6 +317,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminChauffeursRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/api/payments/create-checkout-session': {
+      id: '/api/payments/create-checkout-session'
+      path: '/api/payments/create-checkout-session'
+      fullPath: '/api/payments/create-checkout-session'
+      preLoaderRoute: typeof ApiPaymentsCreateCheckoutSessionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -337,7 +358,18 @@ const rootRouteChildren: RootRouteChildren = {
   LocationVehiculesRoute: LocationVehiculesRoute,
   ServicesSurMesureRoute: ServicesSurMesureRoute,
   LocationVehiculesVehicleIdRoute: LocationVehiculesVehicleIdRoute,
+  ApiPaymentsCreateCheckoutSessionRoute: ApiPaymentsCreateCheckoutSessionRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
