@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Menu, Lock } from "lucide-react";
+import { Menu, Lock, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import carHero from "@/assets/car-hero.jpg";
 import destDakar from "@/assets/dest-dakar.jpg";
@@ -10,6 +10,7 @@ import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehic
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
 import { ContactModal } from "@/components/ContactModal";
+import { getCurrentClient, type ClientAccount } from "@/lib/client/auth";
 import {
   Sheet,
   SheetClose,
@@ -50,9 +51,11 @@ function LocationVehicules() {
   const [contactOpen, setContactOpen] = useState(false);
   const [prefilledVehicle, setPrefilledVehicle] = useState<string>("");
   const [vehicles, setVehicles] = useState<Vehicle[]>(seedVehicles);
+  const [client, setClient] = useState<ClientAccount | null>(null);
 
   useEffect(() => {
     setVehicles(listVehicles());
+    setClient(getCurrentClient());
   }, []);
 
   const openBooking = (vehicleId?: string) => {
@@ -74,12 +77,33 @@ function LocationVehicules() {
             <a href="#destinations" className="hover:text-white">Destinations</a>
             <a href="#pourquoi" className="hover:text-white">À propos</a>
             <button onClick={() => setContactOpen(true)} className="hover:text-white cursor-pointer">Contact</button>
+            
+            {/* Dynamic Client Portal Button */}
+            {client ? (
+              <Link
+                to="/client"
+                className="inline-flex items-center gap-2 rounded-full border border-[#7dd3fc]/45 bg-[#7dd3fc]/10 px-4 py-1.5 text-white hover:bg-[#7dd3fc]/20 transition-colors normal-case tracking-normal text-sm"
+              >
+                <User className="h-3.5 w-3.5 text-[#7dd3fc]" />
+                <span>{client.firstName} {client.lastName.slice(0, 1)}.</span>
+              </Link>
+            ) : (
+              <Link
+                to="/client"
+                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-white hover:bg-white/15 transition-colors normal-case tracking-normal text-sm"
+              >
+                <User className="h-3.5 w-3.5" />
+                Espace Client
+              </Link>
+            )}
+
+            {/* Discreet Admin Lock Icon */}
             <Link
               to="/admin"
-              className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-white hover:bg-white/15 transition-colors normal-case tracking-normal text-sm"
+              className="p-1 text-white/40 hover:text-white transition-colors"
+              title="Administration"
             >
               <Lock className="h-3.5 w-3.5" />
-              Login
             </Link>
           </nav>
           <Sheet>
@@ -126,9 +150,24 @@ function LocationVehicules() {
                     Contact
                   </button>
                 </SheetClose>
+                
+                <div className="border-t border-white/10 my-4" />
+
                 <SheetClose asChild>
-                  <Link to="/admin" className="mt-2 inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base text-white hover:bg-white/10">
-                    <Lock className="h-4 w-4" /> Login admin
+                  {client ? (
+                    <Link to="/client" className="inline-flex items-center gap-2 rounded-lg bg-[#7dd3fc]/10 border border-[#7dd3fc]/30 px-3 py-3 text-base text-white hover:bg-[#7dd3fc]/20">
+                      <User className="h-4 w-4 text-[#7dd3fc]" /> Espace Client ({client.firstName})
+                    </Link>
+                  ) : (
+                    <Link to="/client" className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base text-white hover:bg-white/10">
+                      <User className="h-4 w-4" /> Espace Client
+                    </Link>
+                  )}
+                </SheetClose>
+
+                <SheetClose asChild>
+                  <Link to="/admin" className="inline-flex items-center gap-2 text-white/40 hover:text-white/60 px-3 py-2 text-xs">
+                    <Lock className="h-3 w-3" /> Accès administrateur
                   </Link>
                 </SheetClose>
               </nav>

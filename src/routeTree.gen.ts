@@ -12,10 +12,14 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesSurMesureRouteImport } from './routes/services-sur-mesure'
 import { Route as LocationVehiculesRouteImport } from './routes/location-vehicules'
 import { Route as DemenagementRouteImport } from './routes/demenagement'
+import { Route as ClientRouteImport } from './routes/client'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ClientIndexRouteImport } from './routes/client.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as LocationVehiculesVehicleIdRouteImport } from './routes/location-vehicules_.$vehicleId'
+import { Route as ClientSupportRouteImport } from './routes/client.support'
+import { Route as ClientReservationsRouteImport } from './routes/client.reservations'
 import { Route as AdminVehiculesRouteImport } from './routes/admin.vehicules'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
 import { Route as AdminReservationsRouteImport } from './routes/admin.reservations'
@@ -39,6 +43,11 @@ const DemenagementRoute = DemenagementRouteImport.update({
   path: '/demenagement',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ClientRoute = ClientRouteImport.update({
+  id: '/client',
+  path: '/client',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -48,6 +57,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ClientIndexRoute = ClientIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ClientRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -60,6 +74,16 @@ const LocationVehiculesVehicleIdRoute =
     path: '/location-vehicules/$vehicleId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ClientSupportRoute = ClientSupportRouteImport.update({
+  id: '/support',
+  path: '/support',
+  getParentRoute: () => ClientRoute,
+} as any)
+const ClientReservationsRoute = ClientReservationsRouteImport.update({
+  id: '/reservations',
+  path: '/reservations',
+  getParentRoute: () => ClientRoute,
+} as any)
 const AdminVehiculesRoute = AdminVehiculesRouteImport.update({
   id: '/vehicules',
   path: '/vehicules',
@@ -99,6 +123,7 @@ const AdminChauffeursRoute = AdminChauffeursRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/client': typeof ClientRouteWithChildren
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
@@ -109,8 +134,11 @@ export interface FileRoutesByFullPath {
   '/admin/reservations': typeof AdminReservationsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
+  '/client/reservations': typeof ClientReservationsRoute
+  '/client/support': typeof ClientSupportRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/client/': typeof ClientIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -124,13 +152,17 @@ export interface FileRoutesByTo {
   '/admin/reservations': typeof AdminReservationsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
+  '/client/reservations': typeof ClientReservationsRoute
+  '/client/support': typeof ClientSupportRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/admin': typeof AdminIndexRoute
+  '/client': typeof ClientIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/client': typeof ClientRouteWithChildren
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
@@ -141,14 +173,18 @@ export interface FileRoutesById {
   '/admin/reservations': typeof AdminReservationsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
+  '/client/reservations': typeof ClientReservationsRoute
+  '/client/support': typeof ClientSupportRoute
   '/location-vehicules_/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/client/': typeof ClientIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/admin'
+    | '/client'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
@@ -159,8 +195,11 @@ export interface FileRouteTypes {
     | '/admin/reservations'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
+    | '/client/reservations'
+    | '/client/support'
     | '/location-vehicules/$vehicleId'
     | '/admin/'
+    | '/client/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -174,12 +213,16 @@ export interface FileRouteTypes {
     | '/admin/reservations'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
+    | '/client/reservations'
+    | '/client/support'
     | '/location-vehicules/$vehicleId'
     | '/admin'
+    | '/client'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/client'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
@@ -190,13 +233,17 @@ export interface FileRouteTypes {
     | '/admin/reservations'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
+    | '/client/reservations'
+    | '/client/support'
     | '/location-vehicules_/$vehicleId'
     | '/admin/'
+    | '/client/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
+  ClientRoute: typeof ClientRouteWithChildren
   DemenagementRoute: typeof DemenagementRoute
   LocationVehiculesRoute: typeof LocationVehiculesRoute
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
@@ -226,6 +273,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemenagementRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/client': {
+      id: '/client'
+      path: '/client'
+      fullPath: '/client'
+      preLoaderRoute: typeof ClientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -240,6 +294,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/client/': {
+      id: '/client/'
+      path: '/'
+      fullPath: '/client/'
+      preLoaderRoute: typeof ClientIndexRouteImport
+      parentRoute: typeof ClientRoute
+    }
     '/admin/': {
       id: '/admin/'
       path: '/'
@@ -253,6 +314,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/location-vehicules/$vehicleId'
       preLoaderRoute: typeof LocationVehiculesVehicleIdRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/client/support': {
+      id: '/client/support'
+      path: '/support'
+      fullPath: '/client/support'
+      preLoaderRoute: typeof ClientSupportRouteImport
+      parentRoute: typeof ClientRoute
+    }
+    '/client/reservations': {
+      id: '/client/reservations'
+      path: '/reservations'
+      fullPath: '/client/reservations'
+      preLoaderRoute: typeof ClientReservationsRouteImport
+      parentRoute: typeof ClientRoute
     }
     '/admin/vehicules': {
       id: '/admin/vehicules'
@@ -330,9 +405,25 @@ const AdminRouteChildren: AdminRouteChildren = {
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
+interface ClientRouteChildren {
+  ClientReservationsRoute: typeof ClientReservationsRoute
+  ClientSupportRoute: typeof ClientSupportRoute
+  ClientIndexRoute: typeof ClientIndexRoute
+}
+
+const ClientRouteChildren: ClientRouteChildren = {
+  ClientReservationsRoute: ClientReservationsRoute,
+  ClientSupportRoute: ClientSupportRoute,
+  ClientIndexRoute: ClientIndexRoute,
+}
+
+const ClientRouteWithChildren =
+  ClientRoute._addFileChildren(ClientRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
+  ClientRoute: ClientRouteWithChildren,
   DemenagementRoute: DemenagementRoute,
   LocationVehiculesRoute: LocationVehiculesRoute,
   ServicesSurMesureRoute: ServicesSurMesureRoute,
