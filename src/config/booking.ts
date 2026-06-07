@@ -26,7 +26,7 @@ export const bookingConfig = {
     // POST {apiBaseUrl}/api/notifications/new-booking
     notifyAdminPath: "/api/notifications/new-booking",
     // Page de retour après paiement
-    successUrl: "/admin",
-    cancelUrl: "/location-vehicules",
+    successUrl: "/paiement/succes",
+    cancelUrl: "/paiement/annule",
   },
 };
