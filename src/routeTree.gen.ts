@@ -16,6 +16,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PaiementSuccesRouteImport } from './routes/paiement.succes'
+import { Route as PaiementAnnuleRouteImport } from './routes/paiement.annule'
 import { Route as LocationVehiculesVehicleIdRouteImport } from './routes/location-vehicules_.$vehicleId'
 import { Route as AdminVehiculesRouteImport } from './routes/admin.vehicules'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
@@ -59,6 +60,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const PaiementSuccesRoute = PaiementSuccesRouteImport.update({
   id: '/paiement/succes',
   path: '/paiement/succes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PaiementAnnuleRoute = PaiementAnnuleRouteImport.update({
+  id: '/paiement/annule',
+  path: '/paiement/annule',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LocationVehiculesVehicleIdRoute =
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/paiement/annule': typeof PaiementAnnuleRoute
   '/paiement/succes': typeof PaiementSuccesRoute
   '/admin/': typeof AdminIndexRoute
   '/api/payments/create-checkout-session': typeof ApiPaymentsCreateCheckoutSessionRoute
@@ -140,6 +147,7 @@ export interface FileRoutesByTo {
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/paiement/annule': typeof PaiementAnnuleRoute
   '/paiement/succes': typeof PaiementSuccesRoute
   '/admin': typeof AdminIndexRoute
   '/api/payments/create-checkout-session': typeof ApiPaymentsCreateCheckoutSessionRoute
@@ -159,6 +167,7 @@ export interface FileRoutesById {
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/location-vehicules_/$vehicleId': typeof LocationVehiculesVehicleIdRoute
+  '/paiement/annule': typeof PaiementAnnuleRoute
   '/paiement/succes': typeof PaiementSuccesRoute
   '/admin/': typeof AdminIndexRoute
   '/api/payments/create-checkout-session': typeof ApiPaymentsCreateCheckoutSessionRoute
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/location-vehicules/$vehicleId'
+    | '/paiement/annule'
     | '/paiement/succes'
     | '/admin/'
     | '/api/payments/create-checkout-session'
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/location-vehicules/$vehicleId'
+    | '/paiement/annule'
     | '/paiement/succes'
     | '/admin'
     | '/api/payments/create-checkout-session'
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/location-vehicules_/$vehicleId'
+    | '/paiement/annule'
     | '/paiement/succes'
     | '/admin/'
     | '/api/payments/create-checkout-session'
@@ -226,6 +238,7 @@ export interface RootRouteChildren {
   LocationVehiculesRoute: typeof LocationVehiculesRoute
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
   LocationVehiculesVehicleIdRoute: typeof LocationVehiculesVehicleIdRoute
+  PaiementAnnuleRoute: typeof PaiementAnnuleRoute
   PaiementSuccesRoute: typeof PaiementSuccesRoute
   ApiPaymentsCreateCheckoutSessionRoute: typeof ApiPaymentsCreateCheckoutSessionRoute
 }
@@ -279,6 +292,13 @@ declare module '@tanstack/react-router' {
       path: '/paiement/succes'
       fullPath: '/paiement/succes'
       preLoaderRoute: typeof PaiementSuccesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/paiement/annule': {
+      id: '/paiement/annule'
+      path: '/paiement/annule'
+      fullPath: '/paiement/annule'
+      preLoaderRoute: typeof PaiementAnnuleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/location-vehicules_/$vehicleId': {
@@ -378,6 +398,7 @@ const rootRouteChildren: RootRouteChildren = {
   LocationVehiculesRoute: LocationVehiculesRoute,
   ServicesSurMesureRoute: ServicesSurMesureRoute,
   LocationVehiculesVehicleIdRoute: LocationVehiculesVehicleIdRoute,
+  PaiementAnnuleRoute: PaiementAnnuleRoute,
   PaiementSuccesRoute: PaiementSuccesRoute,
   ApiPaymentsCreateCheckoutSessionRoute: ApiPaymentsCreateCheckoutSessionRoute,
 }
