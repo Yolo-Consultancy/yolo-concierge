@@ -295,7 +295,7 @@ function ClientShell() {
                       value={reg.phone}
                       onChange={(e) => setReg({ ...reg, phone: e.target.value.replace(/\D/g, "").slice(0, 10) })}
                       placeholder="9 à 10 chiffres"
-                      className={`${inputCls} flex-1`}
+                      className={`${inputCls}`}
                     />
                   </div>
                 </div>

@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { createFileRoute, Link, useSearch } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/paiement/succes")({
