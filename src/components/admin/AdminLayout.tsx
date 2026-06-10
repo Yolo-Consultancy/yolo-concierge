@@ -7,6 +7,7 @@ import {
 import { useState, type ReactNode } from "react";
 import { adminConfig } from "@/config/admin";
 import { logout } from "@/lib/admin/auth";
+import { notifyAuthChange } from "@/lib/auth/session";
 
 type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
 const nav: NavItem[] = [
@@ -27,7 +28,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
   const handleLogout = () => {
     logout();
-    navigate({ to: "/admin" });
+    notifyAuthChange();
+    navigate({ to: "/connexion", search: { espace: "admin", redirect: "/admin" } });
   };
 
   const isActive = (to: string, exact?: boolean) =>

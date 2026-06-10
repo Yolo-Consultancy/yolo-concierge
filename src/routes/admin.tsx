@@ -1,8 +1,7 @@
 /* eslint-disable prettier/prettier */
-import { createFileRoute, Outlet } from "@tanstack/react-router";
+import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { LoginGate } from "@/components/admin/LoginGate";
 import { isAuthenticated } from "@/lib/admin/auth";
 
 export const Route = createFileRoute("/admin")({
@@ -18,14 +17,23 @@ export const Route = createFileRoute("/admin")({
 function AdminShell() {
   const [authed, setAuthed] = useState(false);
   const [ready, setReady] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     setAuthed(isAuthenticated());
     setReady(true);
   }, []);
 
-  if (!ready) return null;
-  if (!authed) return <LoginGate onSuccess={() => setAuthed(true)} />;
+  useEffect(() => {
+    if (ready && !authed) {
+      navigate({
+        to: "/connexion",
+        search: { espace: "admin", redirect: "/admin" },
+      });
+    }
+  }, [ready, authed, navigate]);
+
+  if (!ready || !authed) return null;
 
   return (
     <AdminLayout>

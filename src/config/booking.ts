@@ -20,4 +20,9 @@ export const bookingConfig = {
     // POST {apiBaseUrl}/api/notifications/new-booking
     notifyAdminPath: "/api/notifications/new-booking",
   },
+
+  missions: {
+    // POST {apiBaseUrl}/api/notifications/mission-assigned
+    notifyDriverPath: "/api/notifications/mission-assigned",
+  },
 };

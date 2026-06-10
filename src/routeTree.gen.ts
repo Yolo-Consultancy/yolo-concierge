@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesSurMesureRouteImport } from './routes/services-sur-mesure'
 import { Route as LocationVehiculesRouteImport } from './routes/location-vehicules'
 import { Route as DemenagementRouteImport } from './routes/demenagement'
+import { Route as ConnexionRouteImport } from './routes/connexion'
 import { Route as ClientRouteImport } from './routes/client'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +44,11 @@ const LocationVehiculesRoute = LocationVehiculesRouteImport.update({
 const DemenagementRoute = DemenagementRouteImport.update({
   id: '/demenagement',
   path: '/demenagement',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConnexionRoute = ConnexionRouteImport.update({
+  id: '/connexion',
+  path: '/connexion',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientRoute = ClientRouteImport.update({
@@ -136,6 +142,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/client': typeof ClientRouteWithChildren
+  '/connexion': typeof ConnexionRoute
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
@@ -156,6 +163,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/connexion': typeof ConnexionRoute
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
@@ -179,6 +187,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/client': typeof ClientRouteWithChildren
+  '/connexion': typeof ConnexionRoute
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
@@ -203,6 +212,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/client'
+    | '/connexion'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
@@ -223,6 +233,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/connexion'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
@@ -245,6 +256,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/client'
+    | '/connexion'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
@@ -268,6 +280,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   ClientRoute: typeof ClientRouteWithChildren
+  ConnexionRoute: typeof ConnexionRoute
   DemenagementRoute: typeof DemenagementRoute
   LocationVehiculesRoute: typeof LocationVehiculesRoute
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
@@ -297,6 +310,13 @@ declare module '@tanstack/react-router' {
       path: '/demenagement'
       fullPath: '/demenagement'
       preLoaderRoute: typeof DemenagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/connexion': {
+      id: '/connexion'
+      path: '/connexion'
+      fullPath: '/connexion'
+      preLoaderRoute: typeof ConnexionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/client': {
@@ -464,6 +484,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   ClientRoute: ClientRouteWithChildren,
+  ConnexionRoute: ConnexionRoute,
   DemenagementRoute: DemenagementRoute,
   LocationVehiculesRoute: LocationVehiculesRoute,
   ServicesSurMesureRoute: ServicesSurMesureRoute,

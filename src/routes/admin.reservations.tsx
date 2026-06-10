@@ -27,13 +27,11 @@ const statusColors: Record<BookingStatus, string> = {
 
 /* Calculates what the new total would be with a given driver */
 function computeNewTotal(b: Booking, newDriverId: string): number {
-  const drivers = listDrivers();
-  const driver = drivers.find((d) => d.id === newDriverId);
-  // Estimate vehicle price from existing total
+  const dayRate = bookingConfig.chauffeur.pricePerDay;
   const estimatedVehicleTotal = b.withChauffeur
-    ? b.totalPrice - b.days * (listDrivers().find((d) => d.id === b.driverId)?.pricePerDay ?? 0)
+    ? b.totalPrice - b.days * dayRate
     : b.totalPrice;
-  const chauffeurCost = driver ? b.days * driver.pricePerDay : 0;
+  const chauffeurCost = newDriverId ? b.days * dayRate : 0;
   return estimatedVehicleTotal + chauffeurCost;
 }
 
@@ -171,7 +169,7 @@ function Reservations() {
                           })()}
                           {availableDrivers.map((d) => (
                             <option key={d.id} value={d.id}>
-                              {d.firstName} {d.lastName} · {C}{formatPrice(d.pricePerDay)}/j
+                              {d.firstName} {d.lastName} · {C}{formatPrice(bookingConfig.chauffeur.pricePerDay)}/j
                             </option>
                           ))}
                         </select>

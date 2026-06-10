@@ -4,6 +4,7 @@
 // liste -> create -> update -> delete. Quand le backend sera prêt, remplace
 // le corps de ces fonctions par des appels fetch (voir src/lib/api/client.ts).
 
+import { bookingConfig } from "@/config/booking";
 import { vehicles as seedVehicles, type Vehicle } from "@/lib/vehicles";
 
 const KEYS = {
@@ -120,11 +121,15 @@ export function assignBookingDriver(id: string, driverId: string) {
     const driver = driversList.find((d) => d.id === driverId);
     const vehicle = vehiclesList.find((v) => v.id === b.vehicleId);
 
-    const vehiclePrice = vehicle ? vehicle.pricePerDay : Math.max(0, b.totalPrice - (b.withChauffeur ? b.days * 80 : 0));
+    const vehiclePrice = vehicle
+      ? vehicle.pricePerDay
+      : Math.max(0, b.totalPrice - (b.withChauffeur ? b.days * bookingConfig.chauffeur.pricePerDay : 0));
     const newWithChauffeur = !!driverId;
     const newDriverId = driverId;
     const newDriverName = driver ? `${driver.firstName} ${driver.lastName}` : "";
-    const newChauffeurTotal = newWithChauffeur && driver ? b.days * driver.pricePerDay : 0;
+    const newChauffeurTotal = newWithChauffeur && driver
+      ? b.days * bookingConfig.chauffeur.pricePerDay
+      : 0;
     const newTotalPrice = (b.days * vehiclePrice) + newChauffeurTotal;
 
     return {
@@ -169,7 +174,6 @@ export function listAvailableDriversForDates(
   return listDrivers().filter(
     (d) =>
       d.active &&
-      d.availability !== "indisponible" &&
       isDriverAvailableForDates(d.id, startDate, endDate, excludeBookingId),
   );
 }
@@ -252,7 +256,7 @@ export type MissionStatus = "a_affecter" | "en_cours" | "terminee";
 export type Mission = {
   id: string;
   bookingId: string;
-  assigneeId: string; // user id
+  assigneeId: string; // chauffeur id
   assigneeName: string;
   type: "livraison" | "chauffeur" | "recuperation";
   scheduledAt: string;
@@ -260,7 +264,7 @@ export type Mission = {
   notes: string;
 };
 const seedMissions: Mission[] = [
-  { id: "m-001", bookingId: "b-002", assigneeId: "u-003", assigneeName: "Joseph Mbaya", type: "livraison", scheduledAt: "2026-06-15T09:00:00Z", status: "en_cours", notes: "Livraison à l'hôtel Pullman" },
+  { id: "m-001", bookingId: "b-002", assigneeId: "d-001", assigneeName: "Joseph Mbaya", type: "livraison", scheduledAt: "2026-06-15T09:00:00Z", status: "en_cours", notes: "Livraison à l'hôtel Pullman" },
   { id: "m-002", bookingId: "b-003", assigneeId: "", assigneeName: "", type: "livraison", scheduledAt: "2026-06-20T10:00:00Z", status: "a_affecter", notes: "" },
 ];
 export function listMissions(): Mission[] { return read<Mission[]>(KEYS.missions, seedMissions); }
@@ -302,49 +306,55 @@ export function saveSettings(s: SiteSettings) { write(KEYS.settings, s); }
 /* ============================================================
    CHAUFFEURS (catalogue dédié — distinct de l'équipe interne)
    ============================================================ */
-export type DriverAvailability = "disponible" | "occupe" | "indisponible";
 export type Driver = {
   id: string;
   firstName: string;
   lastName: string;
+  email: string;
   phone: string;
-  photo: string;           // URL de la photo
-  pricePerDay: number;     // tarif jour (en devise du site)
-  availability: DriverAvailability;
-  active: boolean;         // false = désactivé (n'apparaît plus côté client)
-  experienceYears: number;
-  languages: string;       // ex: "Français, Lingala"
-  city: string;            // Ville d'activité
+  hiredAt: string;
+  salary: number;
+  active: boolean;
   notes: string;
   createdAt: string;
 };
+
+function normalizeDriver(raw: Partial<Driver> & Record<string, unknown>): Driver {
+  const today = new Date().toISOString().slice(0, 10);
+  return {
+    id: String(raw.id ?? newId("d")),
+    firstName: String(raw.firstName ?? ""),
+    lastName: String(raw.lastName ?? ""),
+    email: String(raw.email ?? ""),
+    phone: String(raw.phone ?? ""),
+    hiredAt: String(raw.hiredAt ?? raw.createdAt ?? today),
+    salary: Number(raw.salary ?? 0),
+    active: raw.active !== false,
+    notes: String(raw.notes ?? ""),
+    createdAt: String(raw.createdAt ?? today),
+  };
+}
+
 const seedDrivers: Driver[] = [
   {
     id: "d-001", firstName: "Joseph", lastName: "Mbaya",
-    phone: "+243 81 555 1122",
-    photo: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80",
-    pricePerDay: 80, availability: "disponible", active: true,
-    experienceYears: 8, languages: "Français, Lingala, Anglais", city: "Kinshasa",
-    notes: "Chauffeur VIP, expérience véhicules de luxe.", createdAt: "2026-01-10",
+    email: "joseph.mbaya@yolo.cd", phone: "+243 81 555 1122", hiredAt: "2024-03-15", salary: 850,
+    active: true, notes: "Chauffeur VIP, expérience véhicules de luxe.", createdAt: "2026-01-10",
   },
   {
     id: "d-002", firstName: "Pascal", lastName: "Kalonji",
-    phone: "+243 99 222 3344",
-    photo: "https://images.unsplash.com/photo-1568602471122-7832951cc4c5?auto=format&fit=crop&w=400&q=80",
-    pricePerDay: 70, availability: "disponible", active: true,
-    experienceYears: 5, languages: "Français, Lingala", city: "Kinshasa",
-    notes: "Spécialisé SUV et longues distances.", createdAt: "2026-02-14",
+    email: "pascal.kalonji@yolo.cd", phone: "+243 99 222 3344", hiredAt: "2025-01-10", salary: 720,
+    active: true, notes: "Spécialisé SUV et longues distances.", createdAt: "2026-02-14",
   },
   {
     id: "d-003", firstName: "André", lastName: "Bwanga",
-    phone: "+243 82 777 8899",
-    photo: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80",
-    pricePerDay: 95, availability: "occupe", active: true,
-    experienceYears: 12, languages: "Français, Lingala, Swahili", city: "Lubumbashi",
-    notes: "Chauffeur protocole / officiels.", createdAt: "2026-03-02",
+    email: "andre.bwanga@yolo.cd", phone: "+243 82 777 8899", hiredAt: "2023-06-01", salary: 950,
+    active: true, notes: "Chauffeur protocole / officiels.", createdAt: "2026-03-02",
   },
 ];
-export function listDrivers(): Driver[] { return read<Driver[]>(KEYS.drivers, seedDrivers); }
+export function listDrivers(): Driver[] {
+  return read<Partial<Driver>[]>(KEYS.drivers, seedDrivers).map((d) => normalizeDriver(d));
+}
 export function listActiveDrivers(): Driver[] {
   return listDrivers().filter((d) => d.active);
 }

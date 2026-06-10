@@ -6,7 +6,6 @@ import type { DateRange } from "react-day-picker";
 import { vehicles as defaultVehicles, formatPrice, type Vehicle } from "@/lib/vehicles";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { listAvailableDriversForDates, type Driver } from "@/lib/admin/store";
 import { bookingConfig } from "@/config/booking";
 import { upsertBooking, newId, type Booking } from "@/lib/admin/store";
 import { notifyAdminNewBooking } from "@/lib/admin/notify";
@@ -106,7 +105,6 @@ const KINSHASA_LOCATION_SUGGESTIONS = [
 const STEPS = [
   "Dates & Durée",
   "Lieu",
-  "Chauffeur",
   "Coordonnées",
   "Vérifier",
 ] as const;
@@ -206,7 +204,6 @@ export function BookingModal({
     pickupLocation: "",
     dropoffLocation: "",
     sameDropoff: true,
-    withChauffeur: false,
     firstName: account?.firstName ?? "",
     lastName: account?.lastName ?? "",
     email: account?.email ?? "",
@@ -248,8 +245,7 @@ export function BookingModal({
   const canNext = () => {
     if (step === 0) return !!selectedDateRange?.from && !!selectedDateRange?.to;
     if (step === 1) return !!form.pickupLocation && (form.sameDropoff || !!form.dropoffLocation);
-    if (step === 2) return true; // chauffeur step (optionnel)
-    if (step === 3) return !!form.firstName && !!form.lastName && !!form.email;
+    if (step === 2) return !!form.firstName && !!form.lastName && !!form.email;
     return true;
   };
 
@@ -259,9 +255,8 @@ export function BookingModal({
     return Math.max(1, Math.round(ms / 86400000));
   }, [selectedDateRange]);
 
-  const chauffeurTotal = form.withChauffeur ? days * bookingConfig.chauffeur.pricePerDay : 0;
   const vehicleTotal = selectedVehicle ? days * selectedVehicle.pricePerDay : 0;
-  const grandTotal = vehicleTotal + chauffeurTotal;
+  const grandTotal = vehicleTotal;
   const C = bookingConfig.currencySymbol;
 
   const [submitting, setSubmitting] = useState(false);
@@ -282,7 +277,7 @@ export function BookingModal({
       days,
       pickupLocation: form.pickupLocation,
       totalPrice: grandTotal,
-      withChauffeur: form.withChauffeur,
+      withChauffeur: false,
       driverId: "",
       driverName: "",
       status: "en_attente",
@@ -519,128 +514,8 @@ export function BookingModal({
             </div>
           )}
 
-          {/* Step 3 — Chauffeur (dédié) */}
-          {step === 2 && (() => {
-            const toISO = (d?: Date) => d ? d.toISOString().slice(0, 10) : "";
-            const startISO = toISO(selectedDateRange?.from);
-            const endISO   = toISO(selectedDateRange?.to ?? selectedDateRange?.from);
-            const availableDrivers: Driver[] = startISO
-              ? listAvailableDriversForDates(startISO, endISO)
-              : [];
-            const noDrivers = availableDrivers.length === 0;
-
-            return (
-              <div className="space-y-5">
-                <div>
-                  <p className="text-sm font-medium text-white">
-                    Souhaitez-vous un chauffeur YOLO ?
-                  </p>
-                  <p className="text-xs text-white/50 mt-1">
-                    Choisissez « Avec chauffeur » si vous ne souhaitez pas conduire vous-même.
-                  </p>
-                </div>
-
-                {noDrivers && startISO && (
-                  <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 flex items-start gap-2">
-                    <svg className="mt-0.5 shrink-0 text-amber-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
-                    </svg>
-                    <p className="text-xs text-amber-300">
-                      Aucun chauffeur disponible sur les dates sélectionnées ({form.dateRange}). Vous pouvez continuer sans chauffeur ou contacter YOLO via WhatsApp pour une solution personnalisée.
-                    </p>
-                  </div>
-                )}
-
-                <div className="grid sm:grid-cols-2 gap-3">
-                  <button
-                    type="button"
-                    onClick={() => setForm({ ...form, withChauffeur: false })}
-                    className={`text-left rounded-xl border p-4 transition ${
-                      !form.withChauffeur
-                        ? "border-[#7dd3fc] bg-[#7dd3fc]/10 ring-2 ring-[#7dd3fc]/30"
-                        : "border-white/10 bg-white/2 hover:border-white/20"
-                    }`}
-                  >
-                    <p className="font-medium text-white">Je conduis</p>
-                    <p className="text-xs text-white/60 mt-1">
-                      Vous récupérez le véhicule et conduisez vous-même.
-                    </p>
-                    <p className="text-xs text-white/40 mt-2">Aucun frais supplémentaire</p>
-                  </button>
-
-                  <button
-                    type="button"
-                    disabled={noDrivers}
-                    onClick={() => !noDrivers && setForm({ ...form, withChauffeur: true })}
-                    className={`text-left rounded-xl border p-4 transition ${
-                      noDrivers
-                        ? "border-white/10 opacity-40 cursor-not-allowed"
-                        : form.withChauffeur
-                        ? "border-[#7dd3fc] bg-[#7dd3fc]/10 ring-2 ring-[#7dd3fc]/30"
-                        : "border-white/10 bg-white/2 hover:border-white/20"
-                    }`}
-                  >
-                    <p className="font-medium text-white">Avec chauffeur</p>
-                    <p className="text-xs text-white/60 mt-1">
-                      Un chauffeur professionnel YOLO assure vos trajets.
-                    </p>
-                    {noDrivers ? (
-                      <p className="text-xs text-amber-400 mt-2">Non disponible sur ces dates</p>
-                    ) : (
-                      <p className="text-xs text-[#7dd3fc] mt-2">
-                        À partir de {C}{formatPrice(Math.min(...availableDrivers.map(d => d.pricePerDay)))} /jour
-                        {days > 0 && form.withChauffeur ? ` · Total chauffeur ${C}${formatPrice(chauffeurTotal)}` : ""}
-                      </p>
-                    )}
-                  </button>
-                </div>
-
-                {/* Liste des chauffeurs disponibles */}
-                {!noDrivers && availableDrivers.length > 0 && (
-                  <div>
-                    <p className="text-xs text-white/50 mb-2 uppercase tracking-wider">
-                      {availableDrivers.length} chauffeur{availableDrivers.length > 1 ? "s" : ""} disponible{availableDrivers.length > 1 ? "s" : ""}
-                    </p>
-                    <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
-                      {availableDrivers.map((driver) => (
-                        <div
-                          key={driver.id}
-                          className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/3 p-3"
-                        >
-                          <div className="h-10 w-10 rounded-full overflow-hidden bg-white/10 shrink-0">
-                            {driver.photo ? (
-                              <img src={driver.photo} alt={`${driver.firstName} ${driver.lastName}`} className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="h-full w-full flex items-center justify-center text-white/30 text-xs font-bold">
-                                {driver.firstName[0]}{driver.lastName[0]}
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white">{driver.firstName} {driver.lastName}</p>
-                            <p className="text-xs text-white/50 truncate">{driver.languages} · {driver.experienceYears} ans exp.</p>
-                          </div>
-                          <p className="text-xs text-[#7dd3fc] font-medium shrink-0">{C}{formatPrice(driver.pricePerDay)}/j</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {form.withChauffeur && !noDrivers && (
-                  <p className="text-xs text-white/50 flex items-start gap-2 rounded-lg bg-[#7dd3fc]/5 border border-[#7dd3fc]/20 p-3">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mt-0.5 shrink-0 text-[#7dd3fc]">
-                      <circle cx="12" cy="12" r="10" /><path d="M12 16v-4M12 8h.01" />
-                    </svg>
-                    Nous vous attribuerons un chauffeur expérimenté selon vos dates. Vous pouvez préciser vos préférences en commentaire WhatsApp.
-                  </p>
-                )}
-              </div>
-            );
-          })()}
-
-          {/* Step 4 — Coordonnées */}
-          {step === 3 && (
+          {/* Step 3 — Coordonnées */}
+          {step === 2 && (
             <div className="space-y-5">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -707,8 +582,8 @@ export function BookingModal({
             </div>
           )}
 
-          {/* Step 5 — Vérification */}
-          {step === 4 && (
+          {/* Step 4 — Vérification */}
+          {step === 3 && (
             <div className="space-y-4">
               <SummaryCard
                 icon={
@@ -749,30 +624,11 @@ export function BookingModal({
               <SummaryCard
                 icon={
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <circle cx="12" cy="8" r="4" /><path d="M6 21v-2a4 4 0 014-4h4a4 4 0 014 4v2" />
-                  </svg>
-                }
-                title="Chauffeur"
-                onEdit={() => setStep(2)}
-              >
-                <p className="text-sm text-white">
-                  {form.withChauffeur ? "Avec chauffeur YOLO" : "Je conduis moi-même"}
-                </p>
-                {form.withChauffeur && (
-                  <p className="text-sm text-white/60">
-                    +{C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} /jour · Total {C}{formatPrice(chauffeurTotal)}
-                  </p>
-                )}
-              </SummaryCard>
-
-              <SummaryCard
-                icon={
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" /><circle cx="12" cy="7" r="4" />
                   </svg>
                 }
                 title="Vos Coordonnées"
-                onEdit={() => setStep(3)}
+                onEdit={() => setStep(2)}
               >
                 <p className="text-sm text-white">
                   {form.firstName} {form.lastName}
@@ -789,14 +645,6 @@ export function BookingModal({
                     </span>
                     <span className="text-white">{C}{formatPrice(vehicleTotal)}</span>
                   </div>
-                  {form.withChauffeur && (
-                    <div className="flex items-center justify-between text-sm text-white/70">
-                      <span>
-                        Chauffeur · {C}{formatPrice(bookingConfig.chauffeur.pricePerDay)} × {days}
-                      </span>
-                      <span className="text-white">{C}{formatPrice(chauffeurTotal)}</span>
-                    </div>
-                  )}
                   <div className="border-t border-[#7dd3fc]/20 pt-2 flex items-center justify-between">
                     <div className="flex items-center gap-2 text-[#7dd3fc] text-sm">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

@@ -1,8 +1,14 @@
 /* eslint-disable prettier/prettier */
 import { Link } from "@tanstack/react-router";
-import { Menu, Lock, User } from "lucide-react";
+import { Menu, LogOut, User, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
-import { getCurrentClient, type ClientAccount } from "@/lib/client/auth";
+import {
+  getClientSession,
+  getAdminSession,
+  logoutSession,
+  subscribeAuth,
+} from "@/lib/auth/session";
+import type { ClientAccount } from "@/lib/client/auth";
 import {
   Sheet,
   SheetClose,
@@ -13,10 +19,24 @@ import {
 
 export function SiteHeader() {
   const [client, setClient] = useState<ClientAccount | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  const refreshAuth = () => {
+    setClient(getClientSession());
+    setIsAdmin(getAdminSession());
+  };
 
   useEffect(() => {
-    setClient(getCurrentClient());
+    refreshAuth();
+    return subscribeAuth(refreshAuth);
   }, []);
+
+  const handleLogout = (role: "client" | "admin" | "all") => {
+    logoutSession(role);
+    refreshAuth();
+  };
+
+  const isLoggedIn = !!client || isAdmin;
 
   return (
     <header className="absolute top-0 left-0 right-0 z-50">
@@ -29,38 +49,50 @@ export function SiteHeader() {
             Le Concierge
           </span>
         </Link>
-        <nav className="hidden md:flex items-center gap-8 text-sm text-white/90">
+        <nav className="hidden md:flex items-center gap-6 text-sm text-white/90">
           <Link to="/location-vehicules" className="hover:text-gold transition-colors">Véhicules</Link>
           <Link to="/demenagement" className="hover:text-gold transition-colors">Déménagement</Link>
           <Link to="/services-sur-mesure" className="hover:text-gold transition-colors">Sur Mesure</Link>
-          
-          {/* Espace Client Button */}
-          {client ? (
-            <Link
-              to="/client"
-              className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-white hover:bg-gold/20 transition-colors"
-            >
-              <User className="h-3.5 w-3.5 text-gold" />
-              <span>{client.firstName} {client.lastName.slice(0, 1)}.</span>
-            </Link>
+
+          {isLoggedIn ? (
+            <div className="flex items-center gap-2">
+              {client && (
+                <Link
+                  to="/client"
+                  className="inline-flex items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-4 py-1.5 text-white hover:bg-gold/20 transition-colors"
+                >
+                  <User className="h-3.5 w-3.5 text-gold" />
+                  <span>{client.firstName} {client.lastName.slice(0, 1)}.</span>
+                </Link>
+              )}
+              {isAdmin && (
+                <Link
+                  to="/admin"
+                  className="inline-flex items-center gap-2 rounded-full border border-[#7dd3fc]/40 bg-[#7dd3fc]/10 px-4 py-1.5 text-white hover:bg-[#7dd3fc]/20 transition-colors"
+                >
+                  <Shield className="h-3.5 w-3.5 text-[#7dd3fc]" />
+                  <span>Admin</span>
+                </Link>
+              )}
+              <button
+                type="button"
+                onClick={() => handleLogout(client && isAdmin ? "all" : client ? "client" : "admin")}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-white/80 hover:bg-white/10 hover:text-white transition-colors"
+                title="Se déconnecter"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span className="text-xs">Déconnexion</span>
+              </button>
+            </div>
           ) : (
             <Link
-              to="/client"
+              to="/connexion"
               className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-white hover:bg-white/15 transition-colors"
             >
               <User className="h-3.5 w-3.5" />
-              Espace Client
+              Connexion
             </Link>
           )}
-
-          {/* Discreet Admin Lock Link */}
-          <Link
-            to="/admin"
-            className="p-1.5 text-white/40 hover:text-white transition-colors"
-            title="Administration"
-          >
-            <Lock className="h-3.5 w-3.5" />
-          </Link>
         </nav>
         <Sheet>
           <SheetTrigger asChild>
@@ -97,26 +129,40 @@ export function SiteHeader() {
                   Sur Mesure
                 </Link>
               </SheetClose>
-              
+
               <div className="border-t border-white/10 my-4" />
 
-              <SheetClose asChild>
-                {client ? (
-                  <Link to="/client" className="inline-flex items-center gap-2 rounded-lg bg-gold/10 border border-gold/30 px-3 py-3 text-base text-white hover:bg-gold/20">
-                    <User className="h-4 w-4 text-gold" /> Espace Client ({client.firstName})
+              {isLoggedIn ? (
+                <>
+                  {client && (
+                    <SheetClose asChild>
+                      <Link to="/client" className="inline-flex items-center gap-2 rounded-lg bg-gold/10 border border-gold/30 px-3 py-3 text-base text-white hover:bg-gold/20">
+                        <User className="h-4 w-4 text-gold" /> Espace Client ({client.firstName})
+                      </Link>
+                    </SheetClose>
+                  )}
+                  {isAdmin && (
+                    <SheetClose asChild>
+                      <Link to="/admin" className="inline-flex items-center gap-2 rounded-lg bg-[#7dd3fc]/10 border border-[#7dd3fc]/30 px-3 py-3 text-base text-white hover:bg-[#7dd3fc]/20">
+                        <Shield className="h-4 w-4 text-[#7dd3fc]" /> Espace Admin
+                      </Link>
+                    </SheetClose>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => handleLogout(client && isAdmin ? "all" : client ? "client" : "admin")}
+                    className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base text-red-300 hover:bg-red-500/10 text-left"
+                  >
+                    <LogOut className="h-4 w-4" /> Déconnexion
+                  </button>
+                </>
+              ) : (
+                <SheetClose asChild>
+                  <Link to="/connexion" className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base text-white hover:bg-white/10">
+                    <User className="h-4 w-4" /> Connexion
                   </Link>
-                ) : (
-                  <Link to="/client" className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base text-white hover:bg-white/10">
-                    <User className="h-4 w-4" /> Espace Client
-                  </Link>
-                )}
-              </SheetClose>
-              
-              <SheetClose asChild>
-                <Link to="/admin" className="inline-flex items-center gap-2 rounded-lg text-white/40 hover:text-white/60 px-3 py-2 text-xs">
-                  <Lock className="h-3 w-3" /> Accès administrateur
-                </Link>
-              </SheetClose>
+                </SheetClose>
+              )}
             </nav>
           </SheetContent>
         </Sheet>

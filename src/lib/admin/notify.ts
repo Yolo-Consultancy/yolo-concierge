@@ -6,7 +6,13 @@
 
 import { adminConfig } from "@/config/admin";
 import { bookingConfig } from "@/config/booking";
-import type { Booking } from "@/lib/admin/store";
+import type { Booking, Driver, Mission } from "@/lib/admin/store";
+
+const missionTypeLabels: Record<Mission["type"], string> = {
+  livraison: "Livraison",
+  chauffeur: "Service chauffeur",
+  recuperation: "Récupération",
+};
 
 const base = () => adminConfig.apiBaseUrl.replace(/\/$/, "");
 
@@ -245,6 +251,107 @@ export function buildAdminEmailHtml(booking: Booking): string {
   </table>
 </body>
 </html>`;
+}
+
+/** Génère le corps HTML du mail envoyé au chauffeur lors d'une affectation. */
+export function buildDriverMissionEmailHtml(
+  mission: Mission,
+  driver: Driver,
+  booking: Booking,
+): string {
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleString("fr-FR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+  return `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Nouvelle mission YOLO</title>
+</head>
+<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Helvetica Neue',Arial,sans-serif;color:#fff;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:40px 20px;">
+    <tr>
+      <td align="center">
+        <table width="600" cellpadding="0" cellspacing="0" style="background:#111;border-radius:16px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;max-width:600px;">
+          <tr>
+            <td style="background:linear-gradient(135deg,#0f0f0f 0%,#1a1a2e 100%);padding:36px 40px 28px;border-bottom:1px solid rgba(255,255,255,0.08);">
+              <span style="font-size:28px;font-weight:700;color:#fff;">YOLO<span style="color:#7dd3fc;">.</span></span>
+              <p style="margin:8px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:3px;color:rgba(255,255,255,0.4);">Nouvelle mission</p>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:36px 40px;">
+              <p style="margin:0 0 24px;font-size:15px;color:rgba(255,255,255,0.75);">
+                Bonjour <strong style="color:#fff;">${driver.firstName} ${driver.lastName}</strong>,<br/><br/>
+                Vous avez été affecté(e) à une nouvelle mission terrain.
+              </p>
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:12px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;margin-bottom:20px;">
+                <tr><td style="padding:14px 20px;background:rgba(125,211,252,0.08);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#7dd3fc;">Détails de la mission</td></tr>
+                <tr><td style="padding:16px 20px;font-size:14px;color:rgba(255,255,255,0.8);">
+                  <p style="margin:0 0 8px;"><strong style="color:#fff;">Référence :</strong> #${mission.id.toUpperCase()}</p>
+                  <p style="margin:0 0 8px;"><strong style="color:#fff;">Type :</strong> ${missionTypeLabels[mission.type]}</p>
+                  <p style="margin:0 0 8px;"><strong style="color:#fff;">Planifiée le :</strong> ${formatDate(mission.scheduledAt)}</p>
+                  <p style="margin:0 0 8px;"><strong style="color:#fff;">Véhicule :</strong> ${booking.vehicleName}</p>
+                  <p style="margin:0 0 8px;"><strong style="color:#fff;">Client :</strong> ${booking.clientName}</p>
+                  <p style="margin:0 0 8px;"><strong style="color:#fff;">Lieu :</strong> ${booking.pickupLocation}</p>
+                  <p style="margin:0 0 8px;"><strong style="color:#fff;">Dates :</strong> ${booking.startDate} → ${booking.endDate}</p>
+                  ${mission.notes ? `<p style="margin:12px 0 0;padding-top:12px;border-top:1px solid rgba(255,255,255,0.08);"><strong style="color:#fff;">Notes :</strong> ${mission.notes}</p>` : ""}
+                </td></tr>
+              </table>
+              <p style="margin:0;font-size:13px;color:rgba(255,255,255,0.5);">
+                Merci de confirmer votre disponibilité auprès de l'équipe YOLO.
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="border-top:1px solid rgba(255,255,255,0.06);padding:20px 40px;text-align:center;">
+              <p style="margin:0;font-size:11px;color:rgba(255,255,255,0.25);">
+                YOLO Le Concierge · Kinshasa, RDC · contact@yolo.cd
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+/** Notifie un chauffeur par e-mail qu'une mission lui a été affectée. */
+export async function notifyDriverMissionAssignment(data: {
+  mission: Mission;
+  driver: Driver;
+  booking: Booking;
+}): Promise<boolean> {
+  const { mission, driver, booking } = data;
+  if (!driver.email.trim()) return false;
+  if (!adminConfig.apiBaseUrl) return false;
+
+  try {
+    const res = await fetch(`${base()}${bookingConfig.missions.notifyDriverPath}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        to: driver.email.trim(),
+        subject: `[YOLO] Nouvelle mission — ${missionTypeLabels[mission.type]} · ${booking.vehicleName}`,
+        html: buildDriverMissionEmailHtml(mission, driver, booking),
+        mission,
+        driver,
+        booking,
+      }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
 }
 
 /** Notifie l'admin par e-mail qu'une nouvelle réservation est arrivée. */
