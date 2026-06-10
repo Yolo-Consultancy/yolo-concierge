@@ -271,7 +271,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
                   <select
                     value={reg.countryCode}
                     onChange={(e) => setReg({ ...reg, countryCode: e.target.value })}
-                    className={`bg-[#0f0f0f] border border-white/15 rounded-lg px-3 py-3.5 text-sm text-white focus:outline-none focus:border-[#7dd3fc] w-28 [color-scheme:dark]`}
+                    className={`bg-[#0f0f0f] border border-white/15 rounded-lg px-3 py-3.5 text-sm text-white focus:outline-none focus:border-[#7dd3fc] w-28 scheme-dark`}
                   >
                     <option className={SELECT_OPTION_CLS} value="+243">🇨🇩 +243</option>
                     <option className={SELECT_OPTION_CLS} value="+221">🇸🇳 +221</option>
