@@ -201,7 +201,7 @@ export function BookingModal({
   const [form, setForm] = useState({
     vehicleId: initialVehicle,
     dateRange: "",
-    pickupTime: "12:00",
+    pickupTime: "06:00",
     returnTime: "12:00",
     pickupLocation: "",
     dropoffLocation: "",
