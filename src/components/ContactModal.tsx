@@ -3,6 +3,7 @@ import { useState, useMemo } from "react";
 import { getSettings } from "@/lib/admin/store";
 // (le contact passe désormais par l'e-mail admin configuré côté backend)
 import { toast } from "sonner";
+import { allCountries } from "country-telephone-data";
 
 const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
 
@@ -12,6 +13,19 @@ type ContactModalProps = {
   initialSubject?: string; // e.g. "Devis Déménagement"
 };
 
+// Tri alphabétique de tous les pays du monde
+const sortedCountries = [...allCountries].sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
+
+// Fonction utilitaire pour générer le drapeau émoji à partir de l'ISO 2 (ex: "fr" -> 🇫🇷)
+function getFlagEmoji(countryCode: string) {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+}
 export function ContactModal({
   onClose,
   prefilledVehicle = "",
@@ -180,33 +194,35 @@ export function ContactModal({
                 </div>
               </div>
 
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-white/50 mb-1.5 font-medium">
-                  Téléphone (optionnel)
-                </label>
+               <div>
+                <label className="block text-sm font-medium text-white mb-2">Téléphone <span className="text-red-400">*</span></label>
                 <div className="flex gap-2">
                   <select
                     value={form.countryCode}
-                    onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
-                    className={`${selectCls} w-32`}
+                    onChange={(e) => setForm({ ...form , countryCode: e.target.value })}
+                    className="bg-[#0f0f0f] border border-white/15 rounded-lg px-3 py-3.5 text-sm text-white focus:outline-none focus:border-[#7dd3fc] w-36 scheme-dark"
                   >
-                    <option className={SELECT_OPTION_CLS} value="+243">🇨🇩 +243</option>
-                    <option className={SELECT_OPTION_CLS} value="+221">🇸🇳 +221</option>
-                    <option className={SELECT_OPTION_CLS} value="+225">🇨🇮 +225</option>
-                    <option className={SELECT_OPTION_CLS} value="+33">🇫🇷 +33</option>
-                    <option className={SELECT_OPTION_CLS} value="+32">🇧🇪 +32</option>
-                    <option className={SELECT_OPTION_CLS} value="+1">🇺🇸 +1</option>
+                    {sortedCountries.map((country) => {
+                      const dialCodeWithPlus = `+${country.dialCode}`;
+                      return (
+                        <option
+                          key={`${country.iso2}-${country.dialCode}`}
+                          className={SELECT_OPTION_CLS}
+                          value={dialCodeWithPlus}
+                        >
+                          {getFlagEmoji(country.iso2)} {dialCodeWithPlus} ({country.name})
+                        </option>
+                      );
+                    })}
                   </select>
                   <input
                     type="tel"
                     inputMode="numeric"
+                    maxLength={15}
                     value={form.phone}
-                    onChange={(e) => {
-                      const onlyDigits = e.target.value.replace(/\D/g, "");
-                      setForm({ ...form, phone: onlyDigits });
-                    }}
-                    placeholder="Numéro de téléphone"
-                    className={inputCls}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "") })}
+                    placeholder="828863897"
+                    className={`${inputCls} flex-1`}
                   />
                 </div>
               </div>
