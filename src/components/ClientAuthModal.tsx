@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState } from "react";
 import { registerClient, loginClient, type ClientAccount } from "@/lib/client/auth";
+import { allCountries } from "country-telephone-data";
 
 type Mode = "choice" | "login" | "register";
 
@@ -13,6 +14,20 @@ interface Props {
 const inputCls =
   "w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#7dd3fc]";
 const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
+
+// Tri alphabétique de tous les pays du monde
+const sortedCountries = [...allCountries].sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
+
+// Fonction utilitaire pour générer le drapeau émoji à partir de l'ISO 2 (ex: "fr" -> 🇫🇷)
+function getFlagEmoji(countryCode: string) {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+}
 
 export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props) {
   const [mode, setMode] = useState<Mode>("choice");
@@ -271,26 +286,33 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
                   <select
                     value={reg.countryCode}
                     onChange={(e) => setReg({ ...reg, countryCode: e.target.value })}
-                    className={`bg-[#0f0f0f] border border-white/15 rounded-lg px-3 py-3.5 text-sm text-white focus:outline-none focus:border-[#7dd3fc] w-28 scheme-dark`}
+                    className="bg-[#0f0f0f] border border-white/15 rounded-lg px-3 py-3.5 text-sm text-white focus:outline-none focus:border-[#7dd3fc] w-36 scheme-dark"
                   >
-                    <option className={SELECT_OPTION_CLS} value="+243">🇨🇩 +243</option>
-                    <option className={SELECT_OPTION_CLS} value="+221">🇸🇳 +221</option>
-                    <option className={SELECT_OPTION_CLS} value="+225">🇨🇮 +225</option>
-                    <option className={SELECT_OPTION_CLS} value="+33">🇫🇷 +33</option>
-                    <option className={SELECT_OPTION_CLS} value="+32">🇧🇪 +32</option>
-                    <option className={SELECT_OPTION_CLS} value="+1">🇺🇸 +1</option>
+                    {sortedCountries.map((country) => {
+                      const dialCodeWithPlus = `+${country.dialCode}`;
+                      return (
+                        <option
+                          key={`${country.iso2}-${country.dialCode}`}
+                          className={SELECT_OPTION_CLS}
+                          value={dialCodeWithPlus}
+                        >
+                          {getFlagEmoji(country.iso2)} {dialCodeWithPlus} ({country.name})
+                        </option>
+                      );
+                    })}
                   </select>
                   <input
                     type="tel"
                     inputMode="numeric"
-                    maxLength={10}
+                    maxLength={15}
                     value={reg.phone}
-                    onChange={(e) => setReg({ ...reg, phone: e.target.value.replace(/\D/g, "").slice(0, 10) })}
-                    placeholder="9 à 10 chiffres"
+                    onChange={(e) => setReg({ ...reg, phone: e.target.value.replace(/\D/g, "") })}
+                    placeholder="Numéro"
                     className={`${inputCls} flex-1`}
                   />
                 </div>
               </div>
+
 
               <div>
                 <label className="block text-sm font-medium text-white mb-2">Mot de passe *</label>
