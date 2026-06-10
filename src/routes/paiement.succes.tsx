@@ -10,14 +10,13 @@ export const Route = createFileRoute("/paiement/succes")({
     ],
   }),
   validateSearch: (s: Record<string, unknown>) => ({
-    session_id: typeof s.session_id === "string" ? s.session_id : "",
     booking: typeof s.booking === "string" ? s.booking : "",
   }),
   component: SuccessPage,
 });
 
 function SuccessPage() {
-  const { session_id, booking } = useSearch({ from: "/paiement/succes" });
+  const { booking } = useSearch({ from: "/paiement/succes" });
   return (
     <main className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6">
       <div className="max-w-lg w-full bg-[#111] border border-white/10 rounded-2xl p-10 text-center">
@@ -34,12 +33,7 @@ function SuccessPage() {
             Réservation : <span className="text-sky-300">#{booking.toUpperCase()}</span>
           </p>
         )}
-        {session_id && (
-          <p className="text-[10px] text-white/30 mb-6 break-all">
-            Session Stripe : {session_id}
-          </p>
-        )}
-        <div className="flex gap-3 justify-center">
+        <div className="flex gap-3 justify-center mt-6">
           <Link
             to="/"
             className="px-5 py-2.5 rounded-lg bg-white text-black text-sm font-semibold hover:bg-white/90"

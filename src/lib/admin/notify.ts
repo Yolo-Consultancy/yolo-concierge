@@ -251,7 +251,7 @@ export function buildAdminEmailHtml(booking: Booking): string {
 export async function notifyAdminNewBooking(booking: Booking): Promise<boolean> {
   if (!adminConfig.apiBaseUrl) return false;
   try {
-    const res = await fetch(`${base()}${bookingConfig.payOnline.notifyAdminPath}`, {
+    const res = await fetch(`${base()}${bookingConfig.reservation.notifyAdminPath}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -265,38 +265,4 @@ export async function notifyAdminNewBooking(booking: Booking): Promise<boolean> 
   } catch {
     return false;
   }
-}
-
-/** Crée une session Stripe Checkout et retourne l'URL.
- *  Essaie d'abord l'API Express externe si configurée, sinon la route serveur
- *  interne TanStack (/api/payments/create-checkout-session). */
-export async function createCheckoutSession(booking: Booking): Promise<string | null> {
-  const endpoints: string[] = [];
-  if (adminConfig.apiBaseUrl) {
-    endpoints.push(`${base()}${bookingConfig.payOnline.createSessionPath}`);
-  }
-  endpoints.push(bookingConfig.payOnline.createSessionPath);
-
-  const payload = JSON.stringify({
-    booking,
-    successUrl: `${window.location.origin}${bookingConfig.payOnline.successUrl}`,
-    cancelUrl: `${window.location.origin}${bookingConfig.payOnline.cancelUrl}`,
-    currency: "usd",
-  });
-
-  for (const url of endpoints) {
-    try {
-      const res = await fetch(url, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: payload,
-      });
-      if (!res.ok) continue;
-      const data = (await res.json()) as { url?: string };
-      if (data.url) return data.url;
-    } catch {
-      // try next
-    }
-  }
-  return null;
 }

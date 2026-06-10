@@ -9,7 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { listAvailableDriversForDates, type Driver } from "@/lib/admin/store";
 import { bookingConfig } from "@/config/booking";
 import { upsertBooking, newId, type Booking } from "@/lib/admin/store";
-import { notifyAdminNewBooking, createCheckoutSession } from "@/lib/admin/notify";
+import { notifyAdminNewBooking } from "@/lib/admin/notify";
 import { toast } from "sonner";
 import { ClientAuthModal } from "@/components/ClientAuthModal";
 import { getCurrentClient, type ClientAccount } from "@/lib/client/auth";
@@ -290,27 +290,17 @@ export function BookingModal({
     };
   };
 
-  const handlePayOnline = async () => {
+  const handleConfirmBooking = async () => {
     const booking = buildBooking();
     if (!booking) {
       toast.error("Veuillez compléter les étapes précédentes.");
       return;
     }
     setSubmitting(true);
-    // 1) Persiste la réservation côté admin
     upsertBooking(booking);
-    // 2) Notifie l'admin par e-mail (si backend dispo)
-    notifyAdminNewBooking(booking);
-    // 3) Crée la session Stripe Checkout
-    const url = await createCheckoutSession(booking);
+    await notifyAdminNewBooking(booking);
     setSubmitting(false);
-    if (url) {
-      window.location.href = url;
-      return;
-    }
-    toast.success(
-      "Réservation enregistrée. L'administrateur en a été informé. Le paiement par carte sera disponible après activation du backend."
-    );
+    toast.success("Réservation enregistrée. L'administrateur en a été informé.");
     onClose();
   };
 
@@ -857,13 +847,13 @@ export function BookingModal({
           ) : (
             <button
               disabled={submitting}
-              onClick={handlePayOnline}
+              onClick={handleConfirmBooking}
               className="flex-1 py-3.5 rounded-xl bg-[#7dd3fc] text-black text-sm font-medium hover:bg-white transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" />
               </svg>
-              {submitting ? "Traitement..." : bookingConfig.payOnline.label}
+              {submitting ? "Traitement..." : bookingConfig.reservation.label}
             </button>
           )}
         </div>

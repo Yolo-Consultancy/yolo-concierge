@@ -15,18 +15,9 @@ export const bookingConfig = {
     pricePerDay: 80,
   },
 
-  // Paiement en ligne par carte (Stripe Checkout côté backend Express)
-  payOnline: {
-    label: "Payer par carte",
-    // Endpoint attendu côté backend Node/Express :
-    // POST {apiBaseUrl}/api/payments/create-checkout-session
-    //   → renvoie { url: string }  (URL Stripe Checkout)
-    createSessionPath: "/api/payments/create-checkout-session",
-    // Endpoint de notification admin (fallback si paiement indisponible)
+  reservation: {
+    label: "Confirmer la réservation",
     // POST {apiBaseUrl}/api/notifications/new-booking
     notifyAdminPath: "/api/notifications/new-booking",
-    // Page de retour après paiement
-    successUrl: "/paiement/succes",
-    cancelUrl: "/paiement/annule",
   },
 };
