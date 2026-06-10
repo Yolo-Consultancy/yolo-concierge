@@ -196,18 +196,18 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
           {mode === "login" && (
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Adresse e-mail *</label>
+                <label className="block text-sm font-medium text-white mb-2">Adresse e-mail <span className="text-red-400">*</span></label>
                 <input
                   type="email"
                   required
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  placeholder="vous@exemple.com"
+                  placeholder="claudinekakesa@gmail.com"
                   className={inputCls}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Mot de passe *</label>
+                <label className="block text-sm font-medium text-white mb-2">Mot de passe <span className="text-red-400">*</span></label>
                 <input
                   type="password"
                   required
@@ -247,7 +247,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Prénom *</label>
+                  <label className="block text-sm font-medium text-white mb-2">Prénom <span className="text-red-400">*</span></label>
                   <input
                     required
                     value={reg.firstName}
@@ -257,7 +257,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Nom *</label>
+                  <label className="block text-sm font-medium text-white mb-2">Nom <span className="text-red-400">*</span></label>
                   <input
                     required
                     value={reg.lastName}
@@ -269,19 +269,19 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Adresse e-mail *</label>
+                <label className="block text-sm font-medium text-white mb-2">Adresse e-mail <span className="text-red-400">*</span></label>
                 <input
                   type="email"
                   required
                   value={reg.email}
                   onChange={(e) => setReg({ ...reg, email: e.target.value })}
-                  placeholder="vous@exemple.com"
+                  placeholder="claudinekakesa@gmail.com"
                   className={inputCls}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Téléphone (optionnel)</label>
+                <label className="block text-sm font-medium text-white mb-2">Téléphone <span className="text-red-400">*</span></label>
                 <div className="flex gap-2">
                   <select
                     value={reg.countryCode}
@@ -307,7 +307,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
                     maxLength={15}
                     value={reg.phone}
                     onChange={(e) => setReg({ ...reg, phone: e.target.value.replace(/\D/g, "") })}
-                    placeholder="Numéro"
+                    placeholder="828863897"
                     className={`${inputCls} flex-1`}
                   />
                 </div>
@@ -315,7 +315,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
 
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Mot de passe *</label>
+                <label className="block text-sm font-medium text-white mb-2">Mot de passe <span className="text-red-400">*</span></label>
                 <input
                   type="password"
                   required
@@ -328,7 +328,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Confirmer le mot de passe *</label>
+                <label className="block text-sm font-medium text-white mb-2">Confirmer le mot de passe <span className="text-red-400">*</span></label>
                 <input
                   type="password"
                   required
