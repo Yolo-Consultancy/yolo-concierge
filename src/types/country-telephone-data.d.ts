@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 declare module "country-telephone-data" {
   export interface Country {
     name: string;
