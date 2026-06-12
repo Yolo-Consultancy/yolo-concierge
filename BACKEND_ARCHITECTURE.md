@@ -341,7 +341,7 @@ Erreur (via `ApiError` + middleware) :
    }
    ```
 5. Au premier démarrage, le script de seed crée :
-   - l'admin par défaut (`ADMIN_BOOTSTRAP_EMAIL` / `ADMIN_BOOTSTRAP_PASSWORD`)
+   - l'admin par défaut (`ADMIN_YOLO_EMAIL` / `ADMIN_YOLO_PASSWORD`)
    - le document `Settings` initial
    - les véhicules du seed frontend (`src/lib/vehicles.ts`) pour démarrer avec du contenu.
 
