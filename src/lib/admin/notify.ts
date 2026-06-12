@@ -348,7 +348,8 @@ export async function notifyDriverMissionAssignment(data: {
         booking,
       }),
     });
-    return res.ok;
+    const json = await res.json();
+    return res.ok && (json.success !== false);
   } catch {
     return false;
   }
@@ -368,7 +369,8 @@ export async function notifyAdminNewBooking(booking: Booking): Promise<boolean> 
         booking,
       }),
     });
-    return res.ok;
+    const json = await res.json();
+    return res.ok && (json.success !== false);
   } catch {
     return false;
   }

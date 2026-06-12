@@ -12,10 +12,10 @@ function SettingsPage() {
   const [s, setS] = useState<SiteSettings | null>(null);
   const [saved, setSaved] = useState(false);
 
-  useEffect(() => { setS(getSettings()); }, []);
+  useEffect(() => { getSettings().then(setS); }, []);
   if (!s) return null;
 
-  const save = () => { saveSettings(s); setSaved(true); setTimeout(() => setSaved(false), 2000); };
+  const save = () => { void saveSettings(s).then(() => { setSaved(true); setTimeout(() => setSaved(false), 2000); }); };
 
   return (
     <>

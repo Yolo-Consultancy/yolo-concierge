@@ -27,9 +27,9 @@ function ClientDashboard() {
   const [vehicles, setVehicles] = useState<any[]>([]);
 
   useEffect(() => {
-    setBookings(listBookings());
-    setVehicles(listVehicles());
-  }, []);
+    listBookings({ clientEmail: account.email, clientPhone: account.phone }).then(setBookings);
+    listVehicles().then(setVehicles);
+  }, [account.id]);
 
   // Filter bookings for this client
   const clientBookings = useMemo(() => {

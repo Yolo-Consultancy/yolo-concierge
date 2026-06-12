@@ -5,8 +5,8 @@ import { Trash2, TrendingUp, TrendingDown, Minus, Mail, X } from "lucide-react";
 import { PageHeader } from "@/components/admin/AdminLayout";
 import {
   listBookings, updateBookingStatus, deleteBooking, assignBookingDriver,
-  listAvailableDriversForDates, listDrivers,
-  type Booking, type BookingStatus,
+  listDrivers,
+  type Booking, type BookingStatus, type Driver,
 } from "@/lib/admin/store";
 import { formatPrice } from "@/lib/vehicles";
 import { bookingConfig } from "@/config/booking";
@@ -49,23 +49,40 @@ function PriceDiffBadge({ current, next }: { current: number; next: number }) {
   );
 }
 
+const ACTIVE_STATUSES: BookingStatus[] = ["en_attente", "confirmee", "payee"];
+
+function availableDriversForBooking(bookings: Booking[], drivers: Driver[], b: Booking): Driver[] {
+  return drivers.filter(
+    (d) =>
+      d.active &&
+      !bookings.some(
+        (x) =>
+          x.driverId === d.id &&
+          x.id !== b.id &&
+          ACTIVE_STATUSES.includes(x.status) &&
+          x.startDate <= b.endDate &&
+          x.endDate >= b.startDate,
+      ),
+  );
+}
+
 function Reservations() {
   const [items, setItems] = useState<Booking[]>([]);
-  // Track pending driver selection before save (bookingId → driverId)
+  const [drivers, setDrivers] = useState<Driver[]>([]);
   const [pendingDriver, setPendingDriver] = useState<Record<string, string>>({});
-  // Email preview modal
   const [emailPreview, setEmailPreview] = useState<Booking | null>(null);
 
-  const refresh = () => setItems(listBookings());
+  const refresh = () => {
+    listBookings().then(setItems);
+    listDrivers().then(setDrivers);
+  };
   useEffect(refresh, []);
 
   const C = bookingConfig.currencySymbol;
 
-  const handleDriverChange = (bookingId: string, newDriverId: string) => {
-    // Update pending state for immediate UI feedback
+  const handleDriverChange = async (bookingId: string, newDriverId: string) => {
     setPendingDriver((prev) => ({ ...prev, [bookingId]: newDriverId }));
-    // Persist immediately
-    assignBookingDriver(bookingId, newDriverId);
+    await assignBookingDriver(bookingId, newDriverId);
     refresh();
   };
 
@@ -132,7 +149,7 @@ function Reservations() {
             </thead>
             <tbody>
               {items.map((b) => {
-                const availableDrivers = listAvailableDriversForDates(b.startDate, b.endDate, b.id);
+                const availableDrivers = availableDriversForBooking(items, drivers, b);
                 const pendingId = pendingDriver[b.id] ?? b.driverId;
                 const previewTotal = pendingId !== b.driverId
                   ? computeNewTotal(b, pendingId)
@@ -160,7 +177,7 @@ function Reservations() {
                           <option value="">— Aucun chauffeur —</option>
                           {/* Current driver always shown even if not available on those dates */}
                           {b.driverId && !availableDrivers.find((d) => d.id === b.driverId) && (() => {
-                            const cur = listDrivers().find((d) => d.id === b.driverId);
+                            const cur = drivers.find((d) => d.id === b.driverId);
                             return cur ? (
                               <option key={cur.id} value={cur.id}>
                                 ⚠ {cur.firstName} {cur.lastName} (conflit)
@@ -197,7 +214,7 @@ function Reservations() {
                     <td className="p-3">
                       <select
                         value={b.status}
-                        onChange={(e) => { updateBookingStatus(b.id, e.target.value as BookingStatus); refresh(); }}
+                        onChange={(e) => { void updateBookingStatus(b.id, e.target.value as BookingStatus).then(refresh); }}
                         className={`text-xs px-2 py-1 rounded-md border-0 font-medium ${statusColors[b.status]}`}
                       >
                         {Object.entries(statusLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
@@ -216,7 +233,7 @@ function Reservations() {
                     </td>
                     <td className="p-3">
                       <button
-                        onClick={() => { if (confirm("Supprimer ?")) { deleteBooking(b.id); refresh(); } }}
+                        onClick={() => { if (confirm("Supprimer ?")) void deleteBooking(b.id).then(refresh); }}
                         className="p-1.5 rounded text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="h-4 w-4" />

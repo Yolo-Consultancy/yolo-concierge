@@ -14,7 +14,7 @@ const empty = (): TeamUser => ({ id: newId("u"), name: "", email: "", role: "age
 function UsersPage() {
   const [items, setItems] = useState<TeamUser[]>([]);
   const [editing, setEditing] = useState<TeamUser | null>(null);
-  const refresh = () => setItems(listUsers());
+  const refresh = () => { listUsers().then(setItems); };
   useEffect(refresh, []);
 
   return (
@@ -41,14 +41,14 @@ function UsersPage() {
                 <td className="p-3 text-xs">{u.email}</td>
                 <td className="p-3"><span className="text-xs px-2 py-1 rounded bg-muted">{roleLabels[u.role]}</span></td>
                 <td className="p-3">
-                  <button onClick={() => { upsertUser({ ...u, active: !u.active }); refresh(); }}
+                  <button onClick={() => { void upsertUser({ ...u, active: !u.active }).then(refresh); }}
                     className={`text-xs px-2 py-1 rounded ${u.active ? "bg-emerald-500/15 text-emerald-700" : "bg-muted text-muted-foreground"}`}>
                     {u.active ? "Actif" : "Inactif"}
                   </button>
                 </td>
                 <td className="p-3 text-right">
                   <button onClick={() => setEditing(u)} className="text-xs text-primary hover:underline mr-2">Modifier</button>
-                  <button onClick={() => { if (confirm("Supprimer ?")) { deleteUser(u.id); refresh(); } }}
+                  <button onClick={() => { if (confirm("Supprimer ?")) void deleteUser(u.id).then(refresh); }}
                     className="p-1.5 rounded text-destructive hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
                 </td>
               </tr>
@@ -73,7 +73,7 @@ function UsersPage() {
             </div>
             <div className="border-t border-border px-6 py-4 flex justify-end gap-2">
               <button onClick={() => setEditing(null)} className="rounded-md border border-input px-4 py-2 text-sm hover:bg-muted">Annuler</button>
-              <button onClick={() => { upsertUser(editing); setEditing(null); refresh(); }}
+              <button onClick={() => { void upsertUser(editing).then(() => { setEditing(null); refresh(); }); }}
                 className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90">Enregistrer</button>
             </div>
           </div>

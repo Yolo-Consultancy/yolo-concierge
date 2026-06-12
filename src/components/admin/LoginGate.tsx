@@ -15,18 +15,17 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
   const [loginError, setLoginError]       = useState("");
   const [loginLoading, setLoginLoading]   = useState(false);
 
-  const submitLogin = (e: FormEvent) => {
+  const submitLogin = async (e: FormEvent) => {
     e.preventDefault();
     setLoginError("");
     setLoginLoading(true);
-    setTimeout(() => {
-      if (login(loginEmail, loginPassword)) {
-        onSuccess();
-      } else {
-        setLoginError("Adresse e-mail ou mot de passe incorrect.");
-        setLoginLoading(false);
-      }
-    }, 400);
+    const ok = await login(loginEmail, loginPassword);
+    if (ok) {
+      onSuccess();
+    } else {
+      setLoginError("Adresse e-mail ou mot de passe incorrect.");
+      setLoginLoading(false);
+    }
   };
 
   // ── Inscription ──────────────────────────────────────────────────────────
@@ -38,19 +37,17 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
   const [regError, setRegError]       = useState("");
   const [regLoading, setRegLoading]   = useState(false);
 
-  const submitRegister = (e: FormEvent) => {
+  const submitRegister = async (e: FormEvent) => {
     e.preventDefault();
     setRegError("");
     setRegLoading(true);
-    setTimeout(() => {
-      const err = register(reg);
-      if (err) {
-        setRegError(err);
-        setRegLoading(false);
-      } else {
-        onSuccess();
-      }
-    }, 400);
+    const err = await register(reg);
+    if (err) {
+      setRegError(err);
+      setRegLoading(false);
+    } else {
+      onSuccess();
+    }
   };
 
   // ── Style helpers ────────────────────────────────────────────────────────

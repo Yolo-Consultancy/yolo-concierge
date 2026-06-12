@@ -10,7 +10,7 @@ import {
   X,
   Compass,
 } from "lucide-react";
-import { getCurrentClient, logoutClient, type ClientAccount } from "@/lib/client/auth";
+import { hydrateCurrentClient, logoutClient, type ClientAccount } from "@/lib/client/auth";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 
@@ -43,8 +43,10 @@ function ClientShell() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    setAccount(getCurrentClient());
-    setReady(true);
+    hydrateCurrentClient().then((acc) => {
+      setAccount(acc);
+      setReady(true);
+    });
   }, []);
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { useState, useMemo } from "react";
-import { getSettings } from "@/lib/admin/store";
-// (le contact passe désormais par l'e-mail admin configuré côté backend)
+import { publicApi } from "@/lib/api/client";
 import { toast } from "sonner";
 import { allCountries } from "country-telephone-data";
 
@@ -71,7 +70,7 @@ export function ContactModal({
     return lines.join("\n");
   }, [form, prefilledVehicle]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.message) {
       toast.error("Veuillez remplir les champs obligatoires.");
@@ -79,15 +78,17 @@ export function ContactModal({
     }
 
     try {
-      const settings = getSettings();
-      // Envoi vers l'e-mail de contact configuré (à brancher sur backend Express).
-      console.log("Contact submission →", settings?.contactEmail, summary);
+      await publicApi.post("/contact", {
+        name: form.name,
+        email: form.email,
+        phone: form.phone ? `${form.countryCode} ${form.phone}` : "",
+        subject: form.subject || prefilledVehicle || "Contact YOLO",
+        message: summary,
+      });
       setSubmitted(true);
       toast.success("Votre demande a bien été envoyée à notre équipe.");
-    } catch (err) {
-      console.error("Error submitting contact form", err);
-      setSubmitted(true);
-      toast.success("Demande envoyée avec succès !");
+    } catch {
+      toast.error("Impossible d'envoyer votre message. Réessayez plus tard.");
     }
   };
 

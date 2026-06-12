@@ -11,7 +11,7 @@ import { upsertBooking, newId, type Booking } from "@/lib/admin/store";
 import { notifyAdminNewBooking } from "@/lib/admin/notify";
 import { toast } from "sonner";
 import { ClientAuthModal } from "@/components/ClientAuthModal";
-import { getCurrentClient, type ClientAccount } from "@/lib/client/auth";
+import { getCurrentClient, hydrateCurrentClient, type ClientAccount } from "@/lib/client/auth";
 
 const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
 const KINSHASA_LOCATION_SUGGESTIONS = [
@@ -186,10 +186,15 @@ export function BookingModal({
 }) {
   // ── Auth gate ────────────────────────────────────────────
   // null = not yet decided, ClientAccount = logged in, "guest" = guest
-  const [clientAccount, setClientAccount] = useState<ClientAccount | "guest" | null>(() => {
-    const existing = getCurrentClient();
-    return existing ?? null; // auto-skip auth if already logged in
-  });
+  const [clientAccount, setClientAccount] = useState<ClientAccount | "guest" | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    hydrateCurrentClient().then((acc) => {
+      if (acc) setClientAccount(acc);
+      setAuthChecked(true);
+    });
+  }, []);
 
   const [step, setStep] = useState(0);
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange | undefined>();
@@ -269,13 +274,15 @@ export function BookingModal({
       id: newId("b"),
       vehicleId: selectedVehicle.id,
       vehicleName: `${selectedVehicle.brand} ${selectedVehicle.name}`,
+      clientId: account?.id,
       clientName: `${form.firstName} ${form.lastName}`.trim(),
       clientPhone: form.phone ? `${form.countryCode} ${form.phone}` : "",
-      clientEmail: form.email || undefined,
+      clientEmail: form.email?.trim().toLowerCase() || undefined,
       startDate,
       endDate,
       days,
       pickupLocation: form.pickupLocation,
+      dropoffLocation: form.sameDropoff ? form.pickupLocation : form.dropoffLocation,
       totalPrice: grandTotal,
       withChauffeur: false,
       driverId: "",
@@ -292,13 +299,20 @@ export function BookingModal({
       return;
     }
     setSubmitting(true);
-    upsertBooking(booking);
-    await notifyAdminNewBooking(booking);
-    setSubmitting(false);
-    toast.success("Réservation enregistrée. L'administrateur en a été informé.");
-    onClose();
+    try {
+      const saved = await upsertBooking(booking);
+      await notifyAdminNewBooking(saved);
+      toast.success("Réservation enregistrée. L'administrateur en a été informé.");
+      onClose();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Impossible d'enregistrer la réservation.");
+    } finally {
+      setSubmitting(false);
+    }
   };
 
+
+  if (!authChecked) return null;
 
   // ── Auth gate — show ClientAuthModal if not yet decided ──────────────────
   if (clientAccount === null) {

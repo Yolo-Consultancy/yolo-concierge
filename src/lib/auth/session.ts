@@ -24,10 +24,8 @@ export function logoutSession(role: "client" | "admin" | "all") {
 
 export function subscribeAuth(listener: () => void) {
   const handler = () => listener();
-  window.addEventListener("storage", handler);
   window.addEventListener("yolo-auth-change", handler);
   return () => {
-    window.removeEventListener("storage", handler);
     window.removeEventListener("yolo-auth-change", handler);
   };
 }

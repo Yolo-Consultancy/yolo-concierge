@@ -32,13 +32,13 @@ function ClientReservations() {
   const [activeTab, setActiveTab] = useState<"active" | "history">("active");
 
   const loadData = () => {
-    setBookings(listBookings());
-    setVehicles(listVehicles());
+    listBookings({ clientEmail: account.email, clientPhone: account.phone }).then(setBookings);
+    listVehicles().then(setVehicles);
   };
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [account.id]);
 
   // Filter bookings for this client
   const clientBookings = useMemo(() => {
@@ -75,9 +75,10 @@ function ClientReservations() {
 
   const handleCancelBooking = (bookingId: string) => {
     if (window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ? Cette action est irréversible.")) {
-      updateBookingStatus(bookingId, "annulee");
-      toast.success("Votre demande de réservation a été annulée.");
-      loadData(); // reload store data
+      void updateBookingStatus(bookingId, "annulee").then(() => {
+        toast.success("Votre demande de réservation a été annulée.");
+        loadData();
+      });
     }
   };
 

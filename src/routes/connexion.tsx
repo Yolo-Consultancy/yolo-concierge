@@ -59,35 +59,34 @@ function ConnexionPage() {
     navigate({ to: to as "/admin" | "/client" });
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
-    setTimeout(() => {
-      if (espace === "admin") {
-        if (loginAdmin(loginEmail, loginPassword)) {
-          toast.success("Connexion administrateur réussie.");
-          goAfterLogin("admin");
-        } else {
-          setError("Adresse e-mail ou mot de passe incorrect.");
-          setLoading(false);
-        }
-        return;
-      }
-
-      const result = loginClient(loginEmail, loginPassword);
-      setLoading(false);
-      if (result.ok) {
-        toast.success(`Ravi de vous revoir, ${result.account.firstName} !`);
-        goAfterLogin("client");
+    if (espace === "admin") {
+      const ok = await loginAdmin(loginEmail, loginPassword);
+      if (ok) {
+        toast.success("Connexion administrateur réussie.");
+        goAfterLogin("admin");
       } else {
-        setError(result.error);
+        setError("Adresse e-mail ou mot de passe incorrect.");
+        setLoading(false);
       }
-    }, espace === "admin" ? 400 : 0);
+      return;
+    }
+
+    const result = await loginClient(loginEmail, loginPassword);
+    setLoading(false);
+    if (result.ok) {
+      toast.success(`Ravi de vous revoir, ${result.account.firstName} !`);
+      goAfterLogin("client");
+    } else {
+      setError(result.error);
+    }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
@@ -98,40 +97,38 @@ function ConnexionPage() {
 
     setLoading(true);
 
-    setTimeout(() => {
-      if (espace === "admin") {
-        const err = registerAdmin({
-          name: reg.name,
-          email: reg.email,
-          password: reg.password,
-          confirmPassword: reg.confirmPassword,
-        });
-        if (err) {
-          setError(err);
-          setLoading(false);
-        } else {
-          toast.success("Compte administrateur créé.");
-          goAfterLogin("admin");
-        }
-        return;
-      }
-
-      const result = registerClient({
-        firstName: reg.firstName,
-        lastName: reg.lastName,
+    if (espace === "admin") {
+      const err = await registerAdmin({
+        name: reg.name,
         email: reg.email,
-        phone: reg.phone,
-        countryCode: reg.countryCode,
         password: reg.password,
+        confirmPassword: reg.confirmPassword,
       });
-      setLoading(false);
-      if (result.ok) {
-        toast.success("Votre compte client a été créé.");
-        goAfterLogin("client");
+      if (err) {
+        setError(err);
+        setLoading(false);
       } else {
-        setError(result.error);
+        toast.success("Compte administrateur créé.");
+        goAfterLogin("admin");
       }
-    }, espace === "admin" ? 400 : 0);
+      return;
+    }
+
+    const result = await registerClient({
+      firstName: reg.firstName,
+      lastName: reg.lastName,
+      email: reg.email,
+      phone: reg.phone,
+      countryCode: reg.countryCode,
+      password: reg.password,
+    });
+    setLoading(false);
+    if (result.ok) {
+      toast.success("Votre compte client a été créé.");
+      goAfterLogin("client");
+    } else {
+      setError(result.error);
+    }
   };
 
   return (

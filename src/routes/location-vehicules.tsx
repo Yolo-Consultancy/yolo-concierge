@@ -10,7 +10,7 @@ import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehic
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
 import { ContactModal } from "@/components/ContactModal";
-import { getCurrentClient, type ClientAccount } from "@/lib/client/auth";
+import { hydrateCurrentClient, type ClientAccount } from "@/lib/client/auth";
 import {
   Sheet,
   SheetClose,
@@ -54,8 +54,8 @@ function LocationVehicules() {
   const [client, setClient] = useState<ClientAccount | null>(null);
 
   useEffect(() => {
-    setVehicles(listVehicles());
-    setClient(getCurrentClient());
+    listVehicles().then(setVehicles);
+    hydrateCurrentClient().then(setClient);
   }, []);
 
   const openBooking = (vehicleId?: string) => {

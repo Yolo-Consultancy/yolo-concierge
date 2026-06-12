@@ -30,7 +30,7 @@ function ChauffeursPage() {
   const [editing, setEditing] = useState<Driver | null>(null);
   const [search, setSearch] = useState("");
 
-  const refresh = () => setItems(listDrivers());
+  const refresh = () => { listDrivers().then(setItems); };
   useEffect(refresh, []);
 
   const C = bookingConfig.currencySymbol;
@@ -113,8 +113,7 @@ function ChauffeursPage() {
                       <button
                         onClick={() => {
                           if (confirm("Supprimer ce chauffeur ?")) {
-                            deleteDriver(d.id);
-                            refresh();
+                            void deleteDriver(d.id).then(refresh);
                           }
                         }}
                         className="p-1.5 rounded text-destructive hover:bg-destructive/10"
@@ -245,9 +244,7 @@ function ChauffeursPage() {
                     alert("Prénom, nom et date de recrutement sont requis.");
                     return;
                   }
-                  upsertDriver(editing);
-                  setEditing(null);
-                  refresh();
+                  void upsertDriver(editing).then(() => { setEditing(null); refresh(); });
                 }}
                 className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90"
               >

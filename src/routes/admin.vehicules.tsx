@@ -36,17 +36,17 @@ function VehiculesAdmin() {
   const [items, setItems] = useState<Vehicle[]>([]);
   const [editing, setEditing] = useState<Vehicle | null>(null);
 
-  const refresh = () => setItems(listVehicles());
+  const refresh = () => { listVehicles().then(setItems); };
   useEffect(refresh, []);
 
-  const save = () => {
+  const save = async () => {
     if (!editing) return;
-    upsertVehicle({ ...editing, image: editing.gallery[0] || editing.image });
+    await upsertVehicle({ ...editing, image: editing.gallery[0] || editing.image });
     setEditing(null);
     refresh();
   };
-  const remove = (id: string) => {
-    if (confirm("Supprimer ce véhicule ?")) { deleteVehicle(id); refresh(); }
+  const remove = async (id: string) => {
+    if (confirm("Supprimer ce véhicule ?")) { await deleteVehicle(id); refresh(); }
   };
 
   return (
@@ -57,7 +57,7 @@ function VehiculesAdmin() {
         action={
           <div className="flex gap-2">
             <button
-              onClick={() => { if (confirm("Restaurer la liste par défaut ?")) { resetVehicles(); refresh(); } }}
+              onClick={() => { if (confirm("Restaurer la liste par défaut ?")) void resetVehicles().then(refresh); }}
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-muted"
             >
               <RotateCcw className="h-4 w-4" /> Réinitialiser

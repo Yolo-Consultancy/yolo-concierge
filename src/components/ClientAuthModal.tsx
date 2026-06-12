@@ -50,11 +50,11 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
   const [regError, setRegError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setLoginError("");
-    const result = loginClient(loginEmail, loginPassword);
+    const result = await loginClient(loginEmail, loginPassword);
     setLoading(false);
     if (result.ok) {
       onSuccess(result.account);
@@ -63,7 +63,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
     }
   };
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError("");
     if (reg.password !== reg.confirmPassword) {
@@ -71,7 +71,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
       return;
     }
     setLoading(true);
-    const result = registerClient(reg);
+    const result = await registerClient(reg);
     setLoading(false);
     if (result.ok) {
       onSuccess(result.account);

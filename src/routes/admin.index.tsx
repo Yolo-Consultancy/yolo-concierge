@@ -2,7 +2,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Car, CalendarCheck, Users, TrendingUp } from "lucide-react";
 import { PageHeader } from "@/components/admin/AdminLayout";
-import { listVehicles, listBookings, listClients, listMissions } from "@/lib/admin/store";
+import { listVehicles, listBookings, listClients, listMissions, type Booking } from "@/lib/admin/store";
 import { formatPrice } from "@/lib/vehicles";
 import { useEffect, useState } from "react";
 
@@ -12,22 +12,20 @@ export const Route = createFileRoute("/admin/")({
 
 function Dashboard() {
   const [stats, setStats] = useState({ vehicles: 0, bookings: 0, clients: 0, revenue: 0, pending: 0, missions: 0 });
-  const [recent, setRecent] = useState<ReturnType<typeof listBookings>>([]);
+  const [recent, setRecent] = useState<Booking[]>([]);
 
   useEffect(() => {
-    const v = listVehicles();
-    const b = listBookings();
-    const c = listClients();
-    const m = listMissions();
-    setStats({
-      vehicles: v.length,
-      bookings: b.length,
-      clients: c.length,
-      revenue: b.filter((x) => x.status === "payee" || x.status === "terminee").reduce((s, x) => s + x.totalPrice, 0),
-      pending: b.filter((x) => x.status === "en_attente").length,
-      missions: m.filter((x) => x.status !== "terminee").length,
+    Promise.all([listVehicles(), listBookings(), listClients(), listMissions()]).then(([v, b, c, m]) => {
+      setStats({
+        vehicles: v.length,
+        bookings: b.length,
+        clients: c.length,
+        revenue: b.filter((x) => x.status === "payee" || x.status === "terminee").reduce((s, x) => s + x.totalPrice, 0),
+        pending: b.filter((x) => x.status === "en_attente").length,
+        missions: m.filter((x) => x.status !== "terminee").length,
+      });
+      setRecent(b.slice(0, 5));
     });
-    setRecent(b.slice(0, 5));
   }, []);
 
   const cards = [

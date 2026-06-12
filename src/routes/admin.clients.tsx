@@ -18,7 +18,7 @@ const inputCls = "w-full px-3 py-2 rounded-md border border-input bg-background 
 function ClientsPage() {
   const [items, setItems] = useState<Client[]>([]);
   const [editing, setEditing] = useState<Client | null>(null);
-  const refresh = () => setItems(listClients());
+  const refresh = () => { listClients().then(setItems); };
   useEffect(refresh, []);
 
   return (
@@ -60,7 +60,7 @@ function ClientsPage() {
                   <td className="p-3">
                     <div className="flex gap-1 justify-end">
                       <button onClick={() => setEditing(c)} className="p-1.5 rounded hover:bg-muted"><Pencil className="h-4 w-4" /></button>
-                      <button onClick={() => { if (confirm("Supprimer ?")) { deleteClient(c.id); refresh(); } }}
+                      <button onClick={() => { if (confirm("Supprimer ?")) void deleteClient(c.id).then(refresh); }}
                         className="p-1.5 rounded text-destructive hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
                     </div>
                   </td>
@@ -92,7 +92,7 @@ function ClientsPage() {
             </div>
             <div className="border-t border-border px-6 py-4 flex justify-end gap-2">
               <button onClick={() => setEditing(null)} className="rounded-md border border-input px-4 py-2 text-sm hover:bg-muted">Annuler</button>
-              <button onClick={() => { upsertClient(editing); setEditing(null); refresh(); }}
+              <button onClick={() => { void upsertClient(editing).then(() => { setEditing(null); refresh(); }); }}
                 className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90">Enregistrer</button>
             </div>
           </div>
