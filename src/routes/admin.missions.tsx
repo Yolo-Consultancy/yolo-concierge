@@ -68,13 +68,18 @@ function MissionsPage() {
       const driver = drivers.find((d) => d.id === saved.assigneeId);
 
       if (saved.emailSent) {
-        toast.success(`Mission enregistrée. E-mail envoyé à ${driver?.firstName ?? "le chauffeur"}.`);
+        const target = driver?.email || "le chauffeur";
+        toast.success(`Mission enregistrée. E-mail envoyé à ${target}.`, {
+          description: saved.emailPreviewUrl ? "Aperçu (dev) disponible dans la console backend." : undefined,
+        });
       } else if (saved.assigneeId && saved.emailReason === "no_driver_email") {
         toast.warning("Mission enregistrée. Ajoutez un e-mail au chauffeur pour l'avertir.");
       } else if (saved.assigneeId && saved.emailReason === "no_booking") {
         toast.warning("Mission enregistrée. Associez une réservation pour envoyer les détails.");
       } else if (saved.assigneeId && saved.emailReason === "smtp_not_configured") {
-        toast.warning("Mission enregistrée. Configurez SMTP dans le backend pour envoyer les e-mails.");
+        toast.warning("Mission enregistrée. Ajoutez MAIL_HOST/MAIL_USER/MAIL_PASS dans yolo-backend/.env");
+      } else if (saved.assigneeId && saved.emailReason) {
+        toast.error(`Mission enregistrée, mais e-mail non envoyé : ${saved.emailReason}`);
       } else if (saved.assigneeId && !saved.emailSent) {
         toast.warning("Mission enregistrée, mais l'e-mail n'a pas pu être envoyé.");
       } else {

@@ -200,6 +200,7 @@ export type Mission = {
 export type MissionSaveResult = Mission & {
   emailSent?: boolean;
   emailReason?: string;
+  emailPreviewUrl?: string;
 };
 
 export async function listMissions(): Promise<Mission[]> {

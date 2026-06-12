@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { api, setAccessToken, getAccessToken } from "@/lib/api/client";
+import { api, setAccessToken, getAccessToken, refreshAdminAccessToken } from "@/lib/api/client";
 
 export type AdminUser = {
   id: string;
@@ -13,15 +13,29 @@ export function isAuthenticated(): boolean {
   return !!getAccessToken();
 }
 
-/** Vérifie que le JWT admin en session est encore valide côté API. */
+/** Vérifie que la session admin est valide (refresh cookie + JWT). */
 export async function validateAdminSession(): Promise<boolean> {
-  if (!getAccessToken()) return false;
+  if (!getAccessToken()) {
+    const refreshed = await refreshAdminAccessToken();
+    if (!refreshed) return false;
+  }
+
   try {
     await api.get<AdminUser>("/auth/me");
     return true;
   } catch {
-    setAccessToken(null);
-    return false;
+    const refreshed = await refreshAdminAccessToken();
+    if (!refreshed) {
+      setAccessToken(null);
+      return false;
+    }
+    try {
+      await api.get<AdminUser>("/auth/me");
+      return true;
+    } catch {
+      setAccessToken(null);
+      return false;
+    }
   }
 }
 

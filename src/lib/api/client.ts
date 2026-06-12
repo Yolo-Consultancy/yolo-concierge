@@ -46,7 +46,36 @@ function apiUrl(path: string) {
   return `${base}${normalized}`;
 }
 
-async function request<T>(path: string, init?: RequestInit, scope: TokenScope = "admin"): Promise<T> {
+type RequestInitWithRetry = RequestInit & { _retried?: boolean };
+
+let refreshInFlight: Promise<boolean> | null = null;
+
+/** Renouvelle le JWT admin via le cookie httpOnly refresh (7 jours). */
+export async function refreshAdminAccessToken(): Promise<boolean> {
+  if (refreshInFlight) return refreshInFlight;
+
+  refreshInFlight = (async () => {
+    try {
+      const res = await fetch(apiUrl("/auth/refresh"), {
+        method: "POST",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+      });
+      const json = (await res.json()) as ApiEnvelope<{ accessToken: string }>;
+      if (!res.ok || !json.success) return false;
+      setAccessToken(json.data.accessToken);
+      return true;
+    } catch {
+      return false;
+    } finally {
+      refreshInFlight = null;
+    }
+  })();
+
+  return refreshInFlight;
+}
+
+async function request<T>(path: string, init?: RequestInitWithRetry, scope: TokenScope = "admin"): Promise<T> {
   if (!adminConfig.apiBaseUrl) {
     throw new Error("apiBaseUrl non configuré (src/config/admin.ts)");
   }
@@ -68,6 +97,12 @@ async function request<T>(path: string, init?: RequestInit, scope: TokenScope = 
 
   const json = (await res.json()) as ApiEnvelope<T>;
   if (!res.ok || !json.success) {
+    if (res.status === 401 && scope === "admin" && !init?._retried) {
+      const refreshed = await refreshAdminAccessToken();
+      if (refreshed) {
+        return request<T>(path, { ...init, _retried: true }, scope);
+      }
+    }
     if (res.status === 401 && scope === "admin") {
       setAccessToken(null);
       if (typeof window !== "undefined") {
