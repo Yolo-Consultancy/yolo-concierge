@@ -13,6 +13,18 @@ export function isAuthenticated(): boolean {
   return !!getAccessToken();
 }
 
+/** Vérifie que le JWT admin en session est encore valide côté API. */
+export async function validateAdminSession(): Promise<boolean> {
+  if (!getAccessToken()) return false;
+  try {
+    await api.get<AdminUser>("/auth/me");
+    return true;
+  } catch {
+    setAccessToken(null);
+    return false;
+  }
+}
+
 export async function login(email: string, password: string): Promise<boolean> {
   try {
     const result = await api.post<{ accessToken: string; user: AdminUser }>("/auth/login", {

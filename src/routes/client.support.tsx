@@ -16,12 +16,14 @@ import {
   resetSupportMessages,
   type ChatMessage,
 } from "@/lib/client/support";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 
 export const Route = createFileRoute("/client/support")({
   component: ClientSupport,
 });
 
 function ClientSupport() {
+  const { ask, dialog } = useConfirmDialog();
   const { account } = useClientAccount() as { account: ClientAccount };
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState("");
@@ -54,15 +56,22 @@ function ClientSupport() {
     }
   };
 
-  const handleClearHistory = async () => {
-    if (!window.confirm("Voulez-vous réinitialiser l'historique du chat de support ?")) return;
-    try {
-      const updated = await resetSupportMessages();
-      setMessages(updated);
-      toast.success("Historique du chat réinitialisé.");
-    } catch {
-      toast.error("Réinitialisation impossible.");
-    }
+  const handleClearHistory = () => {
+    ask({
+      title: "Effacer l'historique du chat ?",
+      description: "Tous vos messages de support seront supprimés. Le concierge vous enverra un nouveau message de bienvenue.",
+      confirmLabel: "Effacer",
+      variant: "warning",
+      onConfirm: async () => {
+        try {
+          const updated = await resetSupportMessages();
+          setMessages(updated);
+          toast.success("Historique du chat réinitialisé.");
+        } catch {
+          toast.error("Réinitialisation impossible.");
+        }
+      },
+    });
   };
 
   const suggestions = [
@@ -77,6 +86,7 @@ function ClientSupport() {
   }
 
   return (
+    <>
     <div className="flex-1 flex flex-col h-[calc(100vh-10rem)] max-h-[800px] min-h-[500px]">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-white/5 shrink-0">
         <div>
@@ -156,5 +166,7 @@ function ClientSupport() {
         </form>
       </div>
     </div>
+    {dialog}
+    </>
   );
 }

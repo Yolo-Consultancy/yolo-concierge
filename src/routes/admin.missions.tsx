@@ -4,11 +4,10 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, X } from "lucide-react";
 import { PageHeader } from "@/components/admin/AdminLayout";
 import {
-  listMissions, upsertMission, deleteMission, listBookings, listDrivers,
+  listMissions, upsertMission, deleteMission, listBookings, listDrivers, listBusyDriverIds,
   type Mission, type MissionStatus, type Booking, type Driver,
 } from "@/lib/admin/store";
-import { notifyDriverMissionAssignment } from "@/lib/admin/notify";
-import { adminConfig } from "@/config/admin";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/missions")({ component: MissionsPage });
@@ -29,58 +28,62 @@ const empty = (): Mission => ({
 });
 
 function MissionsPage() {
+  const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Mission[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [editing, setEditing] = useState<Mission | null>(null);
   const [saving, setSaving] = useState(false);
+  const [busyDriverIds, setBusyDriverIds] = useState<string[]>([]);
   const activeDrivers = drivers.filter((d) => d.active);
 
   const refresh = () => {
     listMissions().then(setItems);
     listBookings().then(setBookings);
     listDrivers().then(setDrivers);
+    listBusyDriverIds(editing?.id).then(setBusyDriverIds);
   };
   useEffect(refresh, []);
+
+  useEffect(() => {
+    if (editing) listBusyDriverIds(editing.id).then(setBusyDriverIds);
+  }, [editing?.id]);
 
   const handleSave = async () => {
     if (!editing) return;
 
-    const previous = items.find((m) => m.id === editing.id);
-    const assigneeChanged = previous?.assigneeId !== editing.assigneeId;
-    const shouldNotify = !!editing.assigneeId && (!previous || assigneeChanged);
+    if (editing.assigneeId && busyDriverIds.includes(editing.assigneeId)) {
+      toast.error("Ce chauffeur a déjà une mission en cours. Choisissez un autre chauffeur.");
+      return;
+    }
+
+    if (!editing.bookingId && editing.assigneeId) {
+      toast.error("Associez une réservation avant d'affecter un chauffeur.");
+      return;
+    }
 
     setSaving(true);
     try {
-      await upsertMission(editing);
+      const saved = await upsertMission(editing);
+      const driver = drivers.find((d) => d.id === saved.assigneeId);
+
+      if (saved.emailSent) {
+        toast.success(`Mission enregistrée. E-mail envoyé à ${driver?.firstName ?? "le chauffeur"}.`);
+      } else if (saved.assigneeId && saved.emailReason === "no_driver_email") {
+        toast.warning("Mission enregistrée. Ajoutez un e-mail au chauffeur pour l'avertir.");
+      } else if (saved.assigneeId && saved.emailReason === "no_booking") {
+        toast.warning("Mission enregistrée. Associez une réservation pour envoyer les détails.");
+      } else if (saved.assigneeId && saved.emailReason === "smtp_not_configured") {
+        toast.warning("Mission enregistrée. Configurez SMTP dans le backend pour envoyer les e-mails.");
+      } else if (saved.assigneeId && !saved.emailSent) {
+        toast.warning("Mission enregistrée, mais l'e-mail n'a pas pu être envoyé.");
+      } else {
+        toast.success("Mission enregistrée.");
+      }
     } catch (err) {
       setSaving(false);
       toast.error(err instanceof Error ? err.message : "Impossible d'enregistrer la mission.");
       return;
-    }
-
-    if (shouldNotify) {
-      const driver = drivers.find((d) => d.id === editing.assigneeId);
-      const booking = bookings.find((b) => b.id === editing.bookingId);
-
-      if (!driver?.email.trim()) {
-        toast.warning("Mission enregistrée. Ajoutez un e-mail au chauffeur pour l'avertir.");
-      } else if (!booking) {
-        toast.warning("Mission enregistrée. Associez une réservation pour envoyer les détails.");
-      } else if (!adminConfig.apiBaseUrl) {
-        toast.info(
-          `Mission enregistrée. L'e-mail à ${driver.email} sera envoyé après activation du backend.`
-        );
-      } else {
-        const sent = await notifyDriverMissionAssignment({ mission: editing, driver, booking });
-        if (sent) {
-          toast.success(`E-mail de mission envoyé à ${driver.firstName} ${driver.lastName}.`);
-        } else {
-          toast.error("Mission enregistrée, mais l'envoi de l'e-mail a échoué.");
-        }
-      }
-    } else {
-      toast.success("Mission enregistrée.");
     }
 
     setSaving(false);
@@ -120,8 +123,15 @@ function MissionsPage() {
               </div>
               <div className="mt-4 flex gap-2">
                 <button onClick={() => setEditing(m)} className="flex-1 text-xs rounded-md border border-input px-3 py-1.5 hover:bg-muted">Modifier</button>
-                <button onClick={() => { if (confirm("Supprimer ?")) void deleteMission(m.id).then(refresh); }}
-                  className="p-1.5 rounded text-destructive hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
+                <button
+                  onClick={() => ask({
+                    title: "Supprimer cette mission ?",
+                    description: "Cette action est définitive. La mission sera retirée du suivi terrain.",
+                    confirmLabel: "Supprimer",
+                    onConfirm: () => deleteMission(m.id).then(refresh),
+                  })}
+                  className="p-1.5 rounded text-destructive hover:bg-destructive/10"
+                ><Trash2 className="h-4 w-4" /></button>
               </div>
             </div>
           );
@@ -171,12 +181,24 @@ function MissionsPage() {
                       </option>
                     ) : null;
                   })()}
-                {activeDrivers.map((d) => (
-                  <option key={d.id} value={d.id}>
-                    {d.firstName} {d.lastName}{d.email ? ` · ${d.email}` : " (sans e-mail)"}
-                  </option>
-                ))}
+                {activeDrivers.map((d) => {
+                  const isBusy = busyDriverIds.includes(d.id);
+                  const isCurrent = d.id === editing.assigneeId;
+                  return (
+                    <option key={d.id} value={d.id} disabled={isBusy && !isCurrent}>
+                      {d.firstName} {d.lastName}
+                      {isBusy && !isCurrent ? " (mission en cours)" : ""}
+                      {!isBusy && !d.email ? " (sans e-mail)" : ""}
+                      {!isBusy && d.email ? ` · ${d.email}` : ""}
+                    </option>
+                  );
+                })}
               </select>
+              {busyDriverIds.length > 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Les chauffeurs avec une mission <strong>en cours</strong> sont désactivés.
+                </p>
+              )}
               <input type="datetime-local" className={inputCls}
                 value={editing.scheduledAt.slice(0, 16)}
                 onChange={(e) => setEditing({ ...editing, scheduledAt: new Date(e.target.value).toISOString() })} />
@@ -213,6 +235,7 @@ function MissionsPage() {
           </div>
         </div>
       )}
+      {dialog}
     </>
   );
 }

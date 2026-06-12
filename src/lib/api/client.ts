@@ -68,6 +68,12 @@ async function request<T>(path: string, init?: RequestInit, scope: TokenScope = 
 
   const json = (await res.json()) as ApiEnvelope<T>;
   if (!res.ok || !json.success) {
+    if (res.status === 401 && scope === "admin") {
+      setAccessToken(null);
+      if (typeof window !== "undefined") {
+        window.dispatchEvent(new Event("yolo-auth-change"));
+      }
+    }
     throw new Error(json.error?.message || `API ${res.status}`);
   }
   return json.data;

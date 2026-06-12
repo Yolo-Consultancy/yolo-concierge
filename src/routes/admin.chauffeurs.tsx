@@ -6,6 +6,7 @@ import { PageHeader } from "@/components/admin/AdminLayout";
 import { listDrivers, upsertDriver, deleteDriver, newId, type Driver } from "@/lib/admin/store";
 import { formatPrice } from "@/lib/vehicles";
 import { bookingConfig } from "@/config/booking";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 
 export const Route = createFileRoute("/admin/chauffeurs")({ component: ChauffeursPage });
 
@@ -26,6 +27,7 @@ const empty = (): Driver => ({
 });
 
 function ChauffeursPage() {
+  const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Driver[]>([]);
   const [editing, setEditing] = useState<Driver | null>(null);
   const [search, setSearch] = useState("");
@@ -111,11 +113,12 @@ function ChauffeursPage() {
                         <Pencil className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => {
-                          if (confirm("Supprimer ce chauffeur ?")) {
-                            void deleteDriver(d.id).then(refresh);
-                          }
-                        }}
+                        onClick={() => ask({
+                          title: "Supprimer ce chauffeur ?",
+                          description: `${d.firstName} ${d.lastName} sera définitivement retiré de l'équipe.`,
+                          confirmLabel: "Supprimer",
+                          onConfirm: () => deleteDriver(d.id).then(refresh),
+                        })}
                         className="p-1.5 rounded text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -254,6 +257,7 @@ function ChauffeursPage() {
           </div>
         </div>
       )}
+      {dialog}
     </>
   );
 }

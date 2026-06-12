@@ -1,5 +1,14 @@
 /* eslint-disable prettier/prettier */
 import { api, getAccessToken, publicApi } from "@/lib/api/client";
+
+async function withAdminAuth<T>(call: () => Promise<T>, fallback: T): Promise<T> {
+  if (!getAccessToken()) return fallback;
+  try {
+    return await call();
+  } catch {
+    return fallback;
+  }
+}
 import { bookingConfig } from "@/config/booking";
 import { vehicles as seedVehicles, type Vehicle } from "@/lib/vehicles";
 
@@ -57,7 +66,9 @@ export type Booking = {
 export type ListBookingsOptions = { clientEmail?: string; clientPhone?: string };
 
 export async function listBookings(opts?: ListBookingsOptions): Promise<Booking[]> {
-  if (getAccessToken()) return api.get<Booking[]>("/bookings");
+  if (getAccessToken()) {
+    return withAdminAuth(() => api.get<Booking[]>("/bookings"), []);
+  }
   if (opts?.clientEmail || opts?.clientPhone) {
     const params = new URLSearchParams();
     if (opts.clientEmail) params.set("clientEmail", opts.clientEmail);
@@ -133,7 +144,7 @@ export type Client = {
 };
 
 export async function listClients(): Promise<Client[]> {
-  return api.get<Client[]>("/clients");
+  return withAdminAuth(() => api.get<Client[]>("/clients"), []);
 }
 
 export async function upsertClient(c: Client): Promise<Client> {
@@ -159,7 +170,7 @@ export type TeamUser = {
 };
 
 export async function listUsers(): Promise<TeamUser[]> {
-  return api.get<TeamUser[]>("/users");
+  return withAdminAuth(() => api.get<TeamUser[]>("/users"), []);
 }
 
 export async function upsertUser(u: TeamUser): Promise<TeamUser> {
@@ -186,8 +197,13 @@ export type Mission = {
   notes: string;
 };
 
+export type MissionSaveResult = Mission & {
+  emailSent?: boolean;
+  emailReason?: string;
+};
+
 export async function listMissions(): Promise<Mission[]> {
-  return api.get<Mission[]>("/missions");
+  return withAdminAuth(() => api.get<Mission[]>("/missions"), []);
 }
 
 function isMongoId(id: string) {
@@ -199,11 +215,16 @@ function toMissionPayload(m: Mission) {
   return payload;
 }
 
-export async function upsertMission(m: Mission): Promise<Mission> {
+export async function upsertMission(m: Mission): Promise<MissionSaveResult> {
   const payload = toMissionPayload(m);
   return isMongoId(m.id)
-    ? api.put<Mission>(`/missions/${m.id}`, payload)
-    : api.post<Mission>("/missions", payload);
+    ? api.put<MissionSaveResult>(`/missions/${m.id}`, payload)
+    : api.post<MissionSaveResult>("/missions", payload);
+}
+
+export async function listBusyDriverIds(excludeMissionId?: string): Promise<string[]> {
+  const q = excludeMissionId ? `?excludeMissionId=${excludeMissionId}` : "";
+  return withAdminAuth(() => api.get<string[]>(`/missions/busy-drivers${q}`), []);
 }
 
 export async function deleteMission(id: string): Promise<void> {

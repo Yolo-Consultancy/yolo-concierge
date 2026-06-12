@@ -15,17 +15,22 @@ function Dashboard() {
   const [recent, setRecent] = useState<Booking[]>([]);
 
   useEffect(() => {
-    Promise.all([listVehicles(), listBookings(), listClients(), listMissions()]).then(([v, b, c, m]) => {
-      setStats({
-        vehicles: v.length,
-        bookings: b.length,
-        clients: c.length,
-        revenue: b.filter((x) => x.status === "payee" || x.status === "terminee").reduce((s, x) => s + x.totalPrice, 0),
-        pending: b.filter((x) => x.status === "en_attente").length,
-        missions: m.filter((x) => x.status !== "terminee").length,
+    void Promise.all([listVehicles(), listBookings(), listClients(), listMissions()])
+      .then(([v, b, c, m]) => {
+        setStats({
+          vehicles: v.length,
+          bookings: b.length,
+          clients: c.length,
+          revenue: b.filter((x) => x.status === "payee" || x.status === "terminee").reduce((s, x) => s + x.totalPrice, 0),
+          pending: b.filter((x) => x.status === "en_attente").length,
+          missions: m.filter((x) => x.status !== "terminee").length,
+        });
+        setRecent(b.slice(0, 5));
+      })
+      .catch(() => {
+        setStats({ vehicles: 0, bookings: 0, clients: 0, revenue: 0, pending: 0, missions: 0 });
+        setRecent([]);
       });
-      setRecent(b.slice(0, 5));
-    });
   }, []);
 
   const cards = [

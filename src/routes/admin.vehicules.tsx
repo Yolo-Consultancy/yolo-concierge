@@ -8,6 +8,7 @@ import {
   listVehicles, upsertVehicle, deleteVehicle, resetVehicles, newId,
 } from "@/lib/admin/store";
 import { formatPrice, type Vehicle } from "@/lib/vehicles";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 
 export const Route = createFileRoute("/admin/vehicules")({
   component: VehiculesAdmin,
@@ -33,6 +34,7 @@ const emptyVehicle = (): Vehicle => ({
 });
 
 function VehiculesAdmin() {
+  const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Vehicle[]>([]);
   const [editing, setEditing] = useState<Vehicle | null>(null);
 
@@ -45,8 +47,13 @@ function VehiculesAdmin() {
     setEditing(null);
     refresh();
   };
-  const remove = async (id: string) => {
-    if (confirm("Supprimer ce véhicule ?")) { await deleteVehicle(id); refresh(); }
+  const remove = (id: string, name: string) => {
+    ask({
+      title: "Supprimer ce véhicule ?",
+      description: `${name} sera retiré du catalogue public. Cette action est irréversible.`,
+      confirmLabel: "Supprimer",
+      onConfirm: async () => { await deleteVehicle(id); refresh(); },
+    });
   };
 
   return (
@@ -57,7 +64,13 @@ function VehiculesAdmin() {
         action={
           <div className="flex gap-2">
             <button
-              onClick={() => { if (confirm("Restaurer la liste par défaut ?")) void resetVehicles().then(refresh); }}
+              onClick={() => ask({
+                title: "Restaurer le catalogue par défaut ?",
+                description: "Tous les véhicules actuels seront supprimés et remplacés par la liste initiale YOLO.",
+                confirmLabel: "Restaurer",
+                variant: "warning",
+                onConfirm: () => resetVehicles().then(refresh),
+              })}
               className="inline-flex items-center gap-2 rounded-md border border-input bg-background px-3 py-2 text-sm hover:bg-muted"
             >
               <RotateCcw className="h-4 w-4" /> Réinitialiser
@@ -87,7 +100,7 @@ function VehiculesAdmin() {
                   className="flex-1 inline-flex items-center justify-center gap-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs hover:bg-muted">
                   <Pencil className="h-3 w-3" /> Modifier
                 </button>
-                <button onClick={() => remove(v.id)}
+                <button onClick={() => remove(v.id, v.name)}
                   className="inline-flex items-center justify-center gap-1 rounded-md border border-destructive/30 text-destructive px-2 py-1.5 text-xs hover:bg-destructive/10">
                   <Trash2 className="h-3 w-3" />
                 </button>
@@ -98,6 +111,7 @@ function VehiculesAdmin() {
       </div>
 
       {editing && <VehicleForm value={editing} onChange={setEditing} onClose={() => setEditing(null)} onSave={save} />}
+      {dialog}
     </>
   );
 }

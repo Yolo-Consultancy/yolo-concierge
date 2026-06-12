@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, X } from "lucide-react";
 import { PageHeader } from "@/components/admin/AdminLayout";
 import { listClients, upsertClient, deleteClient, newId, type Client } from "@/lib/admin/store";
 import { formatPrice } from "@/lib/vehicles";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 
 export const Route = createFileRoute("/admin/clients")({ component: ClientsPage });
 
@@ -16,6 +17,7 @@ const empty = (): Client => ({
 const inputCls = "w-full px-3 py-2 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring";
 
 function ClientsPage() {
+  const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Client[]>([]);
   const [editing, setEditing] = useState<Client | null>(null);
   const refresh = () => { listClients().then(setItems); };
@@ -60,8 +62,15 @@ function ClientsPage() {
                   <td className="p-3">
                     <div className="flex gap-1 justify-end">
                       <button onClick={() => setEditing(c)} className="p-1.5 rounded hover:bg-muted"><Pencil className="h-4 w-4" /></button>
-                      <button onClick={() => { if (confirm("Supprimer ?")) void deleteClient(c.id).then(refresh); }}
-                        className="p-1.5 rounded text-destructive hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
+                      <button
+                        onClick={() => ask({
+                          title: "Supprimer ce client ?",
+                          description: `${c.firstName} ${c.lastName} sera définitivement retiré du CRM.`,
+                          confirmLabel: "Supprimer",
+                          onConfirm: () => deleteClient(c.id).then(refresh),
+                        })}
+                        className="p-1.5 rounded text-destructive hover:bg-destructive/10"
+                      ><Trash2 className="h-4 w-4" /></button>
                     </div>
                   </td>
                 </tr>
@@ -98,6 +107,7 @@ function ClientsPage() {
           </div>
         </div>
       )}
+      {dialog}
     </>
   );
 }

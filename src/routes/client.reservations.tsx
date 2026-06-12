@@ -19,6 +19,7 @@ import { listBookings, listVehicles, updateBookingStatus, type Booking } from "@
 import { formatPrice } from "@/lib/vehicles";
 import type { ClientAccount } from "@/lib/client/auth";
 import { toast } from "sonner";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import { useClientAccount } from "./client";
 
 export const Route = createFileRoute("/client/reservations")({
@@ -26,6 +27,7 @@ export const Route = createFileRoute("/client/reservations")({
 });
 
 function ClientReservations() {
+  const { ask, dialog } = useConfirmDialog();
   const { account } = useClientAccount() as { account: ClientAccount };
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [vehicles, setVehicles] = useState<any[]>([]);
@@ -73,13 +75,16 @@ function ClientReservations() {
 
   const displayedBookings = activeTab === "active" ? activeBookings : historyBookings;
 
-  const handleCancelBooking = (bookingId: string) => {
-    if (window.confirm("Êtes-vous sûr de vouloir annuler cette réservation ? Cette action est irréversible.")) {
-      void updateBookingStatus(bookingId, "annulee").then(() => {
+  const handleCancelBooking = (bookingId: string, vehicleName: string) => {
+    ask({
+      title: "Annuler cette réservation ?",
+      description: `Votre demande pour ${vehicleName} sera annulée. Cette action est irréversible.`,
+      confirmLabel: "Annuler la réservation",
+      onConfirm: () => updateBookingStatus(bookingId, "annulee").then(() => {
         toast.success("Votre demande de réservation a été annulée.");
         loadData();
-      });
-    }
+      }),
+    });
   };
 
   const getVehicleData = (vehicleId: string) => {
@@ -228,7 +233,7 @@ function ClientReservations() {
                       {/* Only allow cancelling pending reservations */}
                       {b.status === "en_attente" && (
                         <button
-                          onClick={() => handleCancelBooking(b.id)}
+                          onClick={() => handleCancelBooking(b.id, b.vehicleName)}
                           className="px-4 py-2 rounded-xl border border-red-500/30 bg-red-500/5 text-red-400 hover:bg-red-500/10 text-xs font-semibold transition cursor-pointer"
                         >
                           Annuler ma demande
@@ -266,6 +271,7 @@ function ClientReservations() {
           </Link>
         </div>
       )}
+      {dialog}
     </div>
   );
 }

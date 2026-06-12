@@ -11,6 +11,7 @@ import {
 import { formatPrice } from "@/lib/vehicles";
 import { bookingConfig } from "@/config/booking";
 import { buildAdminEmailHtml } from "@/lib/admin/notify";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 
 export const Route = createFileRoute("/admin/reservations")({ component: Reservations });
 
@@ -67,6 +68,7 @@ function availableDriversForBooking(bookings: Booking[], drivers: Driver[], b: B
 }
 
 function Reservations() {
+  const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Booking[]>([]);
   const [drivers, setDrivers] = useState<Driver[]>([]);
   const [pendingDriver, setPendingDriver] = useState<Record<string, string>>({});
@@ -233,7 +235,12 @@ function Reservations() {
                     </td>
                     <td className="p-3">
                       <button
-                        onClick={() => { if (confirm("Supprimer ?")) void deleteBooking(b.id).then(refresh); }}
+                        onClick={() => ask({
+                          title: "Supprimer cette réservation ?",
+                          description: `La réservation de ${b.clientName} (${b.vehicleName}) sera définitivement supprimée.`,
+                          confirmLabel: "Supprimer",
+                          onConfirm: () => deleteBooking(b.id).then(refresh),
+                        })}
                         className="p-1.5 rounded text-destructive hover:bg-destructive/10"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -249,6 +256,7 @@ function Reservations() {
           </table>
         </div>
       </div>
+      {dialog}
     </>
   );
 }

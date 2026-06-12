@@ -2,7 +2,8 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { isAuthenticated } from "@/lib/admin/auth";
+import { validateAdminSession } from "@/lib/admin/auth";
+import { subscribeAuth } from "@/lib/auth/session";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -20,18 +21,28 @@ function AdminShell() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setAuthed(isAuthenticated());
-    setReady(true);
-  }, []);
+    let cancelled = false;
 
-  useEffect(() => {
-    if (ready && !authed) {
-      navigate({
-        to: "/connexion",
-        search: { espace: "admin", redirect: "/admin" },
-      });
-    }
-  }, [ready, authed, navigate]);
+    const check = async () => {
+      const ok = await validateAdminSession();
+      if (cancelled) return;
+      setAuthed(ok);
+      setReady(true);
+      if (!ok) {
+        navigate({
+          to: "/connexion",
+          search: { espace: "admin", redirect: "/admin" },
+        });
+      }
+    };
+
+    void check();
+    const unsub = subscribeAuth(() => { void check(); });
+    return () => {
+      cancelled = true;
+      unsub();
+    };
+  }, [navigate]);
 
   if (!ready || !authed) return null;
 

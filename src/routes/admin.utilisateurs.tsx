@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash2, X } from "lucide-react";
 import { PageHeader } from "@/components/admin/AdminLayout";
 import { listUsers, upsertUser, deleteUser, newId, type TeamUser, type UserRole } from "@/lib/admin/store";
+import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 
 export const Route = createFileRoute("/admin/utilisateurs")({ component: UsersPage });
 
@@ -12,6 +13,7 @@ const roleLabels: Record<UserRole, string> = { admin: "Administrateur", agent: "
 const empty = (): TeamUser => ({ id: newId("u"), name: "", email: "", role: "agent", active: true, createdAt: new Date().toISOString().slice(0, 10) });
 
 function UsersPage() {
+  const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<TeamUser[]>([]);
   const [editing, setEditing] = useState<TeamUser | null>(null);
   const refresh = () => { listUsers().then(setItems); };
@@ -48,8 +50,15 @@ function UsersPage() {
                 </td>
                 <td className="p-3 text-right">
                   <button onClick={() => setEditing(u)} className="text-xs text-primary hover:underline mr-2">Modifier</button>
-                  <button onClick={() => { if (confirm("Supprimer ?")) void deleteUser(u.id).then(refresh); }}
-                    className="p-1.5 rounded text-destructive hover:bg-destructive/10"><Trash2 className="h-4 w-4" /></button>
+                  <button
+                    onClick={() => ask({
+                      title: "Supprimer cet utilisateur ?",
+                      description: `${u.name} sera définitivement retiré de l'équipe YOLO.`,
+                      confirmLabel: "Supprimer",
+                      onConfirm: () => deleteUser(u.id).then(refresh),
+                    })}
+                    className="p-1.5 rounded text-destructive hover:bg-destructive/10"
+                  ><Trash2 className="h-4 w-4" /></button>
                 </td>
               </tr>
             ))}
@@ -79,6 +88,7 @@ function UsersPage() {
           </div>
         </div>
       )}
+      {dialog}
     </>
   );
 }
