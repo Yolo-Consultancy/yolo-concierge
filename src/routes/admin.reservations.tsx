@@ -12,6 +12,7 @@ import { formatPrice } from "@/lib/vehicles";
 import { bookingConfig } from "@/config/booking";
 import { buildAdminEmailHtml } from "@/lib/admin/notify";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/reservations")({ component: Reservations });
 
@@ -216,7 +217,22 @@ function Reservations() {
                     <td className="p-3">
                       <select
                         value={b.status}
-                        onChange={(e) => { void updateBookingStatus(b.id, e.target.value as BookingStatus).then(refresh); }}
+                        onChange={(e) => {
+                          void updateBookingStatus(b.id, e.target.value as BookingStatus).then((saved) => {
+                            refresh();
+                            const result = saved as Booking & { clientEmailSent?: boolean; clientEmailReason?: string };
+                            if (result.clientEmailSent) {
+                              toast.success(`Statut mis à jour. E-mail envoyé à ${b.clientEmail || b.clientName}.`);
+                            } else if (result.clientEmailReason === "no_client_email") {
+                              toast.warning("Statut mis à jour. Le client n'a pas d'e-mail enregistré.");
+                            } else if (e.target.value !== b.status) {
+                              toast.success("Statut mis à jour.");
+                            }
+                          }).catch((err) => {
+                            toast.error(err instanceof Error ? err.message : "Impossible de changer le statut.");
+                            refresh();
+                          });
+                        }}
                         className={`text-xs px-2 py-1 rounded-md border-0 font-medium ${statusColors[b.status]}`}
                       >
                         {Object.entries(statusLabels).map(([k, v]) => <option key={k} value={k}>{v}</option>)}

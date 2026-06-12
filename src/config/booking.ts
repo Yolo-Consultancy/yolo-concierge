@@ -5,7 +5,7 @@ export const bookingConfig = {
   currencySymbol: "$",
 
   // Email destinataire pour les notifications de nouvelles réservations
-  adminNotificationEmail: "admin@yolo.cd",
+  adminNotificationEmail: "contact@yololeconcierge.com",
 
   // Option "Chauffeur"
   chauffeur: {

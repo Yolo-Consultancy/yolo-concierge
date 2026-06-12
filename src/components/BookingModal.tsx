@@ -8,7 +8,6 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { bookingConfig } from "@/config/booking";
 import { upsertBooking, newId, type Booking } from "@/lib/admin/store";
-import { notifyAdminNewBooking } from "@/lib/admin/notify";
 import { toast } from "sonner";
 import { ClientAuthModal } from "@/components/ClientAuthModal";
 import { getCurrentClient, hydrateCurrentClient, type ClientAccount } from "@/lib/client/auth";
@@ -301,8 +300,12 @@ export function BookingModal({
     setSubmitting(true);
     try {
       const saved = await upsertBooking(booking);
-      await notifyAdminNewBooking(saved);
-      toast.success("Réservation enregistrée. L'administrateur en a été informé.");
+      const notified = (saved as { adminEmailSent?: boolean }).adminEmailSent;
+      toast.success(
+        notified
+          ? "Réservation enregistrée. L'administrateur a reçu un e-mail."
+          : "Réservation enregistrée.",
+      );
       onClose();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Impossible d'enregistrer la réservation.");
