@@ -118,10 +118,14 @@ function toBookingPayload(b: Booking) {
 }
 
 export async function upsertBooking(b: Booking): Promise<Booking> {
+  const payload = toBookingPayload(b);
   if (b.id && !b.id.startsWith("b-")) {
-    return api.put<Booking>(`/bookings/${b.id}`, toBookingPayload(b));
+    return api.put<Booking>(`/bookings/${b.id}`, payload);
   }
-  return publicApi.post<Booking>("/bookings", toBookingPayload(b));
+  if (getAccessToken()) {
+    return api.post<Booking>("/bookings", payload);
+  }
+  return publicApi.post<Booking>("/bookings", payload);
 }
 
 export async function deleteBooking(id: string): Promise<void> {
