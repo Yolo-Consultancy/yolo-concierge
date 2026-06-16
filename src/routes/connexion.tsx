@@ -3,7 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { registerClient } from "@/lib/client/auth";
-import { loginUnified, redirectPathForRole, welcomeMessage } from "@/lib/auth/unified-login";
+import { loginUnified, resolvePostLoginPath, welcomeMessage } from "@/lib/auth/unified-login";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -50,9 +50,8 @@ function ConnexionPage() {
 
   const goAfterLogin = (role: "admin" | "client" | "driver") => {
     notifyAuthChange();
-    const fallback = redirectPathForRole(role);
-    const to = redirect?.startsWith("/") ? redirect : fallback;
-    navigate({ to: to as "/admin" | "/client" | "/driver" });
+    const to = resolvePostLoginPath(role, redirect);
+    navigate({ to });
   };
 
   const handleLogin = async (e: React.FormEvent) => {

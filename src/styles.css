@@ -58,8 +58,8 @@
    ============================================================ */
 :root {
   /* Familles de polices */
-  --font-display-family: 'Playfair Display', Georgia, serif;
-  --font-body-family: 'Inter', system-ui, sans-serif;
+  --font-display-family: 'Roboto', system-ui, sans-serif;
+  --font-body-family: 'Lato', system-ui, sans-serif;
   --font-mono-family: 'JetBrains Mono', ui-monospace, monospace;
 
   /* Tailles de titres (clamp = responsive auto) */

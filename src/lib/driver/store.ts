@@ -14,6 +14,9 @@ export type DriverMission = {
   clientName: string;
   vehicleName: string;
   pickupLocation: string;
+  dropoffLocation: string;
+  startDate: string;
+  endDate: string;
   hasReport: boolean;
 };
 

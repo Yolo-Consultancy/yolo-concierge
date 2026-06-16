@@ -19,6 +19,14 @@ export async function listVehicles(): Promise<Vehicle[]> {
   return publicApi.get<Vehicle[]>("/vehicles");
 }
 
+export async function getVehicleById(id: string): Promise<Vehicle | null> {
+  try {
+    return await publicApi.get<Vehicle>(`/vehicles/${encodeURIComponent(id)}`);
+  } catch {
+    return null;
+  }
+}
+
 export async function saveVehicles(list: Vehicle[]): Promise<void> {
   for (const v of list) await api.put(`/vehicles/${v.id}`, v);
 }

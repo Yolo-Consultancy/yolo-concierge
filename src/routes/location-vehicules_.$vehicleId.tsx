@@ -2,7 +2,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { getVehicle, formatPrice, type Vehicle } from "@/lib/vehicles";
+import { getVehicleById, type Vehicle } from "@/lib/admin/store";
+import { formatPrice } from "@/lib/vehicles";
 import { BookingModal } from "@/components/BookingModal";
 import { ContactModal } from "@/components/ContactModal";
 import {
@@ -14,8 +15,8 @@ import {
 } from "@/components/ui/sheet";
 
 export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
-  loader: ({ params }): { vehicle: Vehicle } => {
-    const vehicle = getVehicle(params.vehicleId);
+  loader: async ({ params }): Promise<{ vehicle: Vehicle }> => {
+    const vehicle = await getVehicleById(params.vehicleId);
     if (!vehicle) throw notFound();
     return { vehicle };
   },

@@ -16,6 +16,10 @@ type AuthResponse = { accessToken: string; account: DriverAccount };
 
 let cachedAccount: DriverAccount | null = null;
 
+export function setCachedDriverAccount(account: DriverAccount | null) {
+  cachedAccount = account;
+}
+
 export function getCurrentDriver(): DriverAccount | null {
   return cachedAccount;
 }

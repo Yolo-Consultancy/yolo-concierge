@@ -3,7 +3,6 @@ import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tan
 import { useEffect, useState, createContext, useContext } from "react";
 import {
   LayoutDashboard,
-  ClipboardList,
   LogOut,
   Menu,
   X,

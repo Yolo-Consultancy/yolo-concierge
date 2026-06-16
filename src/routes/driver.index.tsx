@@ -1,23 +1,38 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { ClipboardList, FileText, X, Star } from "lucide-react";
+import {
+  ClipboardList,
+  FileText,
+  X,
+  Star,
+  History,
+  MapPin,
+  Calendar,
+  Car,
+} from "lucide-react";
 import { useDriverAccount } from "@/routes/driver";
 import { listDriverMissions, submitTripReport, type DriverMission } from "@/lib/driver/store";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/driver/")({ component: DriverDashboard });
 
+type Tab = "en_cours" | "historique";
+
 const statusLabels: Record<string, string> = {
-  a_affecter: "À affecter",
   en_cours: "En cours",
   terminee: "Terminée",
 };
 
 const statusColors: Record<string, string> = {
-  a_affecter: "bg-amber-500/15 text-amber-400 border-amber-500/20",
   en_cours: "bg-blue-500/15 text-blue-400 border-blue-500/20",
   terminee: "bg-emerald-500/15 text-emerald-400 border-emerald-500/20",
+};
+
+const typeLabels: Record<string, string> = {
+  livraison: "Livraison véhicule",
+  chauffeur: "Course chauffeur",
+  recuperation: "Récupération",
 };
 
 const inputCls =
@@ -27,6 +42,7 @@ function DriverDashboard() {
   const { account } = useDriverAccount();
   const [missions, setMissions] = useState<DriverMission[]>([]);
   const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState<Tab>("en_cours");
   const [reporting, setReporting] = useState<DriverMission | null>(null);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -45,6 +61,10 @@ function DriverDashboard() {
   };
 
   useEffect(refresh, []);
+
+  const activeMissions = missions.filter((m) => m.status === "en_cours");
+  const historyMissions = missions.filter((m) => m.status === "terminee");
+  const displayed = tab === "en_cours" ? activeMissions : historyMissions;
 
   const openReport = (mission: DriverMission) => {
     setReporting(mission);
@@ -73,6 +93,7 @@ function DriverDashboard() {
           : "Le client recevra un e-mail de notation dans 15 minutes (si son e-mail est renseigné).",
       });
       setReporting(null);
+      setTab("historique");
       refresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Envoi impossible.");
@@ -81,9 +102,6 @@ function DriverDashboard() {
     }
   };
 
-  const activeMissions = missions.filter((m) => m.status === "en_cours");
-  const pastMissions = missions.filter((m) => m.status !== "en_cours");
-
   return (
     <div className="max-w-4xl mx-auto w-full">
       <div className="mb-8">
@@ -91,43 +109,70 @@ function DriverDashboard() {
           Bonjour, {account?.firstName}
         </h1>
         <p className="text-white/50 text-sm mt-2">
-          Clôturez vos courses en cours en envoyant un rapport à l'équipe YOLO.
+          Vos missions assignées par YOLO Le Concierge.
         </p>
       </div>
 
-      {loading ? (
-        <p className="text-white/40 text-sm">Chargement...</p>
-      ) : (
-        <>
-          <section className="mb-10">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-white mb-4">
-              <ClipboardList className="h-5 w-5 text-amber-400" />
-              Missions en cours
-            </h2>
-            {activeMissions.length === 0 ? (
-              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-center text-white/40 text-sm">
-                Aucune mission en cours pour le moment.
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {activeMissions.map((m) => (
-                  <MissionCard key={m.id} mission={m} onReport={() => openReport(m)} />
-                ))}
-              </div>
-            )}
-          </section>
+      {/* Stats */}
+      <div className="grid grid-cols-2 gap-4 mb-8">
+        <div className="rounded-2xl border border-blue-500/20 bg-blue-500/5 p-4">
+          <p className="text-xs uppercase tracking-wider text-blue-400/80">En cours</p>
+          <p className="text-3xl font-bold text-white mt-1">{activeMissions.length}</p>
+        </div>
+        <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+          <p className="text-xs uppercase tracking-wider text-emerald-400/80">Terminées</p>
+          <p className="text-3xl font-bold text-white mt-1">{historyMissions.length}</p>
+        </div>
+      </div>
 
-          {pastMissions.length > 0 && (
-            <section>
-              <h2 className="text-lg font-semibold text-white/70 mb-4">Historique récent</h2>
-              <div className="space-y-3">
-                {pastMissions.slice(0, 10).map((m) => (
-                  <MissionCard key={m.id} mission={m} compact />
-                ))}
-              </div>
-            </section>
-          )}
-        </>
+      {/* Tabs */}
+      <div className="flex gap-2 mb-6 p-1 rounded-xl bg-white/5 border border-white/10">
+        <button
+          type="button"
+          onClick={() => setTab("en_cours")}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            tab === "en_cours"
+              ? "bg-amber-400 text-black shadow"
+              : "text-white/50 hover:text-white"
+          }`}
+        >
+          <ClipboardList className="h-4 w-4" />
+          En cours ({activeMissions.length})
+        </button>
+        <button
+          type="button"
+          onClick={() => setTab("historique")}
+          className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-sm font-medium transition-all ${
+            tab === "historique"
+              ? "bg-amber-400 text-black shadow"
+              : "text-white/50 hover:text-white"
+          }`}
+        >
+          <History className="h-4 w-4" />
+          Historique ({historyMissions.length})
+        </button>
+      </div>
+
+      {loading ? (
+        <p className="text-white/40 text-sm">Chargement de vos missions...</p>
+      ) : displayed.length === 0 ? (
+        <div className="rounded-2xl border border-white/10 bg-white/2 p-10 text-center">
+          <p className="text-white/40 text-sm">
+            {tab === "en_cours"
+              ? "Aucune mission en cours pour le moment."
+              : "Aucune mission terminée dans votre historique."}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {displayed.map((m) => (
+            <MissionCard
+              key={m.id}
+              mission={m}
+              onReport={tab === "en_cours" ? () => openReport(m) : undefined}
+            />
+          ))}
+        </div>
       )}
 
       {reporting && (
@@ -225,38 +270,57 @@ function DriverDashboard() {
 function MissionCard({
   mission,
   onReport,
-  compact,
 }: {
   mission: DriverMission;
   onReport?: () => void;
-  compact?: boolean;
 }) {
   const canReport = mission.status === "en_cours" && !mission.hasReport;
+  const dateRange =
+    mission.startDate && mission.endDate
+      ? `${formatDate(mission.startDate)} → ${formatDate(mission.endDate)}`
+      : null;
 
   return (
-    <div
-      className={`rounded-2xl border border-white/10 bg-white/[0.02] ${
-        compact ? "p-4" : "p-5"
-      }`}
-    >
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <p className="font-medium text-white">{mission.clientName || "Client"}</p>
-          <p className="text-sm text-white/50">{mission.vehicleName || "Véhicule"}</p>
-          {!compact && mission.pickupLocation && (
-            <p className="text-xs text-white/35 mt-1">{mission.pickupLocation}</p>
-          )}
-          <p className="text-xs text-white/30 mt-1">
-            {new Date(mission.scheduledAt).toLocaleString("fr-FR")}
+    <div className="rounded-2xl border border-white/10 bg-white/2 p-5">
+      <div className="flex flex-wrap items-start justify-between gap-3 mb-3">
+        <div className="min-w-0 flex-1">
+          <p className="font-semibold text-white text-lg">{mission.clientName || "Client"}</p>
+          <p className="text-sm text-amber-400/90 mt-0.5">
+            {typeLabels[mission.type] || mission.type}
           </p>
         </div>
         <span
-          className={`text-xs font-medium px-2.5 py-1 rounded-full border ${
+          className={`text-xs font-medium px-2.5 py-1 rounded-full border shrink-0 ${
             statusColors[mission.status] || "bg-white/5 text-white/50"
           }`}
         >
           {statusLabels[mission.status] || mission.status}
         </span>
+      </div>
+
+      <div className="space-y-1.5 text-sm text-white/55">
+        <p className="flex items-center gap-2">
+          <Car className="h-3.5 w-3.5 text-white/30 shrink-0" />
+          {mission.vehicleName || "Véhicule non renseigné"}
+        </p>
+        {mission.pickupLocation && (
+          <p className="flex items-start gap-2">
+            <MapPin className="h-3.5 w-3.5 text-white/30 shrink-0 mt-0.5" />
+            <span>
+              {mission.pickupLocation}
+              {mission.dropoffLocation ? ` → ${mission.dropoffLocation}` : ""}
+            </span>
+          </p>
+        )}
+        {dateRange && (
+          <p className="flex items-center gap-2">
+            <Calendar className="h-3.5 w-3.5 text-white/30 shrink-0" />
+            {dateRange}
+          </p>
+        )}
+        <p className="text-xs text-white/35">
+          Planifiée le {new Date(mission.scheduledAt).toLocaleString("fr-FR")}
+        </p>
       </div>
 
       {canReport && onReport && (
@@ -269,8 +333,16 @@ function MissionCard({
         </button>
       )}
       {mission.hasReport && mission.status === "terminee" && (
-        <p className="mt-3 text-xs text-emerald-400/80">Rapport envoyé</p>
+        <p className="mt-3 text-xs text-emerald-400/80 flex items-center gap-1.5">
+          <FileText className="h-3.5 w-3.5" />
+          Rapport envoyé à l'administration
+        </p>
       )}
     </div>
   );
+}
+
+function formatDate(iso: string) {
+  const [y, m, d] = iso.split("-");
+  return d && m && y ? `${d}/${m}/${y}` : iso;
 }

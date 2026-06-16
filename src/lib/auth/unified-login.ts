@@ -7,6 +7,7 @@ import {
   setAdminCanRefresh,
   clearAllLocalSessions,
 } from "@/lib/api/client";
+import { setCachedDriverAccount } from "@/lib/driver/auth";
 import type { ClientAccount } from "@/lib/client/auth";
 import type { DriverAccount } from "@/lib/driver/auth";
 import type { AdminUser } from "@/lib/admin/auth";
@@ -42,6 +43,7 @@ export async function loginUnified(email: string, password: string): Promise<Uni
 
     if (result.role === "driver") {
       setDriverAccessToken(result.accessToken);
+      setCachedDriverAccount(result.account);
       return { ok: true, role: "driver", account: result.account };
     }
 
@@ -59,6 +61,19 @@ export function redirectPathForRole(role: UserRole): "/admin" | "/client" | "/dr
   if (role === "admin") return "/admin";
   if (role === "driver") return "/driver";
   return "/client";
+}
+
+/** Redirection post-connexion : respecte `redirect` seulement s'il correspond au rôle. */
+export function resolvePostLoginPath(
+  role: UserRole,
+  redirect?: string,
+): "/admin" | "/client" | "/driver" {
+  const fallback = redirectPathForRole(role);
+  if (!redirect?.startsWith("/")) return fallback;
+  if (role === "driver" && redirect.startsWith("/driver")) return redirect as "/driver";
+  if (role === "admin" && redirect.startsWith("/admin")) return redirect as "/admin";
+  if (role === "client" && redirect.startsWith("/client")) return redirect as "/client";
+  return fallback;
 }
 
 export function welcomeMessage(result: Extract<UnifiedLoginResult, { ok: true }>): string {
