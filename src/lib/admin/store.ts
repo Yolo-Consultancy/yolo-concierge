@@ -132,6 +132,15 @@ export async function deleteBooking(id: string): Promise<void> {
   await api.del(`/bookings/${id}`);
 }
 
+export type OccupiedDateRange = { startDate: string; endDate: string };
+
+export async function getVehicleOccupiedDates(vehicleId: string): Promise<OccupiedDateRange[]> {
+  if (!vehicleId) return [];
+  return publicApi.get<OccupiedDateRange[]>(
+    `/bookings/occupied-dates?vehicleId=${encodeURIComponent(vehicleId)}`,
+  );
+}
+
 /* ============================================================
    CLIENTS
    ============================================================ */
@@ -296,4 +305,48 @@ export async function toggleDriverActive(id: string): Promise<Driver> {
 
 export function newId(prefix: string) {
   return `${prefix}-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 5)}`;
+}
+
+/* ============================================================
+   RAPPORTS DE FIN DE COURSE
+   ============================================================ */
+export type TripReport = {
+  id: string;
+  missionId: string;
+  driverId: string;
+  bookingId: string;
+  clientName: string;
+  clientEmail: string;
+  driverName: string;
+  vehicleName: string;
+  notes: string;
+  incidents: string;
+  odometerEnd?: number;
+  fuelLevel: string;
+  status: "soumis" | "lu";
+  ratingEmailSent: boolean;
+  submittedAt: string;
+  createdAt: string;
+};
+
+export async function listTripReports(): Promise<TripReport[]> {
+  return api.get<TripReport[]>("/trip-reports");
+}
+
+export async function markTripReportRead(id: string): Promise<TripReport> {
+  return api.patch<TripReport>(`/trip-reports/${id}/read`, {});
+}
+
+export type ClientRating = {
+  id: string;
+  clientName: string;
+  driverName: string;
+  serviceScore: number;
+  driverScore: number;
+  comment: string;
+  submittedAt: string;
+};
+
+export async function listRatings(): Promise<ClientRating[]> {
+  return api.get<ClientRating[]>("/ratings");
 }

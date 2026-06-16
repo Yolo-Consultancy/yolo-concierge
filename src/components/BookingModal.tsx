@@ -7,7 +7,8 @@ import { vehicles as defaultVehicles, formatPrice, type Vehicle } from "@/lib/ve
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { bookingConfig } from "@/config/booking";
-import { upsertBooking, newId, type Booking } from "@/lib/admin/store";
+import { upsertBooking, getVehicleOccupiedDates, newId, type Booking } from "@/lib/admin/store";
+import { expandOccupiedDates } from "@/lib/booking-dates";
 import { toast } from "sonner";
 import { ClientAuthModal } from "@/components/ClientAuthModal";
 import { getCurrentClient, hydrateCurrentClient, type ClientAccount } from "@/lib/client/auth";
@@ -197,6 +198,13 @@ export function BookingModal({
 
   const [step, setStep] = useState(0);
   const [selectedDateRange, setSelectedDateRange] = useState<DateRange | undefined>();
+  const [occupiedRanges, setOccupiedRanges] = useState<{ startDate: string; endDate: string }[]>([]);
+  const [loadingOccupied, setLoadingOccupied] = useState(false);
+
+  const occupiedDates = useMemo(
+    () => expandOccupiedDates(occupiedRanges),
+    [occupiedRanges],
+  );
 
   // Pre-fill form from account if available
   const account = clientAccount && clientAccount !== "guest" ? clientAccount : null;
@@ -214,6 +222,18 @@ export function BookingModal({
     phone: account?.phone ?? "",
     countryCode: account?.countryCode ?? "+243",
   });
+
+  useEffect(() => {
+    if (!form.vehicleId) {
+      setOccupiedRanges([]);
+      return;
+    }
+    setLoadingOccupied(true);
+    getVehicleOccupiedDates(form.vehicleId)
+      .then(setOccupiedRanges)
+      .catch(() => setOccupiedRanges([]))
+      .finally(() => setLoadingOccupied(false));
+  }, [form.vehicleId]);
 
   // When auth resolves, pre-fill form if we got an account
   const handleAuthSuccess = (acc: ClientAccount) => {
@@ -444,20 +464,30 @@ export function BookingModal({
                       onSelect={handleDateRangeSelect}
                       numberOfMonths={1}
                       locale={fr}
-                      disabled={{ before: new Date() }}
+                      disabled={[{ before: new Date() }, ...occupiedDates]}
+                      modifiers={{ occupied: occupiedDates }}
+                      modifiersClassNames={{
+                        occupied:
+                          "text-red-400 underline decoration-red-500 decoration-2 font-medium opacity-100",
+                      }}
                       className="bg-[#0f0f0f] text-white"
                       classNames={{
                         caption_label: "text-white",
                         day: "text-white",
                         weekday: "text-white/50",
                         outside: "text-white/25",
-                        disabled: "text-white/20",
+                        disabled: "text-red-400/70 underline decoration-red-500/80 line-through opacity-60",
                         today: "bg-white/10 text-white",
                         range_start: "bg-[#7dd3fc] text-black rounded-l-md",
                         range_middle: "bg-[#7dd3fc]/20 text-white rounded-none",
                         range_end: "bg-[#7dd3fc] text-black rounded-r-md",
                       }}
                     />
+                    <p className="border-t border-white/10 px-4 py-2.5 text-xs text-white/50">
+                      {loadingOccupied
+                        ? "Chargement des disponibilités…"
+                        : "Dates soulignées en rouge : véhicule déjà réservé (non sélectionnable)."}
+                    </p>
                   </PopoverContent>
                 </Popover>
                 <p className="text-xs text-white/40 mt-2 flex items-center gap-1.5">

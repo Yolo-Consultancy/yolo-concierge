@@ -2,7 +2,7 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard, Car, CalendarCheck, Users, UserCog,
-  ClipboardList, Settings, LogOut, Menu, X, IdCard,
+  ClipboardList, Settings, LogOut, Menu, X, IdCard, FileText,
 } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { adminConfig } from "@/config/admin";
@@ -17,6 +17,7 @@ const nav: NavItem[] = [
   { to: "/admin/clients", label: "Clients", icon: Users },
   { to: "/admin/chauffeurs", label: "Chauffeurs", icon: IdCard },
   { to: "/admin/missions", label: "Missions", icon: ClipboardList },
+  { to: "/admin/rapports", label: "Rapports", icon: FileText },
   { to: "/admin/utilisateurs", label: "Équipe YOLO", icon: UserCog },
   { to: "/admin/parametres", label: "Paramètres", icon: Settings },
 ];
@@ -29,7 +30,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   const handleLogout = () => {
     logout();
     notifyAuthChange();
-    navigate({ to: "/connexion", search: { espace: "admin", redirect: "/admin" } });
+    navigate({ to: "/connexion", search: { redirect: "/admin" } });
   };
 
   const isActive = (to: string, exact?: boolean) =>

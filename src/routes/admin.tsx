@@ -31,7 +31,7 @@ function AdminShell() {
       if (!ok) {
         navigate({
           to: "/connexion",
-          search: { espace: "admin", redirect: "/admin" },
+          search: { redirect: "/admin" },
         });
       }
     };

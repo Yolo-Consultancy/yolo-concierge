@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
-import { api, setAccessToken, getAccessToken, refreshAdminAccessToken } from "@/lib/api/client";
+import { api, setAccessToken, getAccessToken, getAdminCanRefresh, refreshAdminAccessToken, setAdminCanRefresh, publicApi } from "@/lib/api/client";
+import { adminConfig } from "@/config/admin";
 
 export type AdminUser = {
   id: string;
@@ -15,6 +16,8 @@ export function isAuthenticated(): boolean {
 
 /** Vérifie que la session admin est valide (refresh cookie + JWT). */
 export async function validateAdminSession(): Promise<boolean> {
+  if (!getAccessToken() && !getAdminCanRefresh()) return false;
+
   if (!getAccessToken()) {
     const refreshed = await refreshAdminAccessToken();
     if (!refreshed) return false;
@@ -41,11 +44,12 @@ export async function validateAdminSession(): Promise<boolean> {
 
 export async function login(email: string, password: string): Promise<boolean> {
   try {
-    const result = await api.post<{ accessToken: string; user: AdminUser }>("/auth/login", {
+    const result = await publicApi.post<{ accessToken: string; user: AdminUser }>("/auth/login", {
       email,
       password,
     });
     setAccessToken(result.accessToken);
+    setAdminCanRefresh(true);
     return true;
   } catch {
     return false;
@@ -63,6 +67,17 @@ export async function register(_data: {
 
 export function logout() {
   if (typeof window === "undefined") return;
+  const token = getAccessToken();
   setAccessToken(null);
-  api.post("/auth/logout").catch(() => {});
+  setAdminCanRefresh(false);
+  if (token) {
+    fetch(`${adminConfig.apiBaseUrl.replace(/\/$/, "")}/api/v1/auth/logout`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    }).catch(() => {});
+  }
 }

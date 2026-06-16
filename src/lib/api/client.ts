@@ -4,6 +4,8 @@ import { adminConfig } from "@/config/admin";
 const API_PREFIX = "/api/v1";
 const ADMIN_TOKEN_KEY = "yolo.admin.accessToken";
 const CLIENT_TOKEN_KEY = "yolo.client.accessToken";
+const DRIVER_TOKEN_KEY = "yolo.driver.accessToken";
+const ADMIN_REFRESH_KEY = "yolo.admin.canRefresh";
 
 type ApiEnvelope<T> = {
   success: boolean;
@@ -12,7 +14,7 @@ type ApiEnvelope<T> = {
   error?: { code: string; message: string; details?: unknown[] };
 };
 
-type TokenScope = "admin" | "client" | "none";
+type TokenScope = "admin" | "client" | "driver" | "none";
 
 function storage() {
   return typeof window !== "undefined" ? window.sessionStorage : null;
@@ -40,6 +42,37 @@ export function setClientAccessToken(token: string | null) {
   else s.removeItem(CLIENT_TOKEN_KEY);
 }
 
+export function getDriverAccessToken(): string | null {
+  return storage()?.getItem(DRIVER_TOKEN_KEY) ?? null;
+}
+
+export function setDriverAccessToken(token: string | null) {
+  const s = storage();
+  if (!s) return;
+  if (token) s.setItem(DRIVER_TOKEN_KEY, token);
+  else s.removeItem(DRIVER_TOKEN_KEY);
+}
+
+/** Indique qu'une session admin avec cookie refresh peut exister. */
+export function getAdminCanRefresh(): boolean {
+  return storage()?.getItem(ADMIN_REFRESH_KEY) === "1";
+}
+
+export function setAdminCanRefresh(value: boolean) {
+  const s = storage();
+  if (!s) return;
+  if (value) s.setItem(ADMIN_REFRESH_KEY, "1");
+  else s.removeItem(ADMIN_REFRESH_KEY);
+}
+
+/** Efface toutes les sessions locales (sans appel API). */
+export function clearAllLocalSessions() {
+  setAccessToken(null);
+  setAdminCanRefresh(false);
+  setClientAccessToken(null);
+  setDriverAccessToken(null);
+}
+
 function apiUrl(path: string) {
   const base = adminConfig.apiBaseUrl.replace(/\/$/, "");
   const normalized = path.startsWith(API_PREFIX) ? path : `${API_PREFIX}${path.startsWith("/") ? path : `/${path}`}`;
@@ -52,6 +85,7 @@ let refreshInFlight: Promise<boolean> | null = null;
 
 /** Renouvelle le JWT admin via le cookie httpOnly refresh (7 jours). */
 export async function refreshAdminAccessToken(): Promise<boolean> {
+  if (!getAccessToken() && !getAdminCanRefresh()) return false;
   if (refreshInFlight) return refreshInFlight;
 
   refreshInFlight = (async () => {
@@ -62,7 +96,10 @@ export async function refreshAdminAccessToken(): Promise<boolean> {
         headers: { "Content-Type": "application/json" },
       });
       const json = (await res.json()) as ApiEnvelope<{ accessToken: string }>;
-      if (!res.ok || !json.success) return false;
+      if (!res.ok || !json.success) {
+        if (res.status === 401) setAdminCanRefresh(false);
+        return false;
+      }
       setAccessToken(json.data.accessToken);
       return true;
     } catch {
@@ -82,6 +119,7 @@ async function request<T>(path: string, init?: RequestInitWithRetry, scope: Toke
 
   const token =
     scope === "client" ? getClientAccessToken() :
+    scope === "driver" ? getDriverAccessToken() :
     scope === "admin" ? getAccessToken() :
     null;
 
@@ -105,6 +143,7 @@ async function request<T>(path: string, init?: RequestInitWithRetry, scope: Toke
     }
     if (res.status === 401 && scope === "admin") {
       setAccessToken(null);
+      setAdminCanRefresh(false);
       if (typeof window !== "undefined") {
         window.dispatchEvent(new Event("yolo-auth-change"));
       }
@@ -132,7 +171,13 @@ export const clientApi = {
   del: <T>(path: string) => request<T>(path, { method: "DELETE" }, "client"),
 };
 
-/** Appels publics sans token admin/client. */
+export const driverApi = {
+  get: <T>(path: string) => request<T>(path, undefined, "driver"),
+  post: <T>(path: string, body?: unknown) =>
+    request<T>(path, { method: "POST", body: body !== undefined ? JSON.stringify(body) : undefined }, "driver"),
+};
+
+/** Appels publics sans token admin/client/chauffeur. */
 export const publicApi = {
   get: <T>(path: string) => request<T>(path, undefined, "none"),
   post: <T>(path: string, body?: unknown) =>

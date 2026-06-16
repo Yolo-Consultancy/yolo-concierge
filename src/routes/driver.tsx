@@ -3,47 +3,41 @@ import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tan
 import { useEffect, useState, createContext, useContext } from "react";
 import {
   LayoutDashboard,
-  CalendarCheck,
-  MessageSquare,
+  ClipboardList,
   LogOut,
   Menu,
   X,
   Compass,
 } from "lucide-react";
-import { hydrateCurrentClient, logoutClient, type ClientAccount } from "@/lib/client/auth";
+import { hydrateCurrentDriver, logoutDriver, type DriverAccount } from "@/lib/driver/auth";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/client")({
+export const Route = createFileRoute("/driver")({
   head: () => ({
     meta: [
-      { title: "Espace Client — YOLO Le Concierge" },
+      { title: "Espace Chauffeur — YOLO Le Concierge" },
       { name: "robots", content: "noindex,nofollow" },
     ],
   }),
-  component: ClientShell,
+  component: DriverShell,
 });
 
-// ─── CLIENT CONTEXT FOR CHILD ROUTES ─────────────────────────────────────────
-export const ClientContext = createContext<{ account: ClientAccount | null }>({ account: null });
+export const DriverContext = createContext<{ account: DriverAccount | null }>({ account: null });
 
-export function useClientAccount() {
-  const context = useContext(ClientContext);
-  if (!context) {
-    throw new Error("useClientAccount must be used within a ClientContext.Provider");
-  }
-  return context;
+export function useDriverAccount() {
+  return useContext(DriverContext);
 }
 
-function ClientShell() {
-  const [account, setAccount] = useState<ClientAccount | null>(null);
+function DriverShell() {
+  const [account, setAccount] = useState<DriverAccount | null>(null);
   const [ready, setReady] = useState(false);
   const path = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    hydrateCurrentClient().then((acc) => {
+    hydrateCurrentDriver().then((acc) => {
       setAccount(acc);
       setReady(true);
     });
@@ -53,41 +47,37 @@ function ClientShell() {
     if (ready && !account) {
       navigate({
         to: "/connexion",
-        search: { redirect: "/client" },
+        search: { redirect: "/driver" },
       });
     }
   }, [ready, account, navigate]);
 
   const handleLogout = () => {
-    logoutClient();
+    logoutDriver();
     notifyAuthChange();
     setAccount(null);
     toast.success("Vous avez été déconnecté.");
-    navigate({ to: "/connexion", search: { redirect: "/client" } });
+    navigate({ to: "/connexion", search: { redirect: "/driver" } });
   };
 
   if (!ready || !account) return null;
 
-  // ─── CLIENT PORTAL LAYOUT SHELL ───────────────────────────────────────────
   const navigation = [
-    { to: "/client", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
-    { to: "/client/reservations", label: "Mes Réservations", icon: CalendarCheck },
-    { to: "/client/support", label: "Chat Support", icon: MessageSquare },
+    { to: "/driver", label: "Mes missions", icon: LayoutDashboard, exact: true },
   ];
 
   const isActive = (to: string, exact?: boolean) =>
     exact ? path === to : path === to || path.startsWith(`${to}/`);
 
   return (
-    <ClientContext.Provider value={{ account }}>
+    <DriverContext.Provider value={{ account }}>
       <div className="min-h-screen bg-[#070708] text-white flex flex-col lg:flex-row font-sans">
-        {/* Mobile Topbar */}
         <header className="lg:hidden shrink-0 sticky top-0 z-30 bg-[#0f0f11]/90 backdrop-blur border-b border-white/5 flex items-center justify-between px-6 h-16">
-          <Link to="/client" className="flex items-center gap-2">
+          <Link to="/driver" className="flex items-center gap-2">
             <span className="font-display text-xl font-bold tracking-tight text-white">
-              YOLO<span className="text-[#7dd3fc]">.</span>
+              YOLO<span className="text-amber-400">.</span>
             </span>
-            <span className="text-[9px] uppercase tracking-widest text-[#7dd3fc]">Client</span>
+            <span className="text-[9px] uppercase tracking-widest text-amber-400">Chauffeur</span>
           </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -98,20 +88,18 @@ function ClientShell() {
           </button>
         </header>
 
-        {/* Sidebar navigation */}
         <aside
           className={`fixed inset-y-0 left-0 z-40 w-72 bg-[#0c0c0e] border-r border-white/5 flex flex-col transition-transform duration-300 lg:sticky lg:h-screen lg:translate-x-0 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          {/* Brand */}
           <div className="h-20 px-8 flex items-center justify-between border-b border-white/5">
             <div>
               <Link to="/" className="flex items-center gap-2">
                 <span className="font-display text-2xl font-bold tracking-tight text-white">
-                  YOLO<span className="text-[#7dd3fc]">.</span>
+                  YOLO<span className="text-amber-400">.</span>
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-[#7dd3fc]">Client</span>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-amber-400">Chauffeur</span>
               </Link>
             </div>
             <button
@@ -122,10 +110,9 @@ function ClientShell() {
             </button>
           </div>
 
-          {/* Client User Profile Info Card */}
           <div className="p-6 border-b border-white/5 bg-white/[0.01]">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-[#7dd3fc]/10 border border-[#7dd3fc]/20 flex items-center justify-center text-[#7dd3fc] font-bold">
+              <div className="h-10 w-10 rounded-full bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 font-bold">
                 {account.firstName[0].toUpperCase()}
                 {account.lastName[0].toUpperCase()}
               </div>
@@ -138,7 +125,6 @@ function ClientShell() {
             </div>
           </div>
 
-          {/* Nav Links */}
           <nav className="flex-1 overflow-y-auto p-4 space-y-1.5">
             {navigation.map((item) => {
               const Icon = item.icon;
@@ -146,11 +132,11 @@ function ClientShell() {
               return (
                 <Link
                   key={item.to}
-                  to={item.to as "/client"}
+                  to={item.to as "/driver"}
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                     active
-                      ? "bg-[#7dd3fc] text-black shadow-lg shadow-[#7dd3fc]/10"
+                      ? "bg-amber-400 text-black shadow-lg shadow-amber-400/10"
                       : "text-white/60 hover:text-white hover:bg-white/5"
                   }`}
                 >
@@ -161,7 +147,6 @@ function ClientShell() {
             })}
           </nav>
 
-          {/* Footer Actions */}
           <div className="p-4 border-t border-white/5 space-y-1.5">
             <Link
               to="/"
@@ -180,7 +165,6 @@ function ClientShell() {
           </div>
         </aside>
 
-        {/* Backdrop mobile sidebar */}
         {sidebarOpen && (
           <div
             className="lg:hidden fixed inset-0 z-30 bg-black/70 backdrop-blur-xs"
@@ -188,15 +172,13 @@ function ClientShell() {
           />
         )}
 
-        {/* Main content page area */}
         <main className="flex-1 min-w-0 p-6 lg:p-10 flex flex-col bg-[#070708] relative overflow-y-auto">
-          {/* Glow */}
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[#7dd3fc]/2.5 blur-[120px] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-amber-400/2.5 blur-[120px] pointer-events-none" />
           <div className="relative z-10 flex-1 flex flex-col">
             <Outlet />
           </div>
         </main>
       </div>
-    </ClientContext.Provider>
+    </DriverContext.Provider>
   );
 }

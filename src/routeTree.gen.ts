@@ -11,21 +11,25 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesSurMesureRouteImport } from './routes/services-sur-mesure'
 import { Route as LocationVehiculesRouteImport } from './routes/location-vehicules'
+import { Route as DriverRouteImport } from './routes/driver'
 import { Route as DemenagementRouteImport } from './routes/demenagement'
 import { Route as ConnexionRouteImport } from './routes/connexion'
 import { Route as ClientRouteImport } from './routes/client'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DriverIndexRouteImport } from './routes/driver.index'
 import { Route as ClientIndexRouteImport } from './routes/client.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as PaiementSuccesRouteImport } from './routes/paiement.succes'
 import { Route as PaiementAnnuleRouteImport } from './routes/paiement.annule'
 import { Route as LocationVehiculesVehicleIdRouteImport } from './routes/location-vehicules_.$vehicleId'
+import { Route as EvaluerTokenRouteImport } from './routes/evaluer.$token'
 import { Route as ClientSupportRouteImport } from './routes/client.support'
 import { Route as ClientReservationsRouteImport } from './routes/client.reservations'
 import { Route as AdminVehiculesRouteImport } from './routes/admin.vehicules'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
 import { Route as AdminReservationsRouteImport } from './routes/admin.reservations'
+import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
 import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
 import { Route as AdminMissionsRouteImport } from './routes/admin.missions'
 import { Route as AdminClientsRouteImport } from './routes/admin.clients'
@@ -39,6 +43,11 @@ const ServicesSurMesureRoute = ServicesSurMesureRouteImport.update({
 const LocationVehiculesRoute = LocationVehiculesRouteImport.update({
   id: '/location-vehicules',
   path: '/location-vehicules',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DriverRoute = DriverRouteImport.update({
+  id: '/driver',
+  path: '/driver',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemenagementRoute = DemenagementRouteImport.update({
@@ -66,6 +75,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DriverIndexRoute = DriverIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => DriverRoute,
+} as any)
 const ClientIndexRoute = ClientIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -92,6 +106,11 @@ const LocationVehiculesVehicleIdRoute =
     path: '/location-vehicules/$vehicleId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const EvaluerTokenRoute = EvaluerTokenRouteImport.update({
+  id: '/evaluer/$token',
+  path: '/evaluer/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ClientSupportRoute = ClientSupportRouteImport.update({
   id: '/support',
   path: '/support',
@@ -115,6 +134,11 @@ const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
 const AdminReservationsRoute = AdminReservationsRouteImport.update({
   id: '/reservations',
   path: '/reservations',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminRapportsRoute = AdminRapportsRouteImport.update({
+  id: '/rapports',
+  path: '/rapports',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminParametresRoute = AdminParametresRouteImport.update({
@@ -144,22 +168,26 @@ export interface FileRoutesByFullPath {
   '/client': typeof ClientRouteWithChildren
   '/connexion': typeof ConnexionRoute
   '/demenagement': typeof DemenagementRoute
+  '/driver': typeof DriverRouteWithChildren
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
   '/admin/chauffeurs': typeof AdminChauffeursRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/missions': typeof AdminMissionsRoute
   '/admin/parametres': typeof AdminParametresRoute
+  '/admin/rapports': typeof AdminRapportsRoute
   '/admin/reservations': typeof AdminReservationsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/client/reservations': typeof ClientReservationsRoute
   '/client/support': typeof ClientSupportRoute
+  '/evaluer/$token': typeof EvaluerTokenRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/paiement/annule': typeof PaiementAnnuleRoute
   '/paiement/succes': typeof PaiementSuccesRoute
   '/admin/': typeof AdminIndexRoute
   '/client/': typeof ClientIndexRoute
+  '/driver/': typeof DriverIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -171,16 +199,19 @@ export interface FileRoutesByTo {
   '/admin/clients': typeof AdminClientsRoute
   '/admin/missions': typeof AdminMissionsRoute
   '/admin/parametres': typeof AdminParametresRoute
+  '/admin/rapports': typeof AdminRapportsRoute
   '/admin/reservations': typeof AdminReservationsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/client/reservations': typeof ClientReservationsRoute
   '/client/support': typeof ClientSupportRoute
+  '/evaluer/$token': typeof EvaluerTokenRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/paiement/annule': typeof PaiementAnnuleRoute
   '/paiement/succes': typeof PaiementSuccesRoute
   '/admin': typeof AdminIndexRoute
   '/client': typeof ClientIndexRoute
+  '/driver': typeof DriverIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -189,22 +220,26 @@ export interface FileRoutesById {
   '/client': typeof ClientRouteWithChildren
   '/connexion': typeof ConnexionRoute
   '/demenagement': typeof DemenagementRoute
+  '/driver': typeof DriverRouteWithChildren
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
   '/admin/chauffeurs': typeof AdminChauffeursRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/missions': typeof AdminMissionsRoute
   '/admin/parametres': typeof AdminParametresRoute
+  '/admin/rapports': typeof AdminRapportsRoute
   '/admin/reservations': typeof AdminReservationsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/client/reservations': typeof ClientReservationsRoute
   '/client/support': typeof ClientSupportRoute
+  '/evaluer/$token': typeof EvaluerTokenRoute
   '/location-vehicules_/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/paiement/annule': typeof PaiementAnnuleRoute
   '/paiement/succes': typeof PaiementSuccesRoute
   '/admin/': typeof AdminIndexRoute
   '/client/': typeof ClientIndexRoute
+  '/driver/': typeof DriverIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -214,22 +249,26 @@ export interface FileRouteTypes {
     | '/client'
     | '/connexion'
     | '/demenagement'
+    | '/driver'
     | '/location-vehicules'
     | '/services-sur-mesure'
     | '/admin/chauffeurs'
     | '/admin/clients'
     | '/admin/missions'
     | '/admin/parametres'
+    | '/admin/rapports'
     | '/admin/reservations'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/client/reservations'
     | '/client/support'
+    | '/evaluer/$token'
     | '/location-vehicules/$vehicleId'
     | '/paiement/annule'
     | '/paiement/succes'
     | '/admin/'
     | '/client/'
+    | '/driver/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -241,16 +280,19 @@ export interface FileRouteTypes {
     | '/admin/clients'
     | '/admin/missions'
     | '/admin/parametres'
+    | '/admin/rapports'
     | '/admin/reservations'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/client/reservations'
     | '/client/support'
+    | '/evaluer/$token'
     | '/location-vehicules/$vehicleId'
     | '/paiement/annule'
     | '/paiement/succes'
     | '/admin'
     | '/client'
+    | '/driver'
   id:
     | '__root__'
     | '/'
@@ -258,22 +300,26 @@ export interface FileRouteTypes {
     | '/client'
     | '/connexion'
     | '/demenagement'
+    | '/driver'
     | '/location-vehicules'
     | '/services-sur-mesure'
     | '/admin/chauffeurs'
     | '/admin/clients'
     | '/admin/missions'
     | '/admin/parametres'
+    | '/admin/rapports'
     | '/admin/reservations'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/client/reservations'
     | '/client/support'
+    | '/evaluer/$token'
     | '/location-vehicules_/$vehicleId'
     | '/paiement/annule'
     | '/paiement/succes'
     | '/admin/'
     | '/client/'
+    | '/driver/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -282,8 +328,10 @@ export interface RootRouteChildren {
   ClientRoute: typeof ClientRouteWithChildren
   ConnexionRoute: typeof ConnexionRoute
   DemenagementRoute: typeof DemenagementRoute
+  DriverRoute: typeof DriverRouteWithChildren
   LocationVehiculesRoute: typeof LocationVehiculesRoute
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
+  EvaluerTokenRoute: typeof EvaluerTokenRoute
   LocationVehiculesVehicleIdRoute: typeof LocationVehiculesVehicleIdRoute
   PaiementAnnuleRoute: typeof PaiementAnnuleRoute
   PaiementSuccesRoute: typeof PaiementSuccesRoute
@@ -303,6 +351,13 @@ declare module '@tanstack/react-router' {
       path: '/location-vehicules'
       fullPath: '/location-vehicules'
       preLoaderRoute: typeof LocationVehiculesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/driver': {
+      id: '/driver'
+      path: '/driver'
+      fullPath: '/driver'
+      preLoaderRoute: typeof DriverRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demenagement': {
@@ -340,6 +395,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/driver/': {
+      id: '/driver/'
+      path: '/'
+      fullPath: '/driver/'
+      preLoaderRoute: typeof DriverIndexRouteImport
+      parentRoute: typeof DriverRoute
+    }
     '/client/': {
       id: '/client/'
       path: '/'
@@ -375,6 +437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocationVehiculesVehicleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/evaluer/$token': {
+      id: '/evaluer/$token'
+      path: '/evaluer/$token'
+      fullPath: '/evaluer/$token'
+      preLoaderRoute: typeof EvaluerTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/client/support': {
       id: '/client/support'
       path: '/support'
@@ -408,6 +477,13 @@ declare module '@tanstack/react-router' {
       path: '/reservations'
       fullPath: '/admin/reservations'
       preLoaderRoute: typeof AdminReservationsRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/rapports': {
+      id: '/admin/rapports'
+      path: '/rapports'
+      fullPath: '/admin/rapports'
+      preLoaderRoute: typeof AdminRapportsRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/parametres': {
@@ -446,6 +522,7 @@ interface AdminRouteChildren {
   AdminClientsRoute: typeof AdminClientsRoute
   AdminMissionsRoute: typeof AdminMissionsRoute
   AdminParametresRoute: typeof AdminParametresRoute
+  AdminRapportsRoute: typeof AdminRapportsRoute
   AdminReservationsRoute: typeof AdminReservationsRoute
   AdminUtilisateursRoute: typeof AdminUtilisateursRoute
   AdminVehiculesRoute: typeof AdminVehiculesRoute
@@ -457,6 +534,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminClientsRoute: AdminClientsRoute,
   AdminMissionsRoute: AdminMissionsRoute,
   AdminParametresRoute: AdminParametresRoute,
+  AdminRapportsRoute: AdminRapportsRoute,
   AdminReservationsRoute: AdminReservationsRoute,
   AdminUtilisateursRoute: AdminUtilisateursRoute,
   AdminVehiculesRoute: AdminVehiculesRoute,
@@ -480,14 +558,27 @@ const ClientRouteChildren: ClientRouteChildren = {
 const ClientRouteWithChildren =
   ClientRoute._addFileChildren(ClientRouteChildren)
 
+interface DriverRouteChildren {
+  DriverIndexRoute: typeof DriverIndexRoute
+}
+
+const DriverRouteChildren: DriverRouteChildren = {
+  DriverIndexRoute: DriverIndexRoute,
+}
+
+const DriverRouteWithChildren =
+  DriverRoute._addFileChildren(DriverRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   ClientRoute: ClientRouteWithChildren,
   ConnexionRoute: ConnexionRoute,
   DemenagementRoute: DemenagementRoute,
+  DriverRoute: DriverRouteWithChildren,
   LocationVehiculesRoute: LocationVehiculesRoute,
   ServicesSurMesureRoute: ServicesSurMesureRoute,
+  EvaluerTokenRoute: EvaluerTokenRoute,
   LocationVehiculesVehicleIdRoute: LocationVehiculesVehicleIdRoute,
   PaiementAnnuleRoute: PaiementAnnuleRoute,
   PaiementSuccesRoute: PaiementSuccesRoute,
