@@ -4,28 +4,73 @@ import {
   LayoutDashboard, Car, CalendarCheck, Users, UserCog,
   ClipboardList, Settings, LogOut, Menu, X, IdCard, FileText,
 } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import { useState, type ReactNode, useEffect } from "react";
 import { adminConfig } from "@/config/admin";
 import { logout } from "@/lib/admin/auth";
 import { notifyAuthChange } from "@/lib/auth/session";
+import { useAdminNavBadges } from "@/hooks/useAdminNavBadges";
+import { requestAdminBadgesRefresh } from "@/lib/admin/badges";
 
-type NavItem = { to: string; label: string; icon: typeof LayoutDashboard; exact?: boolean };
+type NavBadgeKey = "pendingBookings" | "totalClients" | "unreadReports";
+
+type NavItem = {
+  to: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  exact?: boolean;
+  badge?: NavBadgeKey;
+  alert?: boolean;
+};
+
 const nav: NavItem[] = [
   { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { to: "/admin/vehicules", label: "Véhicules", icon: Car },
-  { to: "/admin/reservations", label: "Réservations", icon: CalendarCheck },
-  { to: "/admin/clients", label: "Clients", icon: Users },
+  { to: "/admin/reservations", label: "Réservations", icon: CalendarCheck, badge: "pendingBookings", alert: true },
+  { to: "/admin/clients", label: "Clients", icon: Users, badge: "totalClients" },
   { to: "/admin/chauffeurs", label: "Chauffeurs", icon: IdCard },
   { to: "/admin/missions", label: "Missions", icon: ClipboardList },
-  { to: "/admin/rapports", label: "Rapports", icon: FileText },
+  { to: "/admin/rapports", label: "Rapports", icon: FileText, badge: "unreadReports", alert: true },
   { to: "/admin/utilisateurs", label: "Équipe YOLO", icon: UserCog },
   { to: "/admin/parametres", label: "Paramètres", icon: Settings },
 ];
+
+function NavBadge({
+  count,
+  alert,
+  active,
+}: {
+  count: number;
+  alert?: boolean;
+  active: boolean;
+}) {
+  if (count <= 0) return null;
+
+  return (
+    <span
+      className={`ml-auto min-w-5 h-5 px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center tabular-nums ${
+        active
+          ? alert
+            ? "bg-black/25 text-black"
+            : "bg-black/15 text-black/80"
+          : alert
+            ? "bg-amber-500 text-black"
+            : "bg-white/15 text-white"
+      }`}
+    >
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const badges = useAdminNavBadges();
+
+  useEffect(() => {
+    requestAdminBadgesRefresh();
+  }, [path]);
 
   const handleLogout = () => {
     logout();
@@ -81,6 +126,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             {nav.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.to, item.exact);
+              const badgeCount = item.badge ? badges[item.badge] : 0;
               return (
                 <Link
                   key={item.to}
@@ -92,8 +138,9 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                       : "text-white/55 hover:bg-white/5 hover:text-white"
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  {item.label}
+                  <Icon className="h-4 w-4 shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                  <NavBadge count={badgeCount} alert={item.alert} active={active} />
                 </Link>
               );
             })}

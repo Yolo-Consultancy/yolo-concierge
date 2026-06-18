@@ -11,6 +11,7 @@ import {
   type ClientRating,
 } from "@/lib/admin/store";
 import { toast } from "sonner";
+import { requestAdminBadgesRefresh } from "@/lib/admin/badges";
 
 export const Route = createFileRoute("/admin/rapports")({ component: RapportsPage });
 
@@ -37,6 +38,7 @@ function RapportsPage() {
       await markTripReportRead(id);
       toast.success("Rapport marqué comme lu.");
       refresh();
+      requestAdminBadgesRefresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Action impossible.");
     }

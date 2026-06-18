@@ -13,6 +13,7 @@ import { bookingConfig } from "@/config/booking";
 import { buildAdminEmailHtml } from "@/lib/admin/notify";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import { toast } from "sonner";
+import { requestAdminBadgesRefresh } from "@/lib/admin/badges";
 
 export const Route = createFileRoute("/admin/reservations")({ component: Reservations });
 
@@ -165,6 +166,7 @@ function Reservations() {
             toast.success("Statut mis à jour.");
           }
           refresh();
+          requestAdminBadgesRefresh();
         } catch (err) {
           toast.error(err instanceof Error ? err.message : "Impossible de changer le statut.");
         }
@@ -228,6 +230,7 @@ function Reservations() {
       setManualOpen(false);
       setManualForm(emptyManualBooking());
       refresh();
+      requestAdminBadgesRefresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Impossible de créer la réservation.");
     } finally {
