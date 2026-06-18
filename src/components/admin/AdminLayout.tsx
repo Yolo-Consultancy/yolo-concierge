@@ -11,7 +11,7 @@ import { notifyAuthChange } from "@/lib/auth/session";
 import { useAdminNavBadges } from "@/hooks/useAdminNavBadges";
 import { requestAdminBadgesRefresh } from "@/lib/admin/badges";
 
-type NavBadgeKey = "pendingBookings" | "totalClients" | "unreadReports";
+type NavBadgeKey = "pendingBookings" | "unreadReports";
 
 type NavItem = {
   to: string;
@@ -26,7 +26,7 @@ const nav: NavItem[] = [
   { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { to: "/admin/vehicules", label: "Véhicules", icon: Car },
   { to: "/admin/reservations", label: "Réservations", icon: CalendarCheck, badge: "pendingBookings", alert: true },
-  { to: "/admin/clients", label: "Clients", icon: Users, badge: "totalClients" },
+  { to: "/admin/clients", label: "Clients", icon: Users },
   { to: "/admin/chauffeurs", label: "Chauffeurs", icon: IdCard },
   { to: "/admin/missions", label: "Missions", icon: ClipboardList },
   { to: "/admin/rapports", label: "Rapports", icon: FileText, badge: "unreadReports", alert: true },

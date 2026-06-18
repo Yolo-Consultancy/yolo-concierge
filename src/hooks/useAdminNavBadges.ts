@@ -7,7 +7,6 @@ import {
 
 const emptyBadges: AdminNavBadges = {
   pendingBookings: 0,
-  totalClients: 0,
   unreadReports: 0,
 };
 

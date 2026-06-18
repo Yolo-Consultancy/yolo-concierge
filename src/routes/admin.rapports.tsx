@@ -103,7 +103,12 @@ function RapportsPage() {
                       {r.odometerEnd != null && <span>Km fin : {r.odometerEnd}</span>}
                       {r.fuelLevel && <span>Carburant : {r.fuelLevel}</span>}
                       <span>
-                        E-mail client : {r.ratingEmailSent ? "envoyé" : "programmé (+15 min)"}
+                        E-mail client :{" "}
+                        {r.ratingEmailSent
+                          ? "envoyé"
+                          : r.clientEmail
+                            ? "en attente d'envoi"
+                            : "non envoyé (pas d'e-mail)"}
                       </span>
                     </div>
                     {r.status === "soumis" && (

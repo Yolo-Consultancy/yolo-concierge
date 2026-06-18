@@ -36,6 +36,8 @@ export async function submitTripReport(payload: TripReportPayload) {
   return driverApi.post<{
     id: string;
     adminEmailSent: boolean;
+    clientEmailSent: boolean;
+    clientEmailReason?: string;
     ratingScheduledAt: string;
   }>("/trip-reports", payload);
 }

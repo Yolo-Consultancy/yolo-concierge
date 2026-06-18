@@ -122,9 +122,11 @@ function DriverDashboard() {
         incidents,
       });
       toast.success("Rapport envoyé à l'administration.", {
-        description: result.adminEmailSent
-          ? "Un e-mail de satisfaction sera envoyé au client dans 15 minutes."
-          : "Le client recevra un e-mail de notation dans 15 minutes (si son e-mail est renseigné).",
+        description: result.clientEmailSent
+          ? "Le client a reçu immédiatement son e-mail de notation."
+          : result.clientEmailReason === "no_client_email"
+            ? "Le client n'a pas d'e-mail — aucune notification envoyée."
+            : "L'e-mail client sera réessayé automatiquement.",
       });
       setReporting(null);
       setTab("historique");
@@ -308,8 +310,8 @@ function DriverDashboard() {
               )}
 
               <p className="text-xs text-white/35 leading-relaxed">
-                Après envoi, l'administration sera notifiée. Le client recevra automatiquement un e-mail
-                15 minutes plus tard pour noter le service et votre prestation.
+                Après envoi, l'administration sera notifiée et le client recevra immédiatement un e-mail
+                pour noter le service et votre prestation.
               </p>
               <button
                 type="submit"

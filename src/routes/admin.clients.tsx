@@ -6,7 +6,6 @@ import { PageHeader } from "@/components/admin/AdminLayout";
 import { listClients, upsertClient, deleteClient, newId, type Client } from "@/lib/admin/store";
 import { formatPrice } from "@/lib/vehicles";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
-import { requestAdminBadgesRefresh } from "@/lib/admin/badges";
 
 export const Route = createFileRoute("/admin/clients")({ component: ClientsPage });
 
@@ -68,10 +67,7 @@ function ClientsPage() {
                           title: "Supprimer ce client ?",
                           description: `${c.firstName} ${c.lastName} sera définitivement retiré du CRM.`,
                           confirmLabel: "Supprimer",
-                          onConfirm: () => deleteClient(c.id).then(() => {
-                            refresh();
-                            requestAdminBadgesRefresh();
-                          }),
+                          onConfirm: () => deleteClient(c.id).then(refresh),
                         })}
                         className="p-1.5 rounded text-destructive hover:bg-destructive/10"
                       ><Trash2 className="h-4 w-4" /></button>
@@ -105,7 +101,7 @@ function ClientsPage() {
             </div>
             <div className="border-t border-border px-6 py-4 flex justify-end gap-2">
               <button onClick={() => setEditing(null)} className="rounded-md border border-input px-4 py-2 text-sm hover:bg-muted">Annuler</button>
-              <button onClick={() => { void upsertClient(editing).then(() => { setEditing(null); refresh(); requestAdminBadgesRefresh(); }); }}
+              <button onClick={() => { void upsertClient(editing).then(() => { setEditing(null); refresh(); }); }}
                 className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90">Enregistrer</button>
             </div>
           </div>
