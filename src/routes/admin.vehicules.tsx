@@ -5,7 +5,7 @@ import { Plus, Pencil, Trash2, RotateCcw, X, Upload, ArrowLeft, ArrowRight, Grip
 import { toast } from "sonner";
 import { PageHeader } from "@/components/admin/AdminLayout";
 import {
-  listVehicles, upsertVehicle, deleteVehicle, resetVehicles, newId,
+  listAdminVehicles, upsertVehicle, deleteVehicle, resetVehicles, newId,
 } from "@/lib/admin/store";
 import { formatPrice, type Vehicle } from "@/lib/vehicles";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
@@ -37,15 +37,33 @@ function VehiculesAdmin() {
   const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Vehicle[]>([]);
   const [editing, setEditing] = useState<Vehicle | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
-  const refresh = () => { listVehicles().then(setItems); };
+  const refresh = () => { listAdminVehicles().then(setItems); };
   useEffect(refresh, []);
 
   const save = async () => {
-    if (!editing) return;
-    await upsertVehicle({ ...editing, image: editing.gallery[0] || editing.image });
-    setEditing(null);
-    refresh();
+    if (!editing || saving) return;
+    if (!editing.brand.trim() || !editing.name.trim()) {
+      setSaveError("La marque et le modèle sont obligatoires.");
+      toast.error("La marque et le modèle sont obligatoires.");
+      return;
+    }
+    setSaving(true);
+    setSaveError("");
+    try {
+      await upsertVehicle({ ...editing, image: editing.gallery.filter(Boolean)[0] || editing.image });
+      toast.success("Véhicule enregistré.");
+      setEditing(null);
+      refresh();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Impossible d'enregistrer le véhicule.";
+      setSaveError(msg);
+      toast.error(msg);
+    } finally {
+      setSaving(false);
+    }
   };
   const remove = (id: string, name: string) => {
     ask({
@@ -110,7 +128,16 @@ function VehiculesAdmin() {
         ))}
       </div>
 
-      {editing && <VehicleForm value={editing} onChange={setEditing} onClose={() => setEditing(null)} onSave={save} />}
+      {editing && (
+        <VehicleForm
+          value={editing}
+          onChange={setEditing}
+          onClose={() => { setEditing(null); setSaveError(""); }}
+          onSave={save}
+          saving={saving}
+          saveError={saveError}
+        />
+      )}
       {dialog}
     </>
   );
@@ -172,8 +199,15 @@ const compressImage = (file: File): Promise<string> => {
 };
 
 function VehicleForm({
-  value, onChange, onClose, onSave,
-}: { value: Vehicle; onChange: (v: Vehicle) => void; onClose: () => void; onSave: () => void }) {
+  value, onChange, onClose, onSave, saving, saveError,
+}: {
+  value: Vehicle;
+  onChange: (v: Vehicle) => void;
+  onClose: () => void;
+  onSave: () => void;
+  saving?: boolean;
+  saveError?: string;
+}) {
   const v = value;
   const [isDragActive, setIsDragActive] = useState(false);
   const [uploading, setUploading] = useState(false);
@@ -509,9 +543,17 @@ function VehicleForm({
           </details>
         </div>
 
-        <div className="sticky bottom-0 bg-card border-t border-border px-6 py-4 flex justify-end gap-2 rounded-b-2xl">
-          <button onClick={onClose} className="rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-muted">Annuler</button>
-          <button onClick={onSave} className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90">Enregistrer</button>
+        <div className="sticky bottom-0 bg-card border-t border-border px-6 py-4 flex flex-col gap-2 rounded-b-2xl">
+          {saveError && (
+            <p className="text-sm text-destructive text-center">{saveError}</p>
+          )}
+          <div className="flex justify-end gap-2">
+          <button onClick={onClose} disabled={saving} className="rounded-md border border-input bg-background px-4 py-2 text-sm hover:bg-muted disabled:opacity-50">Annuler</button>
+          <button onClick={onSave} disabled={saving} className="inline-flex items-center gap-2 rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 disabled:opacity-50">
+            {saving && <Loader2 className="h-4 w-4 animate-spin" />}
+            {saving ? "Enregistrement..." : "Enregistrer"}
+          </button>
+          </div>
         </div>
       </div>
     </div>

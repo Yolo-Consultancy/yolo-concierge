@@ -133,7 +133,15 @@ async function request<T>(path: string, init?: RequestInitWithRetry, scope: Toke
     ...init,
   });
 
-  const json = (await res.json()) as ApiEnvelope<T>;
+  let json: ApiEnvelope<T>;
+  try {
+    json = (await res.json()) as ApiEnvelope<T>;
+  } catch {
+    if (res.status === 413) {
+      throw new Error("Données trop volumineuses. Réduisez le nombre de photos ou utilisez des URL.");
+    }
+    throw new Error(`Erreur serveur (${res.status}). Vérifiez que le backend est démarré.`);
+  }
   if (!res.ok || !json.success) {
     if (res.status === 401 && scope === "admin" && !init?._retried) {
       const refreshed = await refreshAdminAccessToken();

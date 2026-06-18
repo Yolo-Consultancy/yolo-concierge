@@ -31,9 +31,47 @@ export async function saveVehicles(list: Vehicle[]): Promise<void> {
   for (const v of list) await api.put(`/vehicles/${v.id}`, v);
 }
 
+/** Liste complète pour l'admin (inclut véhicules inactifs). */
+export async function listAdminVehicles(): Promise<Vehicle[]> {
+  if (getAccessToken()) {
+    return api.get<Vehicle[]>("/vehicles");
+  }
+  return listVehicles();
+}
+
+function toVehiclePayload(v: Vehicle) {
+  const gallery = (v.gallery || []).filter((url) => typeof url === "string" && url.trim());
+  return {
+    id: v.id,
+    name: v.name,
+    brand: v.brand,
+    year: v.year,
+    category: v.category,
+    location: v.location,
+    pricePerDay: v.pricePerDay,
+    image: gallery[0] || v.image || "",
+    gallery,
+    specs: v.specs,
+    description: v.description,
+    conditions: v.conditions,
+    keyStats: v.keyStats,
+    performance: v.performance,
+    drivetrain: v.drivetrain,
+    equipment: v.equipment,
+  };
+}
+
 export async function upsertVehicle(v: Vehicle): Promise<Vehicle> {
-  const exists = (await listVehicles()).some((x) => x.id === v.id);
-  return exists ? api.put<Vehicle>(`/vehicles/${v.id}`, v) : api.post<Vehicle>("/vehicles", v);
+  const payload = toVehiclePayload(v);
+  const body = JSON.stringify(payload);
+  if (body.length > 14 * 1024 * 1024) {
+    throw new Error("Le véhicule est trop lourd (photos). Utilisez des URL ou moins d'images.");
+  }
+  const isNew = v.id.startsWith("vh-");
+  if (isNew) {
+    return api.post<Vehicle>("/vehicles", payload);
+  }
+  return api.put<Vehicle>(`/vehicles/${encodeURIComponent(v.id)}`, payload);
 }
 
 export async function deleteVehicle(id: string): Promise<void> {
