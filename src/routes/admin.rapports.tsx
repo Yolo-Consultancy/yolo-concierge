@@ -139,7 +139,9 @@ function RapportsPage() {
                       <span>Chauffeur : {"★".repeat(rt.driverScore)}{"☆".repeat(5 - rt.driverScore)}</span>
                     </div>
                     {rt.comment && (
-                      <p className="text-sm text-muted-foreground mt-2 italic">« {rt.comment} »</p>
+                      <p className="text-sm text-amber-700 mt-2">
+                        <strong>À améliorer :</strong> {rt.comment}
+                      </p>
                     )}
                     <p className="text-xs text-muted-foreground mt-2">
                       {new Date(rt.submittedAt).toLocaleString("fr-FR")}

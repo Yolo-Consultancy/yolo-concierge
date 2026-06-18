@@ -22,6 +22,47 @@ type RatingForm = {
   vehicleName: string;
 };
 
+const IMPROVEMENT_TYPES = [
+  { id: "retard", label: "Retard" },
+  { id: "proprete", label: "Propreté du véhicule" },
+  { id: "accueil", label: "Accueil" },
+  { id: "conduite", label: "Conduite" },
+  { id: "communication", label: "Communication" },
+  { id: "vehicule", label: "État du véhicule" },
+  { id: "autre", label: "Autre" },
+] as const;
+
+type ImprovementTypeId = (typeof IMPROVEMENT_TYPES)[number]["id"];
+
+const choiceBtnCls = (active: boolean) =>
+  `py-2.5 px-3 rounded-xl border text-sm font-medium transition ${
+    active
+      ? "border-[#7dd3fc]/60 bg-[#7dd3fc]/10 text-[#7dd3fc]"
+      : "border-white/10 bg-white/5 text-white/60 hover:text-white"
+  }`;
+
+const yesNoBtnCls = (active: boolean, tone: "no" | "yes") =>
+  `py-3 rounded-xl border text-sm font-medium transition ${
+    active
+      ? tone === "no"
+        ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300"
+        : "border-[#7dd3fc]/60 bg-[#7dd3fc]/10 text-[#7dd3fc]"
+      : "border-white/10 bg-white/5 text-white/60 hover:text-white"
+  }`;
+
+function buildImprovementValue(
+  hasImprovement: boolean | null,
+  improvementType: ImprovementTypeId | "",
+  improvementOther: string,
+): string {
+  if (hasImprovement !== true) return "";
+  if (improvementType === "autre") {
+    return `Autre : ${improvementOther.trim()}`;
+  }
+  const match = IMPROVEMENT_TYPES.find((t) => t.id === improvementType);
+  return match?.label || "";
+}
+
 function StarPicker({
   value,
   onChange,
@@ -64,7 +105,9 @@ function EvaluerPage() {
   const [saving, setSaving] = useState(false);
   const [serviceScore, setServiceScore] = useState(0);
   const [driverScore, setDriverScore] = useState(0);
-  const [comment, setComment] = useState("");
+  const [hasImprovement, setHasImprovement] = useState<boolean | null>(null);
+  const [improvementType, setImprovementType] = useState<ImprovementTypeId | "">("");
+  const [improvementOther, setImprovementOther] = useState("");
 
   useEffect(() => {
     publicApi
@@ -83,12 +126,25 @@ function EvaluerPage() {
       toast.error("Veuillez noter le service et le chauffeur.");
       return;
     }
+    if (hasImprovement === null) {
+      toast.error("Indiquez s'il y a quelque chose à améliorer.");
+      return;
+    }
+    if (hasImprovement && !improvementType) {
+      toast.error("Sélectionnez ce qui pourrait être amélioré.");
+      return;
+    }
+    if (hasImprovement && improvementType === "autre" && !improvementOther.trim()) {
+      toast.error("Précisez votre suggestion dans le champ « Autre ».");
+      return;
+    }
     setSaving(true);
     try {
+      const improvement = buildImprovementValue(hasImprovement, improvementType, improvementOther);
       await publicApi.post(`/ratings/submit/${token}`, {
         serviceScore,
         driverScore,
-        comment: comment.trim(),
+        comment: improvement,
       });
       setDone(true);
       toast.success("Merci pour votre avis !");
@@ -166,18 +222,65 @@ function EvaluerPage() {
               onChange={setDriverScore}
               label="Comportement du chauffeur"
             />
+
             <div>
               <label className="block text-sm font-medium text-white mb-2">
-                Commentaire (optionnel)
+                Y a-t-il quelque chose à améliorer ?
               </label>
-              <textarea
-                rows={3}
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Dites-nous ce qui vous a plu ou ce que nous pourrions améliorer..."
-                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#7dd3fc]"
-              />
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setHasImprovement(false);
+                    setImprovementType("");
+                    setImprovementOther("");
+                  }}
+                  className={yesNoBtnCls(hasImprovement === false, "no")}
+                >
+                  Non
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setHasImprovement(true)}
+                  className={yesNoBtnCls(hasImprovement === true, "yes")}
+                >
+                  Oui
+                </button>
+              </div>
             </div>
+
+            {hasImprovement === true && (
+              <div>
+                <label className="block text-sm font-medium text-white mb-2">
+                  À améliorer
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {IMPROVEMENT_TYPES.map((type) => (
+                    <button
+                      key={type.id}
+                      type="button"
+                      onClick={() => {
+                        setImprovementType(type.id);
+                        if (type.id !== "autre") setImprovementOther("");
+                      }}
+                      className={choiceBtnCls(improvementType === type.id)}
+                    >
+                      {type.label}
+                    </button>
+                  ))}
+                </div>
+                {improvementType === "autre" && (
+                  <textarea
+                    rows={3}
+                    value={improvementOther}
+                    onChange={(e) => setImprovementOther(e.target.value)}
+                    placeholder="Décrivez ce que nous pourrions améliorer..."
+                    className="w-full mt-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#7dd3fc]"
+                  />
+                )}
+              </div>
+            )}
+
             <button
               type="submit"
               disabled={saving}

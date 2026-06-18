@@ -38,6 +38,38 @@ const typeLabels: Record<string, string> = {
 const inputCls =
   "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400/50";
 
+const INCIDENT_TYPES = [
+  { id: "panne", label: "Panne" },
+  { id: "accident", label: "Accident" },
+  { id: "arrestation", label: "Arrestation" },
+  { id: "perte", label: "Perte" },
+  { id: "retard", label: "Retard" },
+  { id: "autre", label: "Autre" },
+] as const;
+
+type IncidentTypeId = (typeof INCIDENT_TYPES)[number]["id"];
+
+type ReportForm = {
+  hasIncident: boolean | null;
+  incidentType: IncidentTypeId | "";
+  incidentOther: string;
+};
+
+const emptyReportForm = (): ReportForm => ({
+  hasIncident: null,
+  incidentType: "",
+  incidentOther: "",
+});
+
+function buildIncidentsValue(form: ReportForm): string | undefined {
+  if (form.hasIncident !== true) return undefined;
+  if (form.incidentType === "autre") {
+    return `Autre : ${form.incidentOther.trim()}`;
+  }
+  const match = INCIDENT_TYPES.find((t) => t.id === form.incidentType);
+  return match?.label;
+}
+
 function DriverDashboard() {
   const { account } = useDriverAccount();
   const [missions, setMissions] = useState<DriverMission[]>([]);
@@ -45,12 +77,7 @@ function DriverDashboard() {
   const [tab, setTab] = useState<Tab>("en_cours");
   const [reporting, setReporting] = useState<DriverMission | null>(null);
   const [saving, setSaving] = useState(false);
-  const [form, setForm] = useState({
-    notes: "",
-    incidents: "",
-    odometerEnd: "",
-    fuelLevel: "",
-  });
+  const [form, setForm] = useState<ReportForm>(emptyReportForm);
 
   const refresh = () => {
     setLoading(true);
@@ -68,24 +95,31 @@ function DriverDashboard() {
 
   const openReport = (mission: DriverMission) => {
     setReporting(mission);
-    setForm({ notes: "", incidents: "", odometerEnd: "", fuelLevel: "" });
+    setForm(emptyReportForm());
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!reporting) return;
-    if (!form.notes.trim()) {
-      toast.error("Le compte-rendu est obligatoire.");
+    if (form.hasIncident === null) {
+      toast.error("Indiquez s'il y a eu un incident.");
+      return;
+    }
+    if (form.hasIncident && !form.incidentType) {
+      toast.error("Sélectionnez le type d'incident.");
+      return;
+    }
+    if (form.hasIncident && form.incidentType === "autre" && !form.incidentOther.trim()) {
+      toast.error("Précisez l'incident dans le champ « Autre ».");
       return;
     }
     setSaving(true);
     try {
+      const incidents = buildIncidentsValue(form);
       const result = await submitTripReport({
         missionId: reporting.id,
-        notes: form.notes.trim(),
-        incidents: form.incidents.trim() || undefined,
-        odometerEnd: form.odometerEnd ? Number(form.odometerEnd) : undefined,
-        fuelLevel: form.fuelLevel.trim() || undefined,
+        notes: incidents ? `Incident signalé : ${incidents}` : "Course terminée sans incident.",
+        incidents,
       });
       toast.success("Rapport envoyé à l'administration.", {
         description: result.adminEmailSent
@@ -198,56 +232,81 @@ function DriverDashboard() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-4">
               <div>
-                <label className="block text-xs uppercase tracking-wider text-white/50 mb-1.5">
-                  Compte-rendu *
+                <label className="block text-xs uppercase tracking-wider text-white/50 mb-2">
+                  Y a-t-il eu un incident ?
                 </label>
-                <textarea
-                  required
-                  rows={4}
-                  value={form.notes}
-                  onChange={(e) => setForm({ ...form, notes: e.target.value })}
-                  placeholder="Décrivez le déroulement de la course, remise du véhicule, état général..."
-                  className={inputCls}
-                />
-              </div>
-              <div>
-                <label className="block text-xs uppercase tracking-wider text-white/50 mb-1.5">
-                  Incidents éventuels
-                </label>
-                <textarea
-                  rows={2}
-                  value={form.incidents}
-                  onChange={(e) => setForm({ ...form, incidents: e.target.value })}
-                  placeholder="Retard, panne, comportement client, etc."
-                  className={inputCls}
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs uppercase tracking-wider text-white/50 mb-1.5">
-                    Km fin
-                  </label>
-                  <input
-                    type="number"
-                    min={0}
-                    value={form.odometerEnd}
-                    onChange={(e) => setForm({ ...form, odometerEnd: e.target.value })}
-                    placeholder="Ex. 45230"
-                    className={inputCls}
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs uppercase tracking-wider text-white/50 mb-1.5">
-                    Carburant
-                  </label>
-                  <input
-                    value={form.fuelLevel}
-                    onChange={(e) => setForm({ ...form, fuelLevel: e.target.value })}
-                    placeholder="Ex. Plein"
-                    className={inputCls}
-                  />
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setForm({
+                        ...form,
+                        hasIncident: false,
+                        incidentType: "",
+                        incidentOther: "",
+                      })
+                    }
+                    className={`py-3 rounded-xl border text-sm font-medium transition ${
+                      form.hasIncident === false
+                        ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300"
+                        : "border-white/10 bg-white/5 text-white/60 hover:text-white"
+                    }`}
+                  >
+                    Non
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setForm({ ...form, hasIncident: true })}
+                    className={`py-3 rounded-xl border text-sm font-medium transition ${
+                      form.hasIncident === true
+                        ? "border-amber-400/60 bg-amber-400/10 text-amber-300"
+                        : "border-white/10 bg-white/5 text-white/60 hover:text-white"
+                    }`}
+                  >
+                    Oui
+                  </button>
                 </div>
               </div>
+
+              {form.hasIncident === true && (
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-white/50 mb-2">
+                    Type d'incident
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    {INCIDENT_TYPES.map((type) => (
+                      <button
+                        key={type.id}
+                        type="button"
+                        onClick={() =>
+                          setForm({
+                            ...form,
+                            incidentType: type.id,
+                            incidentOther: type.id === "autre" ? form.incidentOther : "",
+                          })
+                        }
+                        className={`py-2.5 px-3 rounded-xl border text-sm font-medium transition ${
+                          form.incidentType === type.id
+                            ? "border-amber-400/60 bg-amber-400/10 text-amber-300"
+                            : "border-white/10 bg-white/5 text-white/60 hover:text-white"
+                        }`}
+                      >
+                        {type.label}
+                      </button>
+                    ))}
+                  </div>
+                  {form.incidentType === "autre" && (
+                    <textarea
+                      rows={3}
+                      value={form.incidentOther}
+                      onChange={(e) => setForm({ ...form, incidentOther: e.target.value })}
+                      placeholder="Décrivez brièvement l'incident..."
+                      className={`${inputCls} mt-3`}
+                    />
+                  )}
+                </div>
+              )}
+
               <p className="text-xs text-white/35 leading-relaxed">
                 Après envoi, l'administration sera notifiée. Le client recevra automatiquement un e-mail
                 15 minutes plus tard pour noter le service et votre prestation.
