@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState } from "react";
 import { registerClient, loginClient, type ClientAccount } from "@/lib/client/auth";
+import type { PortalId } from "@/config/portals";
 import { allCountries } from "country-telephone-data";
 
 type Mode = "choice" | "login" | "register";
@@ -9,6 +10,7 @@ interface Props {
   onSuccess: (account: ClientAccount) => void;
   onClose: () => void;
   onContinueAsGuest: () => void;
+  portal?: PortalId;
 }
 
 const inputCls =
@@ -29,7 +31,7 @@ function getFlagEmoji(countryCode: string) {
   return String.fromCodePoint(...codePoints);
 }
 
-export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props) {
+export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal = "vehicules" }: Props) {
   const [mode, setMode] = useState<Mode>("choice");
 
   // Login state
@@ -54,7 +56,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
     e.preventDefault();
     setLoading(true);
     setLoginError("");
-    const result = await loginClient(loginEmail, loginPassword);
+    const result = await loginClient(loginEmail, loginPassword, portal);
     setLoading(false);
     if (result.ok) {
       onSuccess(result.account);
@@ -71,7 +73,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest }: Props
       return;
     }
     setLoading(true);
-    const result = await registerClient(reg);
+    const result = await registerClient({ ...reg, portal });
     setLoading(false);
     if (result.ok) {
       onSuccess(result.account);

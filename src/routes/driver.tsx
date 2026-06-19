@@ -47,7 +47,7 @@ function DriverShell() {
     if (ready && !account) {
       navigate({
         to: "/connexion",
-        search: connexionSearch(undefined, "login"),
+        search: connexionSearch("vehicules", "login"),
       });
     }
   }, [ready, account, navigate]);
@@ -57,7 +57,7 @@ function DriverShell() {
     notifyAuthChange();
     setAccount(null);
     toast.success("Vous avez été déconnecté.");
-    navigate({ to: "/connexion", search: connexionSearch(undefined, "login") });
+    navigate({ to: "/connexion", search: connexionSearch("vehicules", "login") });
   };
 
   if (!ready || !account) return null;

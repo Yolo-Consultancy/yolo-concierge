@@ -62,9 +62,15 @@ function ConnexionPage() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!portalId) {
+      setError("Choisissez un portail depuis la page d'accueil pour vous connecter.");
+      return;
+    }
+
     setLoading(true);
 
-    const result = await loginUnified(loginEmail, loginPassword);
+    const result = await loginUnified(loginEmail, loginPassword, portalId);
     setLoading(false);
 
     if (result.ok) {
@@ -79,6 +85,11 @@ function ConnexionPage() {
     e.preventDefault();
     setError("");
 
+    if (!portalId) {
+      setError("Choisissez un portail depuis la page d'accueil pour créer un compte.");
+      return;
+    }
+
     if (reg.password !== reg.confirmPassword) {
       setError("Les mots de passe ne correspondent pas.");
       return;
@@ -92,6 +103,7 @@ function ConnexionPage() {
       phone: reg.phone,
       countryCode: reg.countryCode,
       password: reg.password,
+      portal: portalId,
     });
     setLoading(false);
 

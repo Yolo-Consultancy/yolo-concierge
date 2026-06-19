@@ -31,13 +31,18 @@ type UnifiedAuthResponse =
   | { role: "driver"; accessToken: string; account: DriverAccount };
 
 /** Connexion unique : une seule requête, redirection selon le type de compte. */
-export async function loginUnified(email: string, password: string): Promise<UnifiedLoginResult> {
+export async function loginUnified(
+  email: string,
+  password: string,
+  portal?: PortalId,
+): Promise<UnifiedLoginResult> {
   clearAllLocalSessions();
 
   try {
     const result = await publicApi.post<UnifiedAuthResponse>("/auth/unified-login", {
       email: email.trim().toLowerCase(),
       password,
+      portal,
     });
 
     if (result.role === "admin") {
