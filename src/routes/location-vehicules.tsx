@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Menu, Lock, User } from "lucide-react";
 import { useEffect, useState } from "react";
 import carHero from "@/assets/car-hero.jpg";
 import destDakar from "@/assets/dest-dakar.jpg";
@@ -10,14 +9,7 @@ import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehic
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
 import { ContactModal } from "@/components/ContactModal";
-import { hydrateCurrentClient, type ClientAccount } from "@/lib/client/auth";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
+import { PortalHeader } from "@/components/PortalHeader";
 
 export const Route = createFileRoute("/location-vehicules")({
   head: () => ({
@@ -51,11 +43,9 @@ function LocationVehicules() {
   const [contactOpen, setContactOpen] = useState(false);
   const [prefilledVehicle, setPrefilledVehicle] = useState<string>("");
   const [vehicles, setVehicles] = useState<Vehicle[]>(seedVehicles);
-  const [client, setClient] = useState<ClientAccount | null>(null);
 
   useEffect(() => {
     listVehicles().then(setVehicles);
-    hydrateCurrentClient().then(setClient);
   }, []);
 
   const openBooking = (vehicleId?: string) => {
@@ -65,118 +55,8 @@ function LocationVehicules() {
 
   return (
     <div className="bg-[#0a0a0a] text-white min-h-screen font-sans">
-      <header className="absolute top-0 left-0 right-0 z-40">
-        <div className="mx-auto max-w-7xl flex items-center justify-between px-6 py-6">
-          <Link to="/" className="font-display text-2xl tracking-tight">
-            YOLO<span className="text-[#7dd3fc]">.</span>
-            <span className="ml-2 text-[10px] uppercase tracking-[0.35em] text-white/60 hidden sm:inline">Le Concierge</span>
-          </Link>
-          <nav className="hidden md:flex items-center gap-10 text-xs uppercase tracking-[0.2em] text-white/80">
-            <Link to="/" className="hover:text-white">Accueil</Link>
-            <a href="#flotte" className="hover:text-white">Flotte</a>
-            <a href="#destinations" className="hover:text-white">Destinations</a>
-            <a href="#pourquoi" className="hover:text-white">À propos</a>
-            <button onClick={() => setContactOpen(true)} className="hover:text-white cursor-pointer">Contact</button>
-            
-            {/* Dynamic Client Portal Button */}
-            {client ? (
-              <Link
-                to="/client"
-                className="inline-flex items-center gap-2 rounded-full border border-[#7dd3fc]/45 bg-[#7dd3fc]/10 px-4 py-1.5 text-white hover:bg-[#7dd3fc]/20 transition-colors normal-case tracking-normal text-sm"
-              >
-                <User className="h-3.5 w-3.5 text-[#7dd3fc]" />
-                <span>{client.firstName} {client.lastName.slice(0, 1)}.</span>
-              </Link>
-            ) : (
-              <Link
-                to="/client"
-                className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-white hover:bg-white/15 transition-colors normal-case tracking-normal text-sm"
-              >
-                <User className="h-3.5 w-3.5" />
-                Espace Client
-              </Link>
-            )}
-
-            {/* Discreet Admin Lock Icon */}
-            <Link
-              to="/admin"
-              className="p-1 text-white/40 hover:text-white transition-colors"
-              title="Administration"
-            >
-              <Lock className="h-3.5 w-3.5" />
-            </Link>
-          </nav>
-          <Sheet>
-            <SheetTrigger asChild>
-              <button
-                type="button"
-                className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-full border border-white/20 bg-black/25 text-white backdrop-blur transition hover:bg-white/10"
-                aria-label="Ouvrir le menu"
-              >
-                <Menu className="h-5 w-5" />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="right" className="border-white/10 bg-[#0f0f0f] text-white">
-              <SheetTitle className="font-display text-2xl text-white">
-                YOLO<span className="text-[#7dd3fc]">.</span>
-              </SheetTitle>
-              <nav className="mt-10 flex flex-col gap-3">
-                <SheetClose asChild>
-                  <Link to="/" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
-                    Accueil
-                  </Link>
-                </SheetClose>
-                <SheetClose asChild>
-                  <a href="#flotte" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
-                    Flotte
-                  </a>
-                </SheetClose>
-                <SheetClose asChild>
-                  <a href="#destinations" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
-                    Destinations
-                  </a>
-                </SheetClose>
-                <SheetClose asChild>
-                  <a href="#pourquoi" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
-                    À propos
-                  </a>
-                </SheetClose>
-                <SheetClose asChild>
-                  <button
-                    type="button"
-                    onClick={() => setContactOpen(true)}
-                    className="rounded-lg px-3 py-3 text-left text-base text-white/80 hover:bg-white/10 hover:text-white w-full cursor-pointer"
-                  >
-                    Contact
-                  </button>
-                </SheetClose>
-                
-                <div className="border-t border-white/10 my-4" />
-
-                <SheetClose asChild>
-                  {client ? (
-                    <Link to="/client" className="inline-flex items-center gap-2 rounded-lg bg-[#7dd3fc]/10 border border-[#7dd3fc]/30 px-3 py-3 text-base text-white hover:bg-[#7dd3fc]/20">
-                      <User className="h-4 w-4 text-[#7dd3fc]" /> Espace Client ({client.firstName})
-                    </Link>
-                  ) : (
-                    <Link to="/client" className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base text-white hover:bg-white/10">
-                      <User className="h-4 w-4" /> Espace Client
-                    </Link>
-                  )}
-                </SheetClose>
-
-                <SheetClose asChild>
-                  <Link to="/admin" className="inline-flex items-center gap-2 text-white/40 hover:text-white/60 px-3 py-2 text-xs">
-                    <Lock className="h-3 w-3" /> Accès administrateur
-                  </Link>
-                </SheetClose>
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
-      </header>
-
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <PortalHeader portalId="vehicules" onAction={(a) => a === "contact" && setContactOpen(true)} />
         <img src={carHero} alt="Supercar de luxe" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1080} />
         <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/40 to-black" />
         <div className="relative z-10 text-center px-6 max-w-4xl">
@@ -340,7 +220,7 @@ function LocationVehicules() {
       </footer>
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={prefilledVehicle} />}
-      {contactOpen && <ContactModal onClose={() => setContactOpen(false)} />}
+      {contactOpen && <ContactModal onClose={() => setContactOpen(false)} serviceType="vehicules" />}
     </div>
   );
 }

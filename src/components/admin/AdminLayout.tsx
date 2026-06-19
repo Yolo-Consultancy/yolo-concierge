@@ -114,7 +114,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                 {adminConfig.brand.title}<span className="text-[#7dd3fc]">.</span>
               </p>
               <p className="text-[10px] uppercase tracking-widest text-white/40">
-                {adminConfig.brand.subtitle}
+                {adminConfig.brand.subtitle} · Location
               </p>
             </div>
             <button onClick={() => setOpen(false)} className="lg:hidden p-1 rounded text-white/60 hover:bg-white/10 hover:text-white">

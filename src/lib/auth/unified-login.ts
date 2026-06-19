@@ -12,7 +12,12 @@ import type { ClientAccount } from "@/lib/client/auth";
 import type { DriverAccount } from "@/lib/driver/auth";
 import type { AdminUser } from "@/lib/admin/auth";
 
+import type { PortalId } from "@/config/portals";
+import { redirectPathForRole, resolvePostLoginPath } from "@/lib/auth/redirect";
+
 export type UserRole = "admin" | "client" | "driver";
+
+export type AppPath = string;
 
 export type UnifiedLoginResult =
   | { ok: true; role: "admin"; user: AdminUser }
@@ -57,24 +62,7 @@ export async function loginUnified(email: string, password: string): Promise<Uni
   }
 }
 
-export function redirectPathForRole(role: UserRole): "/admin" | "/client" | "/driver" {
-  if (role === "admin") return "/admin";
-  if (role === "driver") return "/driver";
-  return "/client";
-}
-
-/** Redirection post-connexion : respecte `redirect` seulement s'il correspond au rôle. */
-export function resolvePostLoginPath(
-  role: UserRole,
-  redirect?: string,
-): "/admin" | "/client" | "/driver" {
-  const fallback = redirectPathForRole(role);
-  if (!redirect?.startsWith("/")) return fallback;
-  if (role === "driver" && redirect.startsWith("/driver")) return redirect as "/driver";
-  if (role === "admin" && redirect.startsWith("/admin")) return redirect as "/admin";
-  if (role === "client" && redirect.startsWith("/client")) return redirect as "/client";
-  return fallback;
-}
+export { redirectPathForRole, resolvePostLoginPath, connexionSearch } from "@/lib/auth/redirect";
 
 export function welcomeMessage(result: Extract<UnifiedLoginResult, { ok: true }>): string {
   if (result.role === "admin") return `Bienvenue, ${result.user.name}.`;

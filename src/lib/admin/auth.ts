@@ -7,6 +7,7 @@ export type AdminUser = {
   name: string;
   email: string;
   role: "admin" | "agent" | "chauffeur";
+  portalScope?: "vehicules" | "demenagement" | "sur_mesure" | "all";
 };
 
 export function isAuthenticated(): boolean {

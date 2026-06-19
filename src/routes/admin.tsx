@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { validateAdminSession } from "@/lib/admin/auth";
 import { subscribeAuth } from "@/lib/auth/session";
+import { connexionSearch } from "@/lib/auth/redirect";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -31,7 +32,7 @@ function AdminShell() {
       if (!ok) {
         navigate({
           to: "/connexion",
-          search: { redirect: "/admin" },
+          search: connexionSearch("vehicules", "login"),
         });
       }
     };

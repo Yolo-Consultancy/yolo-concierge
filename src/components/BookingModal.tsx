@@ -468,7 +468,7 @@ export function BookingModal({
                       modifiers={{ occupied: occupiedDates }}
                       modifiersClassNames={{
                         occupied:
-                          "text-red-400 underline decoration-red-500 decoration-2 font-medium opacity-100",
+                          "[&_button]:!bg-[#7dd3fc] [&_button]:!text-black [&_button]:!font-semibold [&_button]:!rounded-md [&_button]:!opacity-100 [&_button]:disabled:!opacity-100 [&_button]:hover:!bg-[#7dd3fc] [&_button]:hover:!text-black [&_button]:![text-decoration:none]",
                       }}
                       className="bg-[#0f0f0f] text-white"
                       classNames={{
@@ -476,7 +476,7 @@ export function BookingModal({
                         day: "text-white",
                         weekday: "text-white/50",
                         outside: "text-white/25",
-                        disabled: "text-red-400/70 underline decoration-red-500/80 line-through opacity-60",
+                        disabled: "text-white/25 opacity-40",
                         today: "bg-white/10 text-white",
                         range_start: "bg-[#7dd3fc] text-black rounded-l-md",
                         range_middle: "bg-[#7dd3fc]/20 text-white rounded-none",
@@ -486,7 +486,7 @@ export function BookingModal({
                     <p className="border-t border-white/10 px-4 py-2.5 text-xs text-white/50">
                       {loadingOccupied
                         ? "Chargement des disponibilités…"
-                        : "Dates soulignées en rouge : véhicule déjà réservé (non sélectionnable)."}
+                        : "Cases bleu YOLO : véhicule déjà réservé (non sélectionnable)."}
                     </p>
                   </PopoverContent>
                 </Popover>

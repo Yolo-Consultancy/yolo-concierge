@@ -11,6 +11,7 @@ import {
   Compass,
 } from "lucide-react";
 import { hydrateCurrentClient, logoutClient, type ClientAccount } from "@/lib/client/auth";
+import { connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 
@@ -53,7 +54,7 @@ function ClientShell() {
     if (ready && !account) {
       navigate({
         to: "/connexion",
-        search: { redirect: "/client" },
+        search: connexionSearch("vehicules", "login"),
       });
     }
   }, [ready, account, navigate]);
@@ -63,7 +64,7 @@ function ClientShell() {
     notifyAuthChange();
     setAccount(null);
     toast.success("Vous avez été déconnecté.");
-    navigate({ to: "/connexion", search: { redirect: "/client" } });
+    navigate({ to: "/connexion", search: connexionSearch("vehicules", "login") });
   };
 
   if (!ready || !account) return null;
@@ -87,7 +88,7 @@ function ClientShell() {
             <span className="font-display text-xl font-bold tracking-tight text-white">
               YOLO<span className="text-[#7dd3fc]">.</span>
             </span>
-            <span className="text-[9px] uppercase tracking-widest text-[#7dd3fc]">Client</span>
+            <span className="text-[9px] uppercase tracking-widest text-[#7dd3fc]">Location véhicules</span>
           </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -107,11 +108,11 @@ function ClientShell() {
           {/* Brand */}
           <div className="h-20 px-8 flex items-center justify-between border-b border-white/5">
             <div>
-              <Link to="/" className="flex items-center gap-2">
+              <Link to="/location-vehicules" className="flex items-center gap-2">
                 <span className="font-display text-2xl font-bold tracking-tight text-white">
                   YOLO<span className="text-[#7dd3fc]">.</span>
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-[#7dd3fc]">Client</span>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-[#7dd3fc]">Location</span>
               </Link>
             </div>
             <button
@@ -164,11 +165,11 @@ function ClientShell() {
           {/* Footer Actions */}
           <div className="p-4 border-t border-white/5 space-y-1.5">
             <Link
-              to="/"
+              to="/location-vehicules"
               className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs text-white/40 hover:text-white hover:bg-white/5 transition-all"
             >
               <Compass className="h-4 w-4" />
-              Retour à l'accueil
+              Retour au portail
             </Link>
             <button
               onClick={handleLogout}

@@ -9,6 +9,7 @@ import {
   Compass,
 } from "lucide-react";
 import { hydrateCurrentDriver, logoutDriver, type DriverAccount } from "@/lib/driver/auth";
+import { connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 
@@ -46,7 +47,7 @@ function DriverShell() {
     if (ready && !account) {
       navigate({
         to: "/connexion",
-        search: { redirect: "/driver" },
+        search: connexionSearch(undefined, "login"),
       });
     }
   }, [ready, account, navigate]);
@@ -56,7 +57,7 @@ function DriverShell() {
     notifyAuthChange();
     setAccount(null);
     toast.success("Vous avez été déconnecté.");
-    navigate({ to: "/connexion", search: { redirect: "/driver" } });
+    navigate({ to: "/connexion", search: connexionSearch(undefined, "login") });
   };
 
   if (!ready || !account) return null;

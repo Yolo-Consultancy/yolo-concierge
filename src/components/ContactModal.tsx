@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { useState, useMemo } from "react";
 import { publicApi } from "@/lib/api/client";
+import type { ServiceType } from "@/config/portals";
 import { toast } from "sonner";
 import { allCountries } from "country-telephone-data";
 
@@ -8,8 +9,9 @@ const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
 
 type ContactModalProps = {
   onClose: () => void;
-  prefilledVehicle?: string; // e.g. "Ferrari 488 GTB"
-  initialSubject?: string; // e.g. "Devis Déménagement"
+  prefilledVehicle?: string;
+  initialSubject?: string;
+  serviceType?: ServiceType | "general";
 };
 
 // Tri alphabétique de tous les pays du monde
@@ -29,6 +31,7 @@ export function ContactModal({
   onClose,
   prefilledVehicle = "",
   initialSubject = "",
+  serviceType = "general",
 }: ContactModalProps) {
   const [form, setForm] = useState({
     name: "",
@@ -84,6 +87,7 @@ export function ContactModal({
         phone: form.phone ? `${form.countryCode} ${form.phone}` : "",
         subject: form.subject || prefilledVehicle || "Contact YOLO",
         message: summary,
+        serviceType,
       });
       setSubmitted(true);
       toast.success("Votre demande a bien été envoyée à notre équipe.");

@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { SiteHeader } from "@/components/SiteHeader";
+import { PortalHeader } from "@/components/PortalHeader";
 import { ContactModal } from "@/components/ContactModal";
 import demenagementImg from "@/assets/portal-demenagement.jpg";
 
@@ -31,7 +31,7 @@ function Demenagement() {
     <main className="min-h-screen bg-background">
       {/* Hero */}
       <section className="relative h-[60vh] min-h-120 overflow-hidden">
-        <SiteHeader />
+        <PortalHeader portalId="demenagement" onAction={(a) => a === "devis" && setContactOpen(true)} />
         <img src={demenagementImg} alt="Déménagement" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/70" />
         <div className="relative z-10 mx-auto max-w-7xl px-6 h-full flex flex-col justify-end pb-16 text-white">
@@ -41,7 +41,7 @@ function Demenagement() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl px-6 py-20">
+      <section id="services" className="mx-auto max-w-7xl px-6 py-20">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {services.map((s) => (
             <div key={s.title} className="rounded-xl border border-border bg-card p-7">
@@ -57,7 +57,7 @@ function Demenagement() {
           ))}
         </div>
 
-        <div className="mt-16 rounded-2xl bg-primary text-primary-foreground p-10 md:p-14 text-center">
+        <div id="processus" className="mt-16 rounded-2xl bg-primary text-primary-foreground p-10 md:p-14 text-center">
           <h2 className="font-display text-3xl md:text-4xl mb-4">Demandez votre devis personnalisé</h2>
           <p className="text-primary-foreground/70 max-w-xl mx-auto mb-8">
             Évaluation du volume, réservation des équipes et suivi de l'intervention.
@@ -78,6 +78,7 @@ function Demenagement() {
         <ContactModal
           onClose={() => setContactOpen(false)}
           initialSubject="Devis Déménagement"
+          serviceType="demenagement"
         />
       )}
     </main>

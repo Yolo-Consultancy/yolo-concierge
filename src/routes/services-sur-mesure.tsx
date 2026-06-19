@@ -1,8 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { SiteHeader } from "@/components/SiteHeader";
+import { PortalHeader } from "@/components/PortalHeader";
 import servicesImg from "@/assets/portal-services.jpg";
+import { submitServiceRequest } from "@/lib/portals/service-requests";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/services-sur-mesure")({
   head: () => ({
@@ -24,11 +26,42 @@ const categories = [
 
 function SurMesure() {
   const [sent, setSent] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    category: "",
+    message: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSaving(true);
+    try {
+      await submitServiceRequest({
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        subject: form.category || "Demande sur mesure",
+        message: form.message.trim(),
+        serviceType: "sur_mesure",
+      });
+      setSent(true);
+      toast.success("Votre demande a bien été envoyée.");
+    } catch {
+      toast.error("Impossible d'envoyer votre demande. Réessayez plus tard.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <main className="min-h-screen bg-background">
       <section className="relative h-[60vh] min-h-120 overflow-hidden">
-        <SiteHeader />
+        <PortalHeader portalId="sur-mesure" onAction={() => {
+          document.getElementById("demande")?.scrollIntoView({ behavior: "smooth" });
+        }} />
         <img src={servicesImg} alt="Conciergerie" className="absolute inset-0 h-full w-full object-cover" />
         <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/70" />
         <div className="relative z-10 mx-auto max-w-7xl px-6 h-full flex flex-col justify-end pb-16 text-white">
@@ -39,7 +72,7 @@ function SurMesure() {
       </section>
 
       <section className="mx-auto max-w-7xl px-6 py-20 grid lg:grid-cols-2 gap-12">
-        <div>
+        <div id="univers">
           <h2 className="font-display text-3xl mb-8">Nos univers de service</h2>
           <div className="space-y-5">
             {categories.map((c) => (
@@ -55,7 +88,7 @@ function SurMesure() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-primary text-primary-foreground p-8 md:p-10 self-start sticky top-6">
+        <div id="demande" className="rounded-2xl bg-primary text-primary-foreground p-8 md:p-10 self-start sticky top-6">
           <h2 className="font-display text-3xl mb-2">Formulaire personnalisé</h2>
           <p className="text-primary-foreground/70 text-sm mb-6">Décrivez votre besoin, nous revenons vers vous sous 2h.</p>
 
@@ -66,18 +99,62 @@ function SurMesure() {
               </div>
               <p className="font-display text-xl">Demande envoyée !</p>
               <p className="text-sm text-primary-foreground/70 mt-2">Votre concierge dédié vous contactera très vite.</p>
+              <Link
+                to="/connexion"
+                search={{ portal: "sur-mesure", mode: "register" }}
+                className="inline-block mt-6 text-sm text-gold hover:underline"
+              >
+                Créer un compte pour suivre votre demande →
+              </Link>
             </div>
           ) : (
-            <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="space-y-4">
-              <input required placeholder="Votre nom" className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-gold" />
-              <input required type="email" placeholder="Email" className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-gold" />
-              <input required placeholder="Téléphone" className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-gold" />
-              <select required className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm focus:outline-none focus:border-gold">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                required
+                placeholder="Votre nom"
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-gold"
+              />
+              <input
+                required
+                type="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-gold"
+              />
+              <input
+                required
+                placeholder="Téléphone"
+                value={form.phone}
+                onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-gold"
+              />
+              <select
+                required
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm focus:outline-none focus:border-gold"
+              >
                 <option value="" className="bg-primary">Type de service</option>
                 {categories.map((c) => <option key={c.title} value={c.title} className="bg-primary">{c.title}</option>)}
               </select>
-              <textarea required rows={4} placeholder="Décrivez votre besoin..." className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-gold" />
-              <button type="submit" className="w-full bg-gold text-gold-foreground py-3 rounded-md font-medium hover:opacity-90 transition">Envoyer la demande</button>
+              <textarea
+                required
+                rows={4}
+                placeholder="Décrivez votre besoin..."
+                value={form.message}
+                onChange={(e) => setForm({ ...form, message: e.target.value })}
+                className="w-full bg-white/10 border border-white/20 rounded-md px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:border-gold"
+              />
+              <button
+                type="submit"
+                disabled={saving}
+                className="w-full bg-gold text-gold-foreground py-3 rounded-md font-medium hover:opacity-90 transition disabled:opacity-50"
+              >
+                {saving ? "Envoi..." : "Envoyer la demande"}
+              </button>
             </form>
           )}
         </div>

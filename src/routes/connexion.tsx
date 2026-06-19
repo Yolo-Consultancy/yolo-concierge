@@ -7,11 +7,14 @@ import { loginUnified, resolvePostLoginPath, welcomeMessage } from "@/lib/auth/u
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 import { z } from "zod";
+import { getPortal, type PortalId } from "@/config/portals";
 
 type Mode = "login" | "register";
 
 const connexionSearchSchema = z.object({
   redirect: z.string().optional().catch(undefined),
+  portal: z.enum(["vehicules", "demenagement", "sur-mesure"]).optional().catch(undefined),
+  mode: z.enum(["login", "register"]).optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/connexion")({
@@ -29,9 +32,10 @@ const inputCls =
   "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#7dd3fc] focus:ring-1 focus:ring-[#7dd3fc]/50 transition-all";
 
 function ConnexionPage() {
-  const { redirect } = Route.useSearch();
+  const { redirect, portal: portalId, mode: initialMode } = Route.useSearch();
+  const portal = portalId ? getPortal(portalId) : null;
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>("login");
+  const [mode, setMode] = useState<Mode>(initialMode === "register" ? "register" : "login");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -48,9 +52,10 @@ function ConnexionPage() {
     confirmPassword: "",
   });
 
-  const goAfterLogin = (role: "admin" | "client" | "driver") => {
+  const goAfterLogin = (result: Extract<Awaited<ReturnType<typeof loginUnified>>, { ok: true }>) => {
     notifyAuthChange();
-    const to = resolvePostLoginPath(role, redirect);
+    const adminUser = result.role === "admin" ? result.user : undefined;
+    const to = resolvePostLoginPath(result.role, redirect, portalId as PortalId | undefined, adminUser);
     navigate({ to });
   };
 
@@ -64,7 +69,7 @@ function ConnexionPage() {
 
     if (result.ok) {
       toast.success(welcomeMessage(result));
-      goAfterLogin(result.role);
+      goAfterLogin(result);
     } else {
       setError(result.error);
     }
@@ -92,7 +97,7 @@ function ConnexionPage() {
 
     if (result.ok) {
       toast.success("Votre compte client a été créé.");
-      goAfterLogin("client");
+      goAfterLogin({ ok: true, role: "client", account: result.account });
     } else {
       setError(result.error);
     }
@@ -111,7 +116,11 @@ function ConnexionPage() {
             </span>
             <span className="text-[10px] uppercase tracking-[0.35em] text-white/50">Le Concierge</span>
           </Link>
-          <p className="text-sm text-white/60">Connexion à votre espace</p>
+          <p className="text-sm text-white/60">
+            {portal
+              ? `Connexion unique — ${portal.name}`
+              : "Un seul formulaire pour tous les espaces"}
+          </p>
         </div>
 
         <div className="bg-[#0f0f11]/80 border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-xl shadow-2xl">
@@ -177,7 +186,7 @@ function ConnexionPage() {
                 {loading ? "Connexion..." : "Se connecter"}
               </button>
               <p className="text-center text-xs text-white/35 pt-1">
-                Admin, chauffeur ou client — redirection automatique selon votre compte.
+                Client, chauffeur ou agent — un seul formulaire, redirection automatique vers votre espace.
               </p>
             </form>
           ) : (
@@ -245,9 +254,17 @@ function ConnexionPage() {
           )}
         </div>
 
-        <div className="text-center mt-6">
-          <Link to="/" className="text-xs text-white/50 hover:text-[#7dd3fc] transition-colors">
-            ← Retour au site
+        <div className="text-center mt-6 space-y-2">
+          {portal && (
+            <Link
+              to={portal.publicPath as "/demenagement"}
+              className="block text-xs text-white/50 hover:text-[#7dd3fc] transition-colors"
+            >
+              ← Retour au portail {portal.name}
+            </Link>
+          )}
+          <Link to="/" className="block text-xs text-white/50 hover:text-[#7dd3fc] transition-colors">
+            Accueil général
           </Link>
         </div>
       </div>
