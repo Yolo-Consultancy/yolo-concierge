@@ -9,6 +9,7 @@ import {
   Menu,
   X,
   Compass,
+  ClipboardList,
 } from "lucide-react";
 import { hydrateCurrentClient, logoutClient, type ClientAccount } from "@/lib/client/auth";
 import { connexionSearch } from "@/lib/auth/redirect";
@@ -54,7 +55,7 @@ function ClientShell() {
     if (ready && !account) {
       navigate({
         to: "/connexion",
-        search: connexionSearch("vehicules", "login"),
+        search: connexionSearch(undefined, "login"),
       });
     }
   }, [ready, account, navigate]);
@@ -64,7 +65,7 @@ function ClientShell() {
     notifyAuthChange();
     setAccount(null);
     toast.success("Vous avez été déconnecté.");
-    navigate({ to: "/connexion", search: connexionSearch("vehicules", "login") });
+    navigate({ to: "/connexion", search: connexionSearch(undefined, "login") });
   };
 
   if (!ready || !account) return null;
@@ -72,8 +73,10 @@ function ClientShell() {
   // ─── CLIENT PORTAL LAYOUT SHELL ───────────────────────────────────────────
   const navigation = [
     { to: "/client", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
-    { to: "/client/reservations", label: "Mes Réservations", icon: CalendarCheck },
-    { to: "/client/support", label: "Chat Support", icon: MessageSquare },
+    { to: "/client/reservations", label: "Mes réservations", icon: CalendarCheck },
+    { to: "/client/demenagement", label: "Déménagement", icon: ClipboardList },
+    { to: "/client/sur-mesure", label: "Sur mesure", icon: ClipboardList },
+    { to: "/client/support", label: "Support", icon: MessageSquare },
   ];
 
   const isActive = (to: string, exact?: boolean) =>
@@ -88,7 +91,7 @@ function ClientShell() {
             <span className="font-display text-xl font-bold tracking-tight text-white">
               YOLO<span className="text-[#7dd3fc]">.</span>
             </span>
-            <span className="text-[9px] uppercase tracking-widest text-[#7dd3fc]">Location véhicules</span>
+            <span className="text-[9px] uppercase tracking-widest text-[#7dd3fc]">Espace client</span>
           </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -112,7 +115,7 @@ function ClientShell() {
                 <span className="font-display text-2xl font-bold tracking-tight text-white">
                   YOLO<span className="text-[#7dd3fc]">.</span>
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-[#7dd3fc]">Location</span>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-[#7dd3fc]">Espace client</span>
               </Link>
             </div>
             <button
@@ -165,11 +168,11 @@ function ClientShell() {
           {/* Footer Actions */}
           <div className="p-4 border-t border-white/5 space-y-1.5">
             <Link
-              to="/location-vehicules"
+              to="/"
               className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs text-white/40 hover:text-white hover:bg-white/5 transition-all"
             >
               <Compass className="h-4 w-4" />
-              Retour au portail
+              Portails YOLO
             </Link>
             <button
               onClick={handleLogout}

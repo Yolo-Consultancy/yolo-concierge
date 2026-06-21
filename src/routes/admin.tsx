@@ -2,9 +2,10 @@
 import { createFileRoute, Outlet, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { validateAdminSession } from "@/lib/admin/auth";
+import { getAdminSession } from "@/lib/admin/auth";
+import { adminCanAccessPortal } from "@/lib/auth/admin-portal";
 import { subscribeAuth } from "@/lib/auth/session";
-import { connexionSearch } from "@/lib/auth/redirect";
+import { adminPathForScope, connexionSearch } from "@/lib/auth/redirect";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({
@@ -25,16 +26,28 @@ function AdminShell() {
     let cancelled = false;
 
     const check = async () => {
-      const ok = await validateAdminSession();
+      const user = await getAdminSession();
       if (cancelled) return;
-      setAuthed(ok);
-      setReady(true);
-      if (!ok) {
+
+      if (!user) {
+        setAuthed(false);
+        setReady(true);
         navigate({
           to: "/connexion",
           search: connexionSearch("vehicules", "login"),
         });
+        return;
       }
+
+      if (!adminCanAccessPortal(user, "vehicules")) {
+        setAuthed(false);
+        setReady(true);
+        navigate({ to: adminPathForScope(user.portalScope) as "/admin" });
+        return;
+      }
+
+      setAuthed(true);
+      setReady(true);
     };
 
     void check();

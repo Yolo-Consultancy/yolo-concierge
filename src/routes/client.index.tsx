@@ -81,21 +81,24 @@ function ClientDashboard() {
   // Quick Action lists
   const actions = [
     {
-      to: "/location-vehicules" as const,
+      bookTo: "/location-vehicules" as const,
+      manageTo: "/client/reservations" as const,
       title: "Location de Véhicules",
       description: "Louez des supercars et berlines de prestige.",
       icon: Car,
       color: "from-blue-500/20 to-cyan-500/20 text-blue-400 border-blue-500/20",
     },
     {
-      to: "/demenagement" as const,
+      bookTo: "/demenagement" as const,
+      manageTo: "/client/demenagement" as const,
       title: "Déménagement",
       description: "Demandez un devis logistique clé en main.",
       icon: Truck,
       color: "from-amber-500/20 to-orange-500/20 text-amber-400 border-amber-500/20",
     },
     {
-      to: "/services-sur-mesure" as const,
+      bookTo: "/services-sur-mesure" as const,
+      manageTo: "/client/sur-mesure" as const,
       title: "Services Sur Mesure",
       description: "Votre concierge dédié s'occupe de tout.",
       icon: Sparkles,
@@ -276,25 +279,36 @@ function ClientDashboard() {
           {actions.map((act) => {
             const Icon = act.icon;
             return (
-              <Link
+              <div
                 key={act.title}
-                to={act.to}
-                className="rounded-xl border border-white/5 bg-[#0f0f12] p-5 flex flex-col justify-between group hover:border-[#7dd3fc]/20 transition-all hover:-translate-y-0.5"
+                className="rounded-xl border border-white/5 bg-[#0f0f12] p-5 flex flex-col justify-between group hover:border-[#7dd3fc]/20 transition-all"
               >
                 <div className="space-y-4">
                   <div className={`h-10 w-10 rounded-lg bg-gradient-to-br ${act.color} flex items-center justify-center border`}>
                     <Icon className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white text-sm group-hover:text-[#7dd3fc] transition-colors">{act.title}</h3>
+                    <h3 className="font-semibold text-white text-sm">{act.title}</h3>
                     <p className="text-xs text-white/40 mt-1 leading-relaxed">{act.description}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-1 text-[11px] text-[#7dd3fc] font-medium mt-5">
-                  Réserver
-                  <ArrowRight className="h-3 w-3 group-hover:translate-x-0.5 transition-transform" />
+                <div className="flex flex-wrap gap-2 mt-5">
+                  <Link
+                    to={act.bookTo}
+                    className="inline-flex items-center gap-1 text-[11px] text-white/70 hover:text-white font-medium px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 transition-colors"
+                  >
+                    Nouvelle demande
+                    <ArrowRight className="h-3 w-3" />
+                  </Link>
+                  <Link
+                    to={act.manageTo}
+                    className="inline-flex items-center gap-1 text-[11px] text-[#7dd3fc] font-medium px-3 py-1.5 rounded-lg bg-[#7dd3fc]/10 hover:bg-[#7dd3fc]/20 transition-colors"
+                  >
+                    Mes demandes
+                    <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </div>
-              </Link>
+              </div>
             );
           })}
         </div>

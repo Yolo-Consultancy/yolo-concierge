@@ -4,13 +4,15 @@ import { Menu, LogOut, User, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   getClientSession,
-  getAdminSession,
   logoutSession,
   subscribeAuth,
 } from "@/lib/auth/session";
 import type { ClientAccount } from "@/lib/client/auth";
+import { getAdminSession, type AdminUser } from "@/lib/admin/auth";
+import { adminCanAccessPortal } from "@/lib/auth/admin-portal";
 import { getPortal, type PortalId } from "@/config/portals";
-import { connexionSearch } from "@/lib/auth/redirect";
+import { connexionSearch, contactSearch } from "@/lib/auth/redirect";
+import { useRouterState } from "@tanstack/react-router";
 import {
   Sheet,
   SheetClose,
@@ -26,18 +28,25 @@ type PortalHeaderProps = {
 
 export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
   const portal = getPortal(portalId);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const searchPortal = useRouterState({
+    select: (s) => (s.location.search as { portal?: PortalId }).portal,
+  });
+  const onContactPage = pathname === "/contact" && searchPortal === portalId;
   const [client, setClient] = useState<ClientAccount | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
 
   const refreshAuth = () => {
     setClient(getClientSession());
-    setIsAdmin(getAdminSession());
+    void getAdminSession().then(setAdminUser);
   };
 
   useEffect(() => {
     refreshAuth();
     return subscribeAuth(refreshAuth);
   }, []);
+
+  const showAdminLink = adminUser && adminCanAccessPortal(adminUser, portalId);
 
   const handleLogout = () => {
     logoutSession("all");
@@ -49,31 +58,50 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
   const registerSearch = connexionSearch(portalId, "register");
 
   const renderNavItem = (item: (typeof portal.publicNav)[number], mobile = false) => {
+    const isContactLink = item.type === "link" && item.to === "/contact";
+    const isActive = isContactLink && onContactPage;
     const cls = mobile
-      ? "rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white block w-full text-left"
-      : "hover:opacity-100 opacity-90 transition-colors";
+      ? `rounded-lg px-3 py-3 text-base block w-full text-left ${
+          isActive ? `${portal.accentClass} bg-white/10` : "text-white/80 hover:bg-white/10 hover:text-white"
+        }`
+      : `transition-colors ${isActive ? portal.accentClass : "hover:opacity-100 opacity-90"}`;
 
     if (item.type === "link") {
+      const search = isContactLink ? contactSearch(portalId) : undefined;
+      const to = item.to === "/" ? portal.publicPath : item.to;
       if (mobile) {
         return (
           <SheetClose key={item.label} asChild>
-            <Link to={item.to as "/"} className={cls}>
+            <Link to={to as "/"} search={search} className={cls}>
               {item.label}
             </Link>
           </SheetClose>
         );
       }
       return (
-        <Link key={item.label} to={item.to as "/"} className={cls}>
+        <Link key={item.label} to={to as "/"} search={search} className={cls}>
           {item.label}
         </Link>
       );
     }
     if (item.type === "anchor") {
+      const anchorCls = mobile
+        ? "rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white block w-full text-left"
+        : "hover:opacity-100 opacity-90 transition-colors";
+      const hash = item.href.replace(/^#/, "");
+      if (mobile) {
+        return (
+          <SheetClose key={item.label} asChild>
+            <Link to={portal.publicPath as "/"} hash={hash} className={anchorCls}>
+              {item.label}
+            </Link>
+          </SheetClose>
+        );
+      }
       return (
-        <a key={item.label} href={item.href} className={cls}>
+        <Link key={item.label} to={portal.publicPath as "/"} hash={hash} className={anchorCls}>
           {item.label}
-        </a>
+        </Link>
       );
     }
     return (
@@ -136,7 +164,7 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
                 </Link>
               </>
             )}
-            {isAdmin && (
+            {showAdminLink && (
               <Link
                 to={portal.adminPath as "/admin"}
                 className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-white/80 hover:text-white transition-colors text-xs"
@@ -146,7 +174,7 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
                 Admin
               </Link>
             )}
-            {(client || isAdmin) && (
+            {(client || showAdminLink) && (
               <button
                 type="button"
                 onClick={handleLogout}
@@ -199,7 +227,7 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
                   </SheetClose>
                 </>
               )}
-              {isAdmin && (
+              {showAdminLink && (
                 <SheetClose asChild>
                   <Link to={portal.adminPath as "/admin"} className="rounded-lg border border-white/15 px-3 py-3 text-base">
                     Back-office

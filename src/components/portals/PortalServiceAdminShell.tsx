@@ -2,8 +2,9 @@
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { LogOut, Menu, X } from "lucide-react";
-import { validateAdminSession, logout } from "@/lib/admin/auth";
-import { connexionSearch } from "@/lib/auth/redirect";
+import { getAdminSession, logout } from "@/lib/admin/auth";
+import { adminCanAccessPortal } from "@/lib/auth/admin-portal";
+import { adminPathForScope, connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { getPortal, type PortalId } from "@/config/portals";
 
@@ -16,15 +17,26 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
-    validateAdminSession().then((ok) => {
-      setAuthed(ok);
-      setReady(true);
-      if (!ok) {
+    getAdminSession().then((user) => {
+      if (!user) {
+        setAuthed(false);
+        setReady(true);
         navigate({
           to: "/connexion",
           search: connexionSearch(portalId, "login"),
         });
+        return;
       }
+
+      if (!adminCanAccessPortal(user, portalId)) {
+        setAuthed(false);
+        setReady(true);
+        navigate({ to: adminPathForScope(user.portalScope) as "/admin" });
+        return;
+      }
+
+      setAuthed(true);
+      setReady(true);
     });
   }, [navigate, portal.adminPath, portalId]);
 

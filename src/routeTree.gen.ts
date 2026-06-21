@@ -11,31 +11,34 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ServicesSurMesureRouteImport } from './routes/services-sur-mesure'
 import { Route as LocationVehiculesRouteImport } from './routes/location-vehicules'
+import { Route as LegacyClientSurMesureRouteImport } from './routes/legacy-client-sur-mesure'
+import { Route as LegacyClientDemenagementRouteImport } from './routes/legacy-client-demenagement'
 import { Route as DriverRouteImport } from './routes/driver'
 import { Route as DemenagementRouteImport } from './routes/demenagement'
+import { Route as ContactRouteImport } from './routes/contact'
 import { Route as ConnexionRouteImport } from './routes/connexion'
-import { Route as ClientSurMesureRouteImport } from './routes/client-sur-mesure'
-import { Route as ClientDemenagementRouteImport } from './routes/client-demenagement'
 import { Route as ClientRouteImport } from './routes/client'
 import { Route as AdminSurMesureRouteImport } from './routes/admin-sur-mesure'
 import { Route as AdminDemenagementRouteImport } from './routes/admin-demenagement'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as LegacyClientSurMesureIndexRouteImport } from './routes/legacy-client-sur-mesure.index'
+import { Route as LegacyClientDemenagementIndexRouteImport } from './routes/legacy-client-demenagement.index'
 import { Route as DriverIndexRouteImport } from './routes/driver.index'
 import { Route as ClientIndexRouteImport } from './routes/client.index'
-import { Route as ClientSurMesureIndexRouteImport } from './routes/client-sur-mesure.index'
-import { Route as ClientDemenagementIndexRouteImport } from './routes/client-demenagement.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminSurMesureIndexRouteImport } from './routes/admin-sur-mesure.index'
 import { Route as AdminDemenagementIndexRouteImport } from './routes/admin-demenagement.index'
 import { Route as PaiementSuccesRouteImport } from './routes/paiement.succes'
 import { Route as PaiementAnnuleRouteImport } from './routes/paiement.annule'
 import { Route as LocationVehiculesVehicleIdRouteImport } from './routes/location-vehicules_.$vehicleId'
+import { Route as LegacyClientSurMesureDemandesRouteImport } from './routes/legacy-client-sur-mesure.demandes'
+import { Route as LegacyClientDemenagementDemandesRouteImport } from './routes/legacy-client-demenagement.demandes'
 import { Route as EvaluerTokenRouteImport } from './routes/evaluer.$token'
+import { Route as ClientSurMesureRouteImport } from './routes/client.sur-mesure'
 import { Route as ClientSupportRouteImport } from './routes/client.support'
 import { Route as ClientReservationsRouteImport } from './routes/client.reservations'
-import { Route as ClientSurMesureDemandesRouteImport } from './routes/client-sur-mesure.demandes'
-import { Route as ClientDemenagementDemandesRouteImport } from './routes/client-demenagement.demandes'
+import { Route as ClientDemenagementRouteImport } from './routes/client.demenagement'
 import { Route as AdminVehiculesRouteImport } from './routes/admin.vehicules'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
 import { Route as AdminReservationsRouteImport } from './routes/admin.reservations'
@@ -61,6 +64,17 @@ const LocationVehiculesRoute = LocationVehiculesRouteImport.update({
   path: '/location-vehicules',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegacyClientSurMesureRoute = LegacyClientSurMesureRouteImport.update({
+  id: '/legacy-client-sur-mesure',
+  path: '/legacy-client-sur-mesure',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LegacyClientDemenagementRoute =
+  LegacyClientDemenagementRouteImport.update({
+    id: '/legacy-client-demenagement',
+    path: '/legacy-client-demenagement',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DriverRoute = DriverRouteImport.update({
   id: '/driver',
   path: '/driver',
@@ -71,19 +85,14 @@ const DemenagementRoute = DemenagementRouteImport.update({
   path: '/demenagement',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContactRoute = ContactRouteImport.update({
+  id: '/contact',
+  path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConnexionRoute = ConnexionRouteImport.update({
   id: '/connexion',
   path: '/connexion',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClientSurMesureRoute = ClientSurMesureRouteImport.update({
-  id: '/client-sur-mesure',
-  path: '/client-sur-mesure',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ClientDemenagementRoute = ClientDemenagementRouteImport.update({
-  id: '/client-demenagement',
-  path: '/client-demenagement',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientRoute = ClientRouteImport.update({
@@ -111,6 +120,18 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LegacyClientSurMesureIndexRoute =
+  LegacyClientSurMesureIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => LegacyClientSurMesureRoute,
+  } as any)
+const LegacyClientDemenagementIndexRoute =
+  LegacyClientDemenagementIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => LegacyClientDemenagementRoute,
+  } as any)
 const DriverIndexRoute = DriverIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -120,16 +141,6 @@ const ClientIndexRoute = ClientIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => ClientRoute,
-} as any)
-const ClientSurMesureIndexRoute = ClientSurMesureIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ClientSurMesureRoute,
-} as any)
-const ClientDemenagementIndexRoute = ClientDemenagementIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => ClientDemenagementRoute,
 } as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
@@ -162,10 +173,27 @@ const LocationVehiculesVehicleIdRoute =
     path: '/location-vehicules/$vehicleId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const LegacyClientSurMesureDemandesRoute =
+  LegacyClientSurMesureDemandesRouteImport.update({
+    id: '/demandes',
+    path: '/demandes',
+    getParentRoute: () => LegacyClientSurMesureRoute,
+  } as any)
+const LegacyClientDemenagementDemandesRoute =
+  LegacyClientDemenagementDemandesRouteImport.update({
+    id: '/demandes',
+    path: '/demandes',
+    getParentRoute: () => LegacyClientDemenagementRoute,
+  } as any)
 const EvaluerTokenRoute = EvaluerTokenRouteImport.update({
   id: '/evaluer/$token',
   path: '/evaluer/$token',
   getParentRoute: () => rootRouteImport,
+} as any)
+const ClientSurMesureRoute = ClientSurMesureRouteImport.update({
+  id: '/sur-mesure',
+  path: '/sur-mesure',
+  getParentRoute: () => ClientRoute,
 } as any)
 const ClientSupportRoute = ClientSupportRouteImport.update({
   id: '/support',
@@ -177,17 +205,11 @@ const ClientReservationsRoute = ClientReservationsRouteImport.update({
   path: '/reservations',
   getParentRoute: () => ClientRoute,
 } as any)
-const ClientSurMesureDemandesRoute = ClientSurMesureDemandesRouteImport.update({
-  id: '/demandes',
-  path: '/demandes',
-  getParentRoute: () => ClientSurMesureRoute,
+const ClientDemenagementRoute = ClientDemenagementRouteImport.update({
+  id: '/demenagement',
+  path: '/demenagement',
+  getParentRoute: () => ClientRoute,
 } as any)
-const ClientDemenagementDemandesRoute =
-  ClientDemenagementDemandesRouteImport.update({
-    id: '/demandes',
-    path: '/demandes',
-    getParentRoute: () => ClientDemenagementRoute,
-  } as any)
 const AdminVehiculesRoute = AdminVehiculesRouteImport.update({
   id: '/vehicules',
   path: '/vehicules',
@@ -269,11 +291,12 @@ export interface FileRoutesByFullPath {
   '/admin-demenagement': typeof AdminDemenagementRouteWithChildren
   '/admin-sur-mesure': typeof AdminSurMesureRouteWithChildren
   '/client': typeof ClientRouteWithChildren
-  '/client-demenagement': typeof ClientDemenagementRouteWithChildren
-  '/client-sur-mesure': typeof ClientSurMesureRouteWithChildren
   '/connexion': typeof ConnexionRoute
+  '/contact': typeof ContactRoute
   '/demenagement': typeof DemenagementRoute
   '/driver': typeof DriverRouteWithChildren
+  '/legacy-client-demenagement': typeof LegacyClientDemenagementRouteWithChildren
+  '/legacy-client-sur-mesure': typeof LegacyClientSurMesureRouteWithChildren
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
   '/admin-demenagement/clients': typeof AdminDemenagementClientsRoute
@@ -290,25 +313,28 @@ export interface FileRoutesByFullPath {
   '/admin/reservations': typeof AdminReservationsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
-  '/client-demenagement/demandes': typeof ClientDemenagementDemandesRoute
-  '/client-sur-mesure/demandes': typeof ClientSurMesureDemandesRoute
+  '/client/demenagement': typeof ClientDemenagementRoute
   '/client/reservations': typeof ClientReservationsRoute
   '/client/support': typeof ClientSupportRoute
+  '/client/sur-mesure': typeof ClientSurMesureRoute
   '/evaluer/$token': typeof EvaluerTokenRoute
+  '/legacy-client-demenagement/demandes': typeof LegacyClientDemenagementDemandesRoute
+  '/legacy-client-sur-mesure/demandes': typeof LegacyClientSurMesureDemandesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/paiement/annule': typeof PaiementAnnuleRoute
   '/paiement/succes': typeof PaiementSuccesRoute
   '/admin-demenagement/': typeof AdminDemenagementIndexRoute
   '/admin-sur-mesure/': typeof AdminSurMesureIndexRoute
   '/admin/': typeof AdminIndexRoute
-  '/client-demenagement/': typeof ClientDemenagementIndexRoute
-  '/client-sur-mesure/': typeof ClientSurMesureIndexRoute
   '/client/': typeof ClientIndexRoute
   '/driver/': typeof DriverIndexRoute
+  '/legacy-client-demenagement/': typeof LegacyClientDemenagementIndexRoute
+  '/legacy-client-sur-mesure/': typeof LegacyClientSurMesureIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/connexion': typeof ConnexionRoute
+  '/contact': typeof ContactRoute
   '/demenagement': typeof DemenagementRoute
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
@@ -326,21 +352,23 @@ export interface FileRoutesByTo {
   '/admin/reservations': typeof AdminReservationsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
-  '/client-demenagement/demandes': typeof ClientDemenagementDemandesRoute
-  '/client-sur-mesure/demandes': typeof ClientSurMesureDemandesRoute
+  '/client/demenagement': typeof ClientDemenagementRoute
   '/client/reservations': typeof ClientReservationsRoute
   '/client/support': typeof ClientSupportRoute
+  '/client/sur-mesure': typeof ClientSurMesureRoute
   '/evaluer/$token': typeof EvaluerTokenRoute
+  '/legacy-client-demenagement/demandes': typeof LegacyClientDemenagementDemandesRoute
+  '/legacy-client-sur-mesure/demandes': typeof LegacyClientSurMesureDemandesRoute
   '/location-vehicules/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/paiement/annule': typeof PaiementAnnuleRoute
   '/paiement/succes': typeof PaiementSuccesRoute
   '/admin-demenagement': typeof AdminDemenagementIndexRoute
   '/admin-sur-mesure': typeof AdminSurMesureIndexRoute
   '/admin': typeof AdminIndexRoute
-  '/client-demenagement': typeof ClientDemenagementIndexRoute
-  '/client-sur-mesure': typeof ClientSurMesureIndexRoute
   '/client': typeof ClientIndexRoute
   '/driver': typeof DriverIndexRoute
+  '/legacy-client-demenagement': typeof LegacyClientDemenagementIndexRoute
+  '/legacy-client-sur-mesure': typeof LegacyClientSurMesureIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -349,11 +377,12 @@ export interface FileRoutesById {
   '/admin-demenagement': typeof AdminDemenagementRouteWithChildren
   '/admin-sur-mesure': typeof AdminSurMesureRouteWithChildren
   '/client': typeof ClientRouteWithChildren
-  '/client-demenagement': typeof ClientDemenagementRouteWithChildren
-  '/client-sur-mesure': typeof ClientSurMesureRouteWithChildren
   '/connexion': typeof ConnexionRoute
+  '/contact': typeof ContactRoute
   '/demenagement': typeof DemenagementRoute
   '/driver': typeof DriverRouteWithChildren
+  '/legacy-client-demenagement': typeof LegacyClientDemenagementRouteWithChildren
+  '/legacy-client-sur-mesure': typeof LegacyClientSurMesureRouteWithChildren
   '/location-vehicules': typeof LocationVehiculesRoute
   '/services-sur-mesure': typeof ServicesSurMesureRoute
   '/admin-demenagement/clients': typeof AdminDemenagementClientsRoute
@@ -370,21 +399,23 @@ export interface FileRoutesById {
   '/admin/reservations': typeof AdminReservationsRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
-  '/client-demenagement/demandes': typeof ClientDemenagementDemandesRoute
-  '/client-sur-mesure/demandes': typeof ClientSurMesureDemandesRoute
+  '/client/demenagement': typeof ClientDemenagementRoute
   '/client/reservations': typeof ClientReservationsRoute
   '/client/support': typeof ClientSupportRoute
+  '/client/sur-mesure': typeof ClientSurMesureRoute
   '/evaluer/$token': typeof EvaluerTokenRoute
+  '/legacy-client-demenagement/demandes': typeof LegacyClientDemenagementDemandesRoute
+  '/legacy-client-sur-mesure/demandes': typeof LegacyClientSurMesureDemandesRoute
   '/location-vehicules_/$vehicleId': typeof LocationVehiculesVehicleIdRoute
   '/paiement/annule': typeof PaiementAnnuleRoute
   '/paiement/succes': typeof PaiementSuccesRoute
   '/admin-demenagement/': typeof AdminDemenagementIndexRoute
   '/admin-sur-mesure/': typeof AdminSurMesureIndexRoute
   '/admin/': typeof AdminIndexRoute
-  '/client-demenagement/': typeof ClientDemenagementIndexRoute
-  '/client-sur-mesure/': typeof ClientSurMesureIndexRoute
   '/client/': typeof ClientIndexRoute
   '/driver/': typeof DriverIndexRoute
+  '/legacy-client-demenagement/': typeof LegacyClientDemenagementIndexRoute
+  '/legacy-client-sur-mesure/': typeof LegacyClientSurMesureIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -394,11 +425,12 @@ export interface FileRouteTypes {
     | '/admin-demenagement'
     | '/admin-sur-mesure'
     | '/client'
-    | '/client-demenagement'
-    | '/client-sur-mesure'
     | '/connexion'
+    | '/contact'
     | '/demenagement'
     | '/driver'
+    | '/legacy-client-demenagement'
+    | '/legacy-client-sur-mesure'
     | '/location-vehicules'
     | '/services-sur-mesure'
     | '/admin-demenagement/clients'
@@ -415,25 +447,28 @@ export interface FileRouteTypes {
     | '/admin/reservations'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
-    | '/client-demenagement/demandes'
-    | '/client-sur-mesure/demandes'
+    | '/client/demenagement'
     | '/client/reservations'
     | '/client/support'
+    | '/client/sur-mesure'
     | '/evaluer/$token'
+    | '/legacy-client-demenagement/demandes'
+    | '/legacy-client-sur-mesure/demandes'
     | '/location-vehicules/$vehicleId'
     | '/paiement/annule'
     | '/paiement/succes'
     | '/admin-demenagement/'
     | '/admin-sur-mesure/'
     | '/admin/'
-    | '/client-demenagement/'
-    | '/client-sur-mesure/'
     | '/client/'
     | '/driver/'
+    | '/legacy-client-demenagement/'
+    | '/legacy-client-sur-mesure/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/connexion'
+    | '/contact'
     | '/demenagement'
     | '/location-vehicules'
     | '/services-sur-mesure'
@@ -451,21 +486,23 @@ export interface FileRouteTypes {
     | '/admin/reservations'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
-    | '/client-demenagement/demandes'
-    | '/client-sur-mesure/demandes'
+    | '/client/demenagement'
     | '/client/reservations'
     | '/client/support'
+    | '/client/sur-mesure'
     | '/evaluer/$token'
+    | '/legacy-client-demenagement/demandes'
+    | '/legacy-client-sur-mesure/demandes'
     | '/location-vehicules/$vehicleId'
     | '/paiement/annule'
     | '/paiement/succes'
     | '/admin-demenagement'
     | '/admin-sur-mesure'
     | '/admin'
-    | '/client-demenagement'
-    | '/client-sur-mesure'
     | '/client'
     | '/driver'
+    | '/legacy-client-demenagement'
+    | '/legacy-client-sur-mesure'
   id:
     | '__root__'
     | '/'
@@ -473,11 +510,12 @@ export interface FileRouteTypes {
     | '/admin-demenagement'
     | '/admin-sur-mesure'
     | '/client'
-    | '/client-demenagement'
-    | '/client-sur-mesure'
     | '/connexion'
+    | '/contact'
     | '/demenagement'
     | '/driver'
+    | '/legacy-client-demenagement'
+    | '/legacy-client-sur-mesure'
     | '/location-vehicules'
     | '/services-sur-mesure'
     | '/admin-demenagement/clients'
@@ -494,21 +532,23 @@ export interface FileRouteTypes {
     | '/admin/reservations'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
-    | '/client-demenagement/demandes'
-    | '/client-sur-mesure/demandes'
+    | '/client/demenagement'
     | '/client/reservations'
     | '/client/support'
+    | '/client/sur-mesure'
     | '/evaluer/$token'
+    | '/legacy-client-demenagement/demandes'
+    | '/legacy-client-sur-mesure/demandes'
     | '/location-vehicules_/$vehicleId'
     | '/paiement/annule'
     | '/paiement/succes'
     | '/admin-demenagement/'
     | '/admin-sur-mesure/'
     | '/admin/'
-    | '/client-demenagement/'
-    | '/client-sur-mesure/'
     | '/client/'
     | '/driver/'
+    | '/legacy-client-demenagement/'
+    | '/legacy-client-sur-mesure/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -517,11 +557,12 @@ export interface RootRouteChildren {
   AdminDemenagementRoute: typeof AdminDemenagementRouteWithChildren
   AdminSurMesureRoute: typeof AdminSurMesureRouteWithChildren
   ClientRoute: typeof ClientRouteWithChildren
-  ClientDemenagementRoute: typeof ClientDemenagementRouteWithChildren
-  ClientSurMesureRoute: typeof ClientSurMesureRouteWithChildren
   ConnexionRoute: typeof ConnexionRoute
+  ContactRoute: typeof ContactRoute
   DemenagementRoute: typeof DemenagementRoute
   DriverRoute: typeof DriverRouteWithChildren
+  LegacyClientDemenagementRoute: typeof LegacyClientDemenagementRouteWithChildren
+  LegacyClientSurMesureRoute: typeof LegacyClientSurMesureRouteWithChildren
   LocationVehiculesRoute: typeof LocationVehiculesRoute
   ServicesSurMesureRoute: typeof ServicesSurMesureRoute
   EvaluerTokenRoute: typeof EvaluerTokenRoute
@@ -546,6 +587,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocationVehiculesRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legacy-client-sur-mesure': {
+      id: '/legacy-client-sur-mesure'
+      path: '/legacy-client-sur-mesure'
+      fullPath: '/legacy-client-sur-mesure'
+      preLoaderRoute: typeof LegacyClientSurMesureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/legacy-client-demenagement': {
+      id: '/legacy-client-demenagement'
+      path: '/legacy-client-demenagement'
+      fullPath: '/legacy-client-demenagement'
+      preLoaderRoute: typeof LegacyClientDemenagementRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/driver': {
       id: '/driver'
       path: '/driver'
@@ -560,25 +615,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DemenagementRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/contact': {
+      id: '/contact'
+      path: '/contact'
+      fullPath: '/contact'
+      preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/connexion': {
       id: '/connexion'
       path: '/connexion'
       fullPath: '/connexion'
       preLoaderRoute: typeof ConnexionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client-sur-mesure': {
-      id: '/client-sur-mesure'
-      path: '/client-sur-mesure'
-      fullPath: '/client-sur-mesure'
-      preLoaderRoute: typeof ClientSurMesureRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/client-demenagement': {
-      id: '/client-demenagement'
-      path: '/client-demenagement'
-      fullPath: '/client-demenagement'
-      preLoaderRoute: typeof ClientDemenagementRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/client': {
@@ -616,6 +664,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legacy-client-sur-mesure/': {
+      id: '/legacy-client-sur-mesure/'
+      path: '/'
+      fullPath: '/legacy-client-sur-mesure/'
+      preLoaderRoute: typeof LegacyClientSurMesureIndexRouteImport
+      parentRoute: typeof LegacyClientSurMesureRoute
+    }
+    '/legacy-client-demenagement/': {
+      id: '/legacy-client-demenagement/'
+      path: '/'
+      fullPath: '/legacy-client-demenagement/'
+      preLoaderRoute: typeof LegacyClientDemenagementIndexRouteImport
+      parentRoute: typeof LegacyClientDemenagementRoute
+    }
     '/driver/': {
       id: '/driver/'
       path: '/'
@@ -629,20 +691,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/client/'
       preLoaderRoute: typeof ClientIndexRouteImport
       parentRoute: typeof ClientRoute
-    }
-    '/client-sur-mesure/': {
-      id: '/client-sur-mesure/'
-      path: '/'
-      fullPath: '/client-sur-mesure/'
-      preLoaderRoute: typeof ClientSurMesureIndexRouteImport
-      parentRoute: typeof ClientSurMesureRoute
-    }
-    '/client-demenagement/': {
-      id: '/client-demenagement/'
-      path: '/'
-      fullPath: '/client-demenagement/'
-      preLoaderRoute: typeof ClientDemenagementIndexRouteImport
-      parentRoute: typeof ClientDemenagementRoute
     }
     '/admin/': {
       id: '/admin/'
@@ -686,12 +734,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LocationVehiculesVehicleIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/legacy-client-sur-mesure/demandes': {
+      id: '/legacy-client-sur-mesure/demandes'
+      path: '/demandes'
+      fullPath: '/legacy-client-sur-mesure/demandes'
+      preLoaderRoute: typeof LegacyClientSurMesureDemandesRouteImport
+      parentRoute: typeof LegacyClientSurMesureRoute
+    }
+    '/legacy-client-demenagement/demandes': {
+      id: '/legacy-client-demenagement/demandes'
+      path: '/demandes'
+      fullPath: '/legacy-client-demenagement/demandes'
+      preLoaderRoute: typeof LegacyClientDemenagementDemandesRouteImport
+      parentRoute: typeof LegacyClientDemenagementRoute
+    }
     '/evaluer/$token': {
       id: '/evaluer/$token'
       path: '/evaluer/$token'
       fullPath: '/evaluer/$token'
       preLoaderRoute: typeof EvaluerTokenRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/client/sur-mesure': {
+      id: '/client/sur-mesure'
+      path: '/sur-mesure'
+      fullPath: '/client/sur-mesure'
+      preLoaderRoute: typeof ClientSurMesureRouteImport
+      parentRoute: typeof ClientRoute
     }
     '/client/support': {
       id: '/client/support'
@@ -707,19 +776,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ClientReservationsRouteImport
       parentRoute: typeof ClientRoute
     }
-    '/client-sur-mesure/demandes': {
-      id: '/client-sur-mesure/demandes'
-      path: '/demandes'
-      fullPath: '/client-sur-mesure/demandes'
-      preLoaderRoute: typeof ClientSurMesureDemandesRouteImport
-      parentRoute: typeof ClientSurMesureRoute
-    }
-    '/client-demenagement/demandes': {
-      id: '/client-demenagement/demandes'
-      path: '/demandes'
-      fullPath: '/client-demenagement/demandes'
-      preLoaderRoute: typeof ClientDemenagementDemandesRouteImport
-      parentRoute: typeof ClientDemenagementRoute
+    '/client/demenagement': {
+      id: '/client/demenagement'
+      path: '/demenagement'
+      fullPath: '/client/demenagement'
+      preLoaderRoute: typeof ClientDemenagementRouteImport
+      parentRoute: typeof ClientRoute
     }
     '/admin/vehicules': {
       id: '/admin/vehicules'
@@ -884,46 +946,23 @@ const AdminSurMesureRouteWithChildren = AdminSurMesureRoute._addFileChildren(
 )
 
 interface ClientRouteChildren {
+  ClientDemenagementRoute: typeof ClientDemenagementRoute
   ClientReservationsRoute: typeof ClientReservationsRoute
   ClientSupportRoute: typeof ClientSupportRoute
+  ClientSurMesureRoute: typeof ClientSurMesureRoute
   ClientIndexRoute: typeof ClientIndexRoute
 }
 
 const ClientRouteChildren: ClientRouteChildren = {
+  ClientDemenagementRoute: ClientDemenagementRoute,
   ClientReservationsRoute: ClientReservationsRoute,
   ClientSupportRoute: ClientSupportRoute,
+  ClientSurMesureRoute: ClientSurMesureRoute,
   ClientIndexRoute: ClientIndexRoute,
 }
 
 const ClientRouteWithChildren =
   ClientRoute._addFileChildren(ClientRouteChildren)
-
-interface ClientDemenagementRouteChildren {
-  ClientDemenagementDemandesRoute: typeof ClientDemenagementDemandesRoute
-  ClientDemenagementIndexRoute: typeof ClientDemenagementIndexRoute
-}
-
-const ClientDemenagementRouteChildren: ClientDemenagementRouteChildren = {
-  ClientDemenagementDemandesRoute: ClientDemenagementDemandesRoute,
-  ClientDemenagementIndexRoute: ClientDemenagementIndexRoute,
-}
-
-const ClientDemenagementRouteWithChildren =
-  ClientDemenagementRoute._addFileChildren(ClientDemenagementRouteChildren)
-
-interface ClientSurMesureRouteChildren {
-  ClientSurMesureDemandesRoute: typeof ClientSurMesureDemandesRoute
-  ClientSurMesureIndexRoute: typeof ClientSurMesureIndexRoute
-}
-
-const ClientSurMesureRouteChildren: ClientSurMesureRouteChildren = {
-  ClientSurMesureDemandesRoute: ClientSurMesureDemandesRoute,
-  ClientSurMesureIndexRoute: ClientSurMesureIndexRoute,
-}
-
-const ClientSurMesureRouteWithChildren = ClientSurMesureRoute._addFileChildren(
-  ClientSurMesureRouteChildren,
-)
 
 interface DriverRouteChildren {
   DriverIndexRoute: typeof DriverIndexRoute
@@ -936,17 +975,50 @@ const DriverRouteChildren: DriverRouteChildren = {
 const DriverRouteWithChildren =
   DriverRoute._addFileChildren(DriverRouteChildren)
 
+interface LegacyClientDemenagementRouteChildren {
+  LegacyClientDemenagementDemandesRoute: typeof LegacyClientDemenagementDemandesRoute
+  LegacyClientDemenagementIndexRoute: typeof LegacyClientDemenagementIndexRoute
+}
+
+const LegacyClientDemenagementRouteChildren: LegacyClientDemenagementRouteChildren =
+  {
+    LegacyClientDemenagementDemandesRoute:
+      LegacyClientDemenagementDemandesRoute,
+    LegacyClientDemenagementIndexRoute: LegacyClientDemenagementIndexRoute,
+  }
+
+const LegacyClientDemenagementRouteWithChildren =
+  LegacyClientDemenagementRoute._addFileChildren(
+    LegacyClientDemenagementRouteChildren,
+  )
+
+interface LegacyClientSurMesureRouteChildren {
+  LegacyClientSurMesureDemandesRoute: typeof LegacyClientSurMesureDemandesRoute
+  LegacyClientSurMesureIndexRoute: typeof LegacyClientSurMesureIndexRoute
+}
+
+const LegacyClientSurMesureRouteChildren: LegacyClientSurMesureRouteChildren = {
+  LegacyClientSurMesureDemandesRoute: LegacyClientSurMesureDemandesRoute,
+  LegacyClientSurMesureIndexRoute: LegacyClientSurMesureIndexRoute,
+}
+
+const LegacyClientSurMesureRouteWithChildren =
+  LegacyClientSurMesureRoute._addFileChildren(
+    LegacyClientSurMesureRouteChildren,
+  )
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AdminDemenagementRoute: AdminDemenagementRouteWithChildren,
   AdminSurMesureRoute: AdminSurMesureRouteWithChildren,
   ClientRoute: ClientRouteWithChildren,
-  ClientDemenagementRoute: ClientDemenagementRouteWithChildren,
-  ClientSurMesureRoute: ClientSurMesureRouteWithChildren,
   ConnexionRoute: ConnexionRoute,
+  ContactRoute: ContactRoute,
   DemenagementRoute: DemenagementRoute,
   DriverRoute: DriverRouteWithChildren,
+  LegacyClientDemenagementRoute: LegacyClientDemenagementRouteWithChildren,
+  LegacyClientSurMesureRoute: LegacyClientSurMesureRouteWithChildren,
   LocationVehiculesRoute: LocationVehiculesRoute,
   ServicesSurMesureRoute: ServicesSurMesureRoute,
   EvaluerTokenRoute: EvaluerTokenRoute,

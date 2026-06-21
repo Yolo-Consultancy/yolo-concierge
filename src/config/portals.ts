@@ -59,11 +59,13 @@ export const PORTALS: Record<PortalId, PortalConfig> = {
       { type: "anchor", label: "Flotte", href: "#flotte" },
       { type: "anchor", label: "Destinations", href: "#destinations" },
       { type: "anchor", label: "À propos", href: "#pourquoi" },
-      { type: "action", label: "Contact", action: "contact" },
+      { type: "link", label: "Contact", to: "/contact" },
     ],
     clientNav: [
       { to: "/client", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
       { to: "/client/reservations", label: "Mes réservations", icon: CalendarCheck },
+      { to: "/client/demenagement", label: "Déménagement", icon: ClipboardList },
+      { to: "/client/sur-mesure", label: "Sur mesure", icon: ClipboardList },
       { to: "/client/support", label: "Support", icon: MessageSquare },
     ],
     adminNav: [
@@ -85,18 +87,20 @@ export const PORTALS: Record<PortalId, PortalConfig> = {
     accentClass: "text-gold",
     accentBgClass: "bg-gold",
     publicPath: "/demenagement",
-    clientPath: "/client-demenagement",
+    clientPath: "/client",
     adminPath: "/admin-demenagement",
     serviceType: "demenagement",
     publicNav: [
       { type: "link", label: "Accueil", to: "/" },
       { type: "anchor", label: "Services", href: "#services" },
       { type: "anchor", label: "Processus", href: "#processus" },
-      { type: "action", label: "Devis", action: "devis" },
+      { type: "link", label: "Devis", to: "/contact" },
     ],
     clientNav: [
-      { to: "/client-demenagement", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
-      { to: "/client-demenagement/demandes", label: "Mes demandes", icon: ClipboardList },
+      { to: "/client", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+      { to: "/client/reservations", label: "Mes réservations", icon: CalendarCheck },
+      { to: "/client/demenagement", label: "Déménagement", icon: ClipboardList },
+      { to: "/client/sur-mesure", label: "Sur mesure", icon: ClipboardList },
       { to: "/client/support", label: "Support", icon: MessageSquare },
     ],
     adminNav: [
@@ -114,18 +118,20 @@ export const PORTALS: Record<PortalId, PortalConfig> = {
     accentClass: "text-gold",
     accentBgClass: "bg-gold",
     publicPath: "/services-sur-mesure",
-    clientPath: "/client-sur-mesure",
+    clientPath: "/client",
     adminPath: "/admin-sur-mesure",
     serviceType: "sur_mesure",
     publicNav: [
       { type: "link", label: "Accueil", to: "/" },
       { type: "anchor", label: "Univers", href: "#univers" },
       { type: "anchor", label: "Demande", href: "#demande" },
-      { type: "action", label: "Composer", action: "devis" },
+      { type: "link", label: "Composer", to: "/contact" },
     ],
     clientNav: [
-      { to: "/client-sur-mesure", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
-      { to: "/client-sur-mesure/demandes", label: "Mes demandes", icon: ClipboardList },
+      { to: "/client", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+      { to: "/client/reservations", label: "Mes réservations", icon: CalendarCheck },
+      { to: "/client/demenagement", label: "Déménagement", icon: ClipboardList },
+      { to: "/client/sur-mesure", label: "Sur mesure", icon: ClipboardList },
       { to: "/client/support", label: "Support", icon: MessageSquare },
     ],
     adminNav: [
@@ -142,10 +148,7 @@ export function getPortal(id: PortalId): PortalConfig {
 }
 
 export function portalFromPath(path: string): PortalId | null {
-  if (path.startsWith("/location-vehicules") || path.startsWith("/client") && !path.startsWith("/client-") && !path.startsWith("/client/")) {
-    if (path === "/client" || path.startsWith("/client/")) return "vehicules";
-  }
-  if (path.startsWith("/location-vehicules") || path === "/client" || path.startsWith("/client/")) return "vehicules";
+  if (path.startsWith("/location-vehicules")) return "vehicules";
   if (path.startsWith("/demenagement") || path.startsWith("/client-demenagement") || path.startsWith("/admin-demenagement")) {
     return "demenagement";
   }

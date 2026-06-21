@@ -15,32 +15,34 @@ export function isAuthenticated(): boolean {
   return !!getAccessToken();
 }
 
-/** Vérifie que la session admin est valide (refresh cookie + JWT). */
-export async function validateAdminSession(): Promise<boolean> {
-  if (!getAccessToken() && !getAdminCanRefresh()) return false;
+export async function getAdminSession(): Promise<AdminUser | null> {
+  if (!getAccessToken() && !getAdminCanRefresh()) return null;
 
   if (!getAccessToken()) {
     const refreshed = await refreshAdminAccessToken();
-    if (!refreshed) return false;
+    if (!refreshed) return null;
   }
 
   try {
-    await api.get<AdminUser>("/auth/me");
-    return true;
+    return await api.get<AdminUser>("/auth/me");
   } catch {
     const refreshed = await refreshAdminAccessToken();
     if (!refreshed) {
       setAccessToken(null);
-      return false;
+      return null;
     }
     try {
-      await api.get<AdminUser>("/auth/me");
-      return true;
+      return await api.get<AdminUser>("/auth/me");
     } catch {
       setAccessToken(null);
-      return false;
+      return null;
     }
   }
+}
+
+/** Vérifie que la session admin est valide (refresh cookie + JWT). */
+export async function validateAdminSession(): Promise<boolean> {
+  return !!(await getAdminSession());
 }
 
 export async function login(email: string, password: string): Promise<boolean> {

@@ -63,11 +63,6 @@ function ConnexionPage() {
     e.preventDefault();
     setError("");
 
-    if (!portalId) {
-      setError("Choisissez un portail depuis la page d'accueil pour vous connecter.");
-      return;
-    }
-
     setLoading(true);
 
     const result = await loginUnified(loginEmail, loginPassword, portalId);
@@ -85,11 +80,6 @@ function ConnexionPage() {
     e.preventDefault();
     setError("");
 
-    if (!portalId) {
-      setError("Choisissez un portail depuis la page d'accueil pour créer un compte.");
-      return;
-    }
-
     if (reg.password !== reg.confirmPassword) {
       setError("Les mots de passe ne correspondent pas.");
       return;
@@ -103,7 +93,6 @@ function ConnexionPage() {
       phone: reg.phone,
       countryCode: reg.countryCode,
       password: reg.password,
-      portal: portalId,
     });
     setLoading(false);
 
@@ -130,8 +119,8 @@ function ConnexionPage() {
           </Link>
           <p className="text-sm text-white/60">
             {portal
-              ? `Connexion unique — ${portal.name}`
-              : "Un seul formulaire pour tous les espaces"}
+              ? `Connexion — ${portal.name}`
+              : "Un compte client pour tous les services YOLO"}
           </p>
         </div>
 
@@ -198,7 +187,8 @@ function ConnexionPage() {
                 {loading ? "Connexion..." : "Se connecter"}
               </button>
               <p className="text-center text-xs text-white/35 pt-1">
-                Client, chauffeur ou agent — un seul formulaire, redirection automatique vers votre espace.
+                Compte client : accès à la location, au déménagement et au sur mesure.
+                {portal ? " Agents et chauffeurs : connectez-vous depuis le portail concerné." : ""}
               </p>
             </form>
           ) : (

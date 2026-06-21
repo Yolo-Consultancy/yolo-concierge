@@ -88,7 +88,7 @@ export function PortalServiceClientShell({ portalId }: { portalId: PortalId }) {
               return (
                 <Link
                   key={item.to}
-                  to={item.to as "/client-demenagement"}
+                  to={item.to as "/client"}
                   onClick={() => setOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                     active ? accentActive : "text-white/60 hover:text-white hover:bg-white/5"

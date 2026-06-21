@@ -31,7 +31,7 @@ function getFlagEmoji(countryCode: string) {
   return String.fromCodePoint(...codePoints);
 }
 
-export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal = "vehicules" }: Props) {
+export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal }: Props) {
   const [mode, setMode] = useState<Mode>("choice");
 
   // Login state
@@ -56,7 +56,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
     e.preventDefault();
     setLoading(true);
     setLoginError("");
-    const result = await loginClient(loginEmail, loginPassword, portal);
+    const result = await loginClient(loginEmail, loginPassword);
     setLoading(false);
     if (result.ok) {
       onSuccess(result.account);
@@ -73,7 +73,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
       return;
     }
     setLoading(true);
-    const result = await registerClient({ ...reg, portal });
+    const result = await registerClient({ ...reg, ...(portal ? { portal } : {}) });
     setLoading(false);
     if (result.ok) {
       onSuccess(result.account);

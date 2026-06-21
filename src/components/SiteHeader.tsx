@@ -53,6 +53,7 @@ export function SiteHeader() {
           <Link to="/location-vehicules" className="hover:text-gold transition-colors">Véhicules</Link>
           <Link to="/demenagement" className="hover:text-gold transition-colors">Déménagement</Link>
           <Link to="/services-sur-mesure" className="hover:text-gold transition-colors">Sur Mesure</Link>
+          <Link to="/contact" className="hover:text-gold transition-colors">Contact</Link>
 
           {isLoggedIn ? (
             <div className="flex items-center gap-2">
@@ -127,6 +128,11 @@ export function SiteHeader() {
               <SheetClose asChild>
                 <Link to="/services-sur-mesure" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
                   Sur Mesure
+                </Link>
+              </SheetClose>
+              <SheetClose asChild>
+                <Link to="/contact" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
+                  Contact
                 </Link>
               </SheetClose>
 

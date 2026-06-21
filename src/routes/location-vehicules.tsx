@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import carHero from "@/assets/car-hero.jpg";
 import destDakar from "@/assets/dest-dakar.jpg";
 import destAbidjan from "@/assets/dest-abidjan.jpg";
@@ -8,8 +9,9 @@ import destSaly from "@/assets/dest-saly.jpg";
 import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehicles";
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
-import { ContactModal } from "@/components/ContactModal";
 import { PortalHeader } from "@/components/PortalHeader";
+import { ClientReviewsSection } from "@/components/ClientReviewsSection";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Route = createFileRoute("/location-vehicules")({
   head: () => ({
@@ -38,15 +40,106 @@ const reasons = [
   { title: "Note 5 Étoiles", desc: "Une réputation construite sur des centaines d'avis vérifiés." },
 ];
 
+const DESKTOP_PAGE_SIZE = 6;
+const MOBILE_PAGE_SIZE = 4;
+
+function FleetPagination({
+  page,
+  totalPages,
+  onPageChange,
+}: {
+  page: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}) {
+  if (totalPages <= 1) return null;
+
+  const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
+
+  return (
+    <nav
+      aria-label="Pagination de la flotte"
+      className="mt-12 flex flex-col items-center gap-4 sm:flex-row sm:justify-between"
+    >
+      <p className="text-xs uppercase tracking-[0.25em] text-white/45">
+        Page {page} sur {totalPages}
+      </p>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onPageChange(page - 1)}
+          disabled={page <= 1}
+          aria-label="Page précédente"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc] disabled:pointer-events-none disabled:opacity-30"
+        >
+          <ChevronLeft className="h-4 w-4" />
+          Précédent
+        </button>
+        <div className="flex items-center gap-1">
+          {pages.map((p) => (
+            <button
+              key={p}
+              type="button"
+              onClick={() => onPageChange(p)}
+              aria-label={`Page ${p}`}
+              aria-current={p === page ? "page" : undefined}
+              className={`h-9 min-w-9 rounded-full px-3 text-sm transition ${
+                p === page
+                  ? "bg-[#7dd3fc] text-black font-medium"
+                  : "border border-white/10 text-white/70 hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc]"
+              }`}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => onPageChange(page + 1)}
+          disabled={page >= totalPages}
+          aria-label="Page suivante"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc] disabled:pointer-events-none disabled:opacity-30"
+        >
+          Suivant
+          <ChevronRight className="h-4 w-4" />
+        </button>
+      </div>
+    </nav>
+  );
+}
+
 function LocationVehicules() {
+  const isMobile = useIsMobile();
+  const pageSize = isMobile ? MOBILE_PAGE_SIZE : DESKTOP_PAGE_SIZE;
+  const [page, setPage] = useState(1);
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
   const [prefilledVehicle, setPrefilledVehicle] = useState<string>("");
   const [vehicles, setVehicles] = useState<Vehicle[]>(seedVehicles);
 
   useEffect(() => {
     listVehicles().then(setVehicles);
   }, []);
+
+  const totalPages = Math.max(1, Math.ceil(vehicles.length / pageSize));
+
+  useEffect(() => {
+    setPage((current) => Math.min(current, totalPages));
+  }, [totalPages]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [pageSize]);
+
+  const paginatedVehicles = useMemo(
+    () => vehicles.slice((page - 1) * pageSize, page * pageSize),
+    [vehicles, page, pageSize],
+  );
+
+  const goToPage = (next: number) => {
+    const clamped = Math.max(1, Math.min(next, totalPages));
+    setPage(clamped);
+    document.getElementById("flotte")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 
   const openBooking = (vehicleId?: string) => {
     setPrefilledVehicle(vehicleId ?? "");
@@ -56,7 +149,7 @@ function LocationVehicules() {
   return (
     <div className="bg-[#0a0a0a] text-white min-h-screen font-sans">
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        <PortalHeader portalId="vehicules" onAction={(a) => a === "contact" && setContactOpen(true)} />
+        <PortalHeader portalId="vehicules" />
         <img src={carHero} alt="Supercar de luxe" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1080} />
         <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/40 to-black" />
         <div className="relative z-10 text-center px-6 max-w-4xl">
@@ -74,9 +167,13 @@ function LocationVehicules() {
               Découvrir notre flotte
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
-            <button onClick={() => setContactOpen(true)} className="inline-flex items-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full text-sm font-medium hover:bg-white/10 transition cursor-pointer">
+            <Link
+              to="/contact"
+              search={{ portal: "vehicules" }}
+              className="inline-flex items-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full text-sm font-medium hover:bg-white/10 transition"
+            >
               Parler au concierge
-            </button>
+            </Link>
           </div>
         </div>
       </section>
@@ -89,7 +186,7 @@ function LocationVehicules() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {vehicles.map((v, idx) => (
+            {paginatedVehicles.map((v, idx) => (
               <article
                 key={v.id}
                 style={{ animationDelay: `${idx * 80}ms` }}
@@ -153,6 +250,8 @@ function LocationVehicules() {
               </article>
             ))}
           </div>
+
+          <FleetPagination page={page} totalPages={totalPages} onPageChange={goToPage} />
         </div>
       </section>
 
@@ -215,12 +314,13 @@ function LocationVehicules() {
         </div>
       </section>
 
+      <ClientReviewsSection />
+
       <footer className="border-t border-white/10 py-8 px-6 text-center text-xs text-white/40 uppercase tracking-widest">
         © {new Date().getFullYear()} YOLO Le Concierge · <Link to="/" className="hover:text-white">Retour à l'accueil</Link>
       </footer>
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={prefilledVehicle} />}
-      {contactOpen && <ContactModal onClose={() => setContactOpen(false)} serviceType="vehicules" />}
     </div>
   );
 }

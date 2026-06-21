@@ -8,7 +8,7 @@ export type ClientAccount = {
   email: string;
   phone: string;
   countryCode: string;
-  portalScope?: "vehicules" | "demenagement" | "sur_mesure";
+  portalScope?: "vehicules" | "demenagement" | "sur_mesure" | "all";
   createdAt: string;
 };
 
@@ -43,7 +43,7 @@ export async function registerClient(data: {
   phone: string;
   countryCode: string;
   password: string;
-  portal: string;
+  portal?: string;
 }): Promise<{ ok: true; account: ClientAccount } | { ok: false; error: string }> {
   try {
     const result = await publicApi.post<AuthResponse>("/auth/client/register", data);
@@ -58,10 +58,9 @@ export async function registerClient(data: {
 export async function loginClient(
   email: string,
   password: string,
-  portal = "vehicules",
 ): Promise<{ ok: true; account: ClientAccount } | { ok: false; error: string }> {
   try {
-    const result = await publicApi.post<AuthResponse>("/auth/client/login", { email, password, portal });
+    const result = await publicApi.post<AuthResponse>("/auth/client/login", { email, password });
     setClientAccessToken(result.accessToken);
     cachedAccount = result.account;
     return { ok: true, account: result.account };

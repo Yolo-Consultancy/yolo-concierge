@@ -2,8 +2,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Menu } from "lucide-react";
 import { useState } from "react";
-import { getVehicleById, type Vehicle } from "@/lib/admin/store";
-import { formatPrice } from "@/lib/vehicles";
+import { getVehicleById } from "@/lib/admin/store";
+import { formatPrice, type Vehicle } from "@/lib/vehicles";
 import { BookingModal } from "@/components/BookingModal";
 import { ContactModal } from "@/components/ContactModal";
 import {

@@ -1,6 +1,5 @@
 /* eslint-disable prettier/prettier */
 import type { PortalId } from "@/config/portals";
-import { getPortal } from "@/config/portals";
 import type { AdminUser } from "@/lib/admin/auth";
 
 export type UserRole = "admin" | "client" | "driver";
@@ -29,7 +28,6 @@ export function redirectPathForRole(
 ): string {
   if (role === "driver") return "/driver";
   if (role === "admin") return adminPathForScope(adminUser?.portalScope, portal);
-  if (portal) return getPortal(portal).clientPath;
   return "/client";
 }
 
@@ -53,4 +51,8 @@ export function resolvePostLoginPath(
 
 export function connexionSearch(portal?: PortalId, mode: "login" | "register" = "login") {
   return portal ? { portal, mode } : { mode };
+}
+
+export function contactSearch(portal: PortalId) {
+  return { portal };
 }
