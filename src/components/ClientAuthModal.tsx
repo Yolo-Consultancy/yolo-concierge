@@ -14,8 +14,8 @@ interface Props {
 }
 
 const inputCls =
-  "w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#7dd3fc]";
-const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
+  "w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-or-vif";
+const SELECT_OPTION_CLS = "bg-charbon text-white";
 
 // Tri alphabétique de tous les pays du monde
 const sortedCountries = [...allCountries].sort((a, b) =>
@@ -88,7 +88,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
       onClick={onClose}
     >
       <div
-        className="bg-[#0f0f0f] border border-white/10 rounded-2xl w-full max-w-md"
+        className="bg-charbon border border-white/10 rounded-2xl w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -136,8 +136,8 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
           {mode === "choice" && (
             <div className="space-y-3">
               {/* Benefits */}
-              <div className="rounded-xl bg-[#7dd3fc]/5 border border-[#7dd3fc]/20 p-4 mb-5">
-                <p className="text-xs font-medium text-[#7dd3fc] mb-2 uppercase tracking-wider">
+              <div className="rounded-xl bg-or-vif/5 border border-or-vif/20 p-4 mb-5">
+                <p className="text-xs font-medium text-or-vif mb-2 uppercase tracking-wider">
                   Avantages d'un compte
                 </p>
                 <ul className="space-y-1.5">
@@ -148,7 +148,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
                     "Suivi de vos demandes en temps réel",
                   ].map((item) => (
                     <li key={item} className="flex items-center gap-2 text-xs text-white/70">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" strokeWidth="3">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                         <path d="M5 13l4 4L19 7" />
                       </svg>
                       {item}
@@ -159,7 +159,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
 
               <button
                 onClick={() => setMode("register")}
-                className="w-full py-3.5 rounded-xl bg-[#7dd3fc] text-black text-sm font-medium hover:bg-white transition flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-xl bg-or-vif text-black text-sm font-medium hover:bg-white transition flex items-center justify-center gap-2"
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
@@ -227,7 +227,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-xl bg-[#7dd3fc] text-black text-sm font-medium hover:bg-white transition disabled:opacity-50"
+                className="w-full py-3.5 rounded-xl bg-or-vif text-black text-sm font-medium hover:bg-white transition disabled:opacity-50"
               >
                 {loading ? "Connexion..." : "Se connecter"}
               </button>
@@ -236,7 +236,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
                 <button
                   type="button"
                   onClick={() => setMode("register")}
-                  className="text-[#7dd3fc] hover:underline"
+                  className="text-or-vif hover:underline"
                 >
                   Créer un compte
                 </button>
@@ -288,7 +288,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
                   <select
                     value={reg.countryCode}
                     onChange={(e) => setReg({ ...reg, countryCode: e.target.value })}
-                    className="bg-[#0f0f0f] border border-white/15 rounded-lg px-3 py-3.5 text-sm text-white focus:outline-none focus:border-[#7dd3fc] w-36 scheme-dark"
+                    className="bg-charbon border border-white/15 rounded-lg px-3 py-3.5 text-sm text-white focus:outline-none focus:border-or-vif w-36 scheme-dark"
                   >
                     {sortedCountries.map((country) => {
                       const dialCodeWithPlus = `+${country.dialCode}`;
@@ -350,7 +350,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-xl bg-[#7dd3fc] text-black text-sm font-medium hover:bg-white transition disabled:opacity-50"
+                className="w-full py-3.5 rounded-xl bg-or-vif text-black text-sm font-medium hover:bg-white transition disabled:opacity-50"
               >
                 {loading ? "Création..." : "Créer mon compte"}
               </button>
@@ -360,7 +360,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
                 <button
                   type="button"
                   onClick={() => setMode("login")}
-                  className="text-[#7dd3fc] hover:underline"
+                  className="text-or-vif hover:underline"
                 >
                   Se connecter
                 </button>

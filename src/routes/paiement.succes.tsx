@@ -18,7 +18,7 @@ export const Route = createFileRoute("/paiement/succes")({
 function SuccessPage() {
   const { booking } = useSearch({ from: "/paiement/succes" });
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6">
+    <main className="min-h-screen bg-charbon text-white flex items-center justify-center px-6">
       <div className="max-w-lg w-full bg-[#111] border border-white/10 rounded-2xl p-10 text-center">
         <div className="mx-auto mb-6 w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-400/30 flex items-center justify-center text-3xl">
           ✓

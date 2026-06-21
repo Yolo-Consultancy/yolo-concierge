@@ -57,7 +57,7 @@ function RapportsPage() {
         <div className="grid gap-8 lg:grid-cols-2">
           <section>
             <h2 className="flex items-center gap-2 text-lg font-semibold mb-4">
-              <FileText className="h-5 w-5 text-[#7dd3fc]" />
+              <FileText className="h-5 w-5 text-or-vif" />
               Rapports chauffeurs ({reports.length})
             </h2>
             {reports.length === 0 ? (
@@ -114,7 +114,7 @@ function RapportsPage() {
                     {r.status === "soumis" && (
                       <button
                         onClick={() => handleMarkRead(r.id)}
-                        className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-[#7dd3fc] hover:underline"
+                        className="mt-3 inline-flex items-center gap-1.5 text-xs font-medium text-or-vif hover:underline"
                       >
                         <Check className="h-3.5 w-3.5" />
                         Marquer comme lu

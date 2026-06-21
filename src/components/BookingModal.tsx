@@ -11,9 +11,14 @@ import { upsertBooking, getVehicleOccupiedDates, newId, type Booking } from "@/l
 import { expandOccupiedDates } from "@/lib/booking-dates";
 import { toast } from "sonner";
 import { ClientAuthModal } from "@/components/ClientAuthModal";
-import { getCurrentClient, hydrateCurrentClient, type ClientAccount } from "@/lib/client/auth";
+import type { ClientAccount } from "@/lib/client/auth";
+import {
+  clientContactFieldsFromAccount,
+  emptyClientContactFields,
+  resolveClientAccount,
+} from "@/lib/client/form-prefill";
 
-const SELECT_OPTION_CLS = "bg-[#0f0f0f] text-white";
+const SELECT_OPTION_CLS = "bg-charbon text-white";
 const KINSHASA_LOCATION_SUGGESTIONS = [
   "Showroom YOLO - Gombe",
   "Gombe",
@@ -155,7 +160,7 @@ function LocationAutocomplete({ value, onChange, placeholder, inputCls }: Locati
         className={`${inputCls} pl-11`}
       />
       {isOpen && filteredSuggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-[#0f0f0f] border border-white/15 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-charbon border border-white/15 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
           {filteredSuggestions.map((location) => (
             <button
               key={location}
@@ -190,8 +195,14 @@ export function BookingModal({
   const [authChecked, setAuthChecked] = useState(false);
 
   useEffect(() => {
-    hydrateCurrentClient().then((acc) => {
-      if (acc) setClientAccount(acc);
+    void resolveClientAccount().then((acc) => {
+      if (acc) {
+        setClientAccount(acc);
+        setForm((prev) => ({
+          ...prev,
+          ...clientContactFieldsFromAccount(acc),
+        }));
+      }
       setAuthChecked(true);
     });
   }, []);
@@ -206,8 +217,6 @@ export function BookingModal({
     [occupiedRanges],
   );
 
-  // Pre-fill form from account if available
-  const account = clientAccount && clientAccount !== "guest" ? clientAccount : null;
   const [form, setForm] = useState({
     vehicleId: initialVehicle,
     dateRange: "",
@@ -216,11 +225,7 @@ export function BookingModal({
     pickupLocation: "",
     dropoffLocation: "",
     sameDropoff: true,
-    firstName: account?.firstName ?? "",
-    lastName: account?.lastName ?? "",
-    email: account?.email ?? "",
-    phone: account?.phone ?? "",
-    countryCode: account?.countryCode ?? "+243",
+    ...emptyClientContactFields(),
   });
 
   useEffect(() => {
@@ -235,24 +240,22 @@ export function BookingModal({
       .finally(() => setLoadingOccupied(false));
   }, [form.vehicleId]);
 
+  const account = clientAccount && clientAccount !== "guest" ? clientAccount : null;
+
   // When auth resolves, pre-fill form if we got an account
   const handleAuthSuccess = (acc: ClientAccount) => {
     setClientAccount(acc);
     setForm((prev) => ({
       ...prev,
-      firstName: acc.firstName,
-      lastName: acc.lastName,
-      email: acc.email,
-      phone: acc.phone,
-      countryCode: acc.countryCode,
+      ...clientContactFieldsFromAccount(acc),
     }));
   };
 
   const selectedVehicle = vehicles.find((v) => v.id === form.vehicleId);
 
   const inputCls =
-    "w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#7dd3fc]";
-  const selectCls = `${inputCls} bg-[#0f0f0f] text-white [color-scheme:dark]`;
+    "w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-or-vif";
+  const selectCls = `${inputCls} bg-charbon text-white [color-scheme:dark]`;
 
   const formatDateRange = (range?: DateRange) => {
     if (!range?.from) return "";
@@ -354,7 +357,7 @@ export function BookingModal({
       onClick={onClose}
     >
       <div
-        className="bg-[#0f0f0f] border border-white/10 rounded-2xl w-full max-w-2xl my-8"
+        className="bg-charbon border border-white/10 rounded-2xl w-full max-w-2xl my-8"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
@@ -362,7 +365,7 @@ export function BookingModal({
           <div>
             <h3 className="font-display text-2xl text-white">Réservation</h3>
             {clientAccount && clientAccount !== "guest" ? (
-              <p className="text-xs text-[#7dd3fc] mt-0.5 flex items-center gap-1.5">
+              <p className="text-xs text-or-vif mt-0.5 flex items-center gap-1.5">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>
                 {clientAccount.firstName} {clientAccount.lastName}
               </p>
@@ -386,12 +389,12 @@ export function BookingModal({
               return (
                 <div key={label} className="flex-1 flex flex-col items-center text-center relative">
                   {i < STEPS.length - 1 && (
-                    <div className={`absolute top-4 left-1/2 w-full h-px ${i < step ? "bg-[#7dd3fc]" : "bg-white/10"}`} />
+                    <div className={`absolute top-4 left-1/2 w-full h-px ${i < step ? "bg-or-vif" : "bg-white/10"}`} />
                   )}
                   <div
                     className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                      done || active ? "bg-[#7dd3fc] text-black" : "bg-white/10 text-white/50"
-                    } ${active ? "ring-4 ring-[#7dd3fc]/20" : ""}`}
+                      done || active ? "bg-or-vif text-black" : "bg-white/10 text-white/50"
+                    } ${active ? "ring-4 ring-or-vif/20" : ""}`}
                   >
                     {done ? (
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
@@ -402,7 +405,7 @@ export function BookingModal({
                     )}
                   </div>
                   <span
-                    className={`mt-2 text-[11px] leading-tight ${active ? "text-[#7dd3fc] font-medium" : "text-white/50"}`}
+                    className={`mt-2 text-[11px] leading-tight ${active ? "text-or-vif font-medium" : "text-white/50"}`}
                   >
                     {label}
                   </span>
@@ -430,7 +433,7 @@ export function BookingModal({
                 <p className="text-xs text-white/50">
                   {selectedVehicle.brand} {selectedVehicle.name} ({selectedVehicle.year})
                 </p>
-                <p className="text-sm text-[#7dd3fc] mt-0.5">${formatPrice(selectedVehicle.pricePerDay)} /jour</p>
+                <p className="text-sm text-or-vif mt-0.5">${formatPrice(selectedVehicle.pricePerDay)} /jour</p>
               </div>
             </div>
           )}
@@ -456,7 +459,7 @@ export function BookingModal({
                   </PopoverTrigger>
                   <PopoverContent
                     align="start"
-                    className="w-auto border-white/10 bg-[#0f0f0f] p-0 text-white shadow-2xl"
+                    className="w-auto border-white/10 bg-charbon p-0 text-white shadow-2xl"
                   >
                     <Calendar
                       mode="range"
@@ -468,9 +471,9 @@ export function BookingModal({
                       modifiers={{ occupied: occupiedDates }}
                       modifiersClassNames={{
                         occupied:
-                          "[&_button]:!bg-[#7dd3fc] [&_button]:!text-black [&_button]:!font-semibold [&_button]:!rounded-md [&_button]:!opacity-100 [&_button]:disabled:!opacity-100 [&_button]:hover:!bg-[#7dd3fc] [&_button]:hover:!text-black [&_button]:![text-decoration:none]",
+                          "[&_button]:!bg-or-vif [&_button]:!text-black [&_button]:!font-semibold [&_button]:!rounded-md [&_button]:!opacity-100 [&_button]:disabled:!opacity-100 [&_button]:hover:!bg-or-vif [&_button]:hover:!text-black [&_button]:![text-decoration:none]",
                       }}
-                      className="bg-[#0f0f0f] text-white"
+                      className="bg-charbon text-white"
                       classNames={{
                         caption_label: "text-white",
                         day: "text-white",
@@ -478,9 +481,9 @@ export function BookingModal({
                         outside: "text-white/25",
                         disabled: "text-white/25 opacity-40",
                         today: "bg-white/10 text-white",
-                        range_start: "bg-[#7dd3fc] text-black rounded-l-md",
-                        range_middle: "bg-[#7dd3fc]/20 text-white rounded-none",
-                        range_end: "bg-[#7dd3fc] text-black rounded-r-md",
+                        range_start: "bg-or-vif text-black rounded-l-md",
+                        range_middle: "bg-or-vif/20 text-white rounded-none",
+                        range_end: "bg-or-vif text-black rounded-r-md",
                       }}
                     />
                     <p className="border-t border-white/10 px-4 py-2.5 text-xs text-white/50">
@@ -541,7 +544,7 @@ export function BookingModal({
                   type="checkbox"
                   checked={form.sameDropoff}
                   onChange={(e) => setForm({ ...form, sameDropoff: e.target.checked })}
-                  className="w-4 h-4 accent-[#7dd3fc]"
+                  className="w-4 h-4 accent-or-vif"
                 />
                 <span className="text-sm">Retour au même endroit</span>
               </label>
@@ -564,6 +567,11 @@ export function BookingModal({
           {/* Step 3 — Coordonnées */}
           {step === 2 && (
             <div className="space-y-5">
+              {account && (
+                <p className="text-xs text-or-vif/90 bg-or-vif/10 border border-or-vif/20 rounded-lg px-3 py-2">
+                  Coordonnées préremplies depuis votre compte YOLO. Vous pouvez les modifier si besoin.
+                </p>
+              )}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Prénom *</label>
@@ -685,21 +693,21 @@ export function BookingModal({
               </SummaryCard>
 
               {selectedVehicle && (
-                <div className="rounded-xl border border-[#7dd3fc]/30 bg-[#7dd3fc]/5 p-4 space-y-2">
+                <div className="rounded-xl border border-or-vif/30 bg-or-vif/5 p-4 space-y-2">
                   <div className="flex items-center justify-between text-sm text-white/70">
                     <span>
                       {C}{formatPrice(selectedVehicle.pricePerDay)} × {days} jour{days > 1 ? "s" : ""}
                     </span>
                     <span className="text-white">{C}{formatPrice(vehicleTotal)}</span>
                   </div>
-                  <div className="border-t border-[#7dd3fc]/20 pt-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-[#7dd3fc] text-sm">
+                  <div className="border-t border-or-vif/20 pt-2 flex items-center justify-between">
+                    <div className="flex items-center gap-2 text-or-vif text-sm">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
                       </svg>
                       Total estimé
                     </div>
-                    <p className="font-display text-xl text-[#7dd3fc]">{C}{formatPrice(grandTotal)}</p>
+                    <p className="font-display text-xl text-or-vif">{C}{formatPrice(grandTotal)}</p>
                   </div>
                 </div>
               )}
@@ -732,7 +740,7 @@ export function BookingModal({
             <button
               disabled={!canNext()}
               onClick={() => setStep(step + 1)}
-              className="flex-1 py-3.5 rounded-xl bg-[#7dd3fc] text-black text-sm font-medium hover:bg-white transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 py-3.5 rounded-xl bg-or-vif text-black text-sm font-medium hover:bg-white transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               Suivant
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -743,7 +751,7 @@ export function BookingModal({
             <button
               disabled={submitting}
               onClick={handleConfirmBooking}
-              className="flex-1 py-3.5 rounded-xl bg-[#7dd3fc] text-black text-sm font-medium hover:bg-white transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-3.5 rounded-xl bg-or-vif text-black text-sm font-medium hover:bg-white transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" />
@@ -782,7 +790,7 @@ function SummaryCard({
   return (
     <div className="rounded-xl border border-white/10 bg-white/2 p-4">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2 text-[#7dd3fc] text-sm font-medium">
+        <div className="flex items-center gap-2 text-or-vif text-sm font-medium">
           {icon}
           {title}
         </div>

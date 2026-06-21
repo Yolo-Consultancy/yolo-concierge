@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { PortalHeader } from "@/components/PortalHeader";
+import { PortalHomeLink } from "@/components/PortalHomeLink";
 import demenagementImg from "@/assets/portal-demenagement.jpg";
 
 export const Route = createFileRoute("/demenagement")({
@@ -69,7 +70,7 @@ function Demenagement() {
           </Link>
         </div>
 
-        <Link to="/" className="mt-12 inline-flex text-sm text-muted-foreground hover:text-foreground">← Retour à l'accueil</Link>
+        <PortalHomeLink variant="footer" className="mt-12 inline-flex text-muted-foreground hover:text-foreground" />
       </section>
     </main>
   );

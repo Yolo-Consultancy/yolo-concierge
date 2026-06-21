@@ -16,6 +16,7 @@ import { listBookings, listVehicles, type Booking } from "@/lib/admin/store";
 import { formatPrice } from "@/lib/vehicles";
 import type { ClientAccount } from "@/lib/client/auth";
 import { useClientAccount } from "./client";
+import { useConciergeChat } from "@/components/ConciergeChatWidget";
 
 export const Route = createFileRoute("/client/")({
   component: ClientDashboard,
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/client/")({
 
 function ClientDashboard() {
   const { account } = useClientAccount() as { account: ClientAccount };
+  const { openChat } = useConciergeChat();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [vehicles, setVehicles] = useState<any[]>([]);
 
@@ -109,11 +111,11 @@ function ClientDashboard() {
   return (
     <div className="space-y-8">
       {/* Welcome banner */}
-      <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-r from-[#0c0c0e] to-[#141417] p-6 md:p-8">
-        <div className="absolute right-0 top-0 w-80 h-full bg-[#7dd3fc]/5 blur-[60px] rounded-full pointer-events-none" />
+      <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-r from-charbon to-charbon/80 p-6 md:p-8">
+        <div className="absolute right-0 top-0 w-80 h-full bg-or-vif/5 blur-[60px] rounded-full pointer-events-none" />
         <div className="relative z-10 space-y-2 max-w-xl">
-          <span className="text-xs uppercase tracking-widest text-[#7dd3fc] font-semibold flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#7dd3fc] animate-ping" />
+          <span className="text-xs uppercase tracking-widest text-or-vif font-semibold flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-or-vif animate-ping" />
             Espace Membre YOLO
           </span>
           <h1 className="font-display text-3xl md:text-4xl font-semibold leading-tight">
@@ -127,7 +129,7 @@ function ClientDashboard() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="rounded-xl border border-white/5 bg-[#0f0f12] p-5 flex items-center gap-4">
+        <div className="rounded-xl border border-white/5 bg-charbon p-5 flex items-center gap-4">
           <div className="h-12 w-12 rounded-xl bg-blue-500/10 flex items-center justify-center text-blue-400">
             <Calendar className="h-6 w-6" />
           </div>
@@ -137,7 +139,7 @@ function ClientDashboard() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/5 bg-[#0f0f12] p-5 flex items-center gap-4">
+        <div className="rounded-xl border border-white/5 bg-charbon p-5 flex items-center gap-4">
           <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400">
             <DollarSign className="h-6 w-6" />
           </div>
@@ -147,7 +149,7 @@ function ClientDashboard() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/5 bg-[#0f0f12] p-5 flex items-center gap-4">
+        <div className="rounded-xl border border-white/5 bg-charbon p-5 flex items-center gap-4">
           <div className="h-12 w-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400">
             <ShieldCheck className="h-6 w-6" />
           </div>
@@ -164,7 +166,7 @@ function ClientDashboard() {
         <div className="lg:col-span-2 space-y-4">
           <h2 className="text-lg font-semibold text-white/80">Prochaine réservation</h2>
           {nextBooking ? (
-            <div className="rounded-xl border border-white/10 bg-[#0f0f12] overflow-hidden group hover:border-[#7dd3fc]/40 transition-colors">
+            <div className="rounded-xl border border-white/10 bg-charbon overflow-hidden group hover:border-or-vif/40 transition-colors">
               {nextBookingVehicle && (
                 <div className="relative h-48 bg-black">
                   <img
@@ -172,7 +174,7 @@ function ClientDashboard() {
                     alt={nextBooking.vehicleName}
                     className="h-full w-full object-cover opacity-80 group-hover:scale-[1.02] transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f12] via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-charbon via-transparent to-transparent" />
                   <div className="absolute top-4 left-4">
                     <span className={`px-3 py-1 rounded-full text-[10px] font-semibold uppercase tracking-wider backdrop-blur-md ${
                       nextBooking.status === "payee"
@@ -210,11 +212,11 @@ function ClientDashboard() {
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-xs text-white/40 block">Montant</span>
-                    <span className="text-lg font-bold text-[#7dd3fc]">${formatPrice(nextBooking.totalPrice)}</span>
+                    <span className="text-lg font-bold text-or-vif">${formatPrice(nextBooking.totalPrice)}</span>
                   </div>
                   <Link
                     to="/client/reservations"
-                    className="inline-flex items-center gap-1.5 text-xs text-[#7dd3fc] hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1.5 text-xs text-or-vif hover:text-white transition-colors"
                   >
                     Voir le détail
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -223,7 +225,7 @@ function ClientDashboard() {
               </div>
             </div>
           ) : (
-            <div className="rounded-xl border border-dashed border-white/10 bg-[#0f0f12]/30 p-8 text-center flex flex-col items-center justify-center space-y-4 h-64">
+            <div className="rounded-xl border border-dashed border-white/10 bg-charbon/30 p-8 text-center flex flex-col items-center justify-center space-y-4 h-64">
               <Car className="h-10 w-10 text-white/20" />
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-white">Aucune réservation active</p>
@@ -243,30 +245,31 @@ function ClientDashboard() {
 
         {/* Support Card Column */}
         <div className="space-y-4">
-          <h2 className="text-lg font-semibold text-white/80">Support YOLO 24/7</h2>
-          <div className="rounded-xl border border-white/5 bg-gradient-to-b from-[#111115] to-[#0a0a0c] p-6 space-y-6 flex flex-col justify-between h-[21.5rem]">
+          <h2 className="text-lg font-semibold text-white/80">Concierge YOLO</h2>
+          <div className="rounded-xl border border-white/5 bg-gradient-to-b from-charbon to-charbon/80 p-6 space-y-6 flex flex-col justify-between h-[21.5rem]">
             <div className="space-y-4">
-              <div className="h-10 w-10 rounded-lg bg-[#7dd3fc]/10 flex items-center justify-center text-[#7dd3fc]">
+              <div className="h-10 w-10 rounded-lg bg-or-vif/10 flex items-center justify-center text-or-vif">
                 <MessageSquare className="h-5 w-5" />
               </div>
               <div className="space-y-2">
                 <h3 className="font-semibold text-white">Une question, une modification ?</h3>
                 <p className="text-xs text-white/50 leading-relaxed">
-                  Notre équipe de concierges se tient à votre entière disposition à tout moment pour répondre à vos questions ou ajuster vos demandes de services.
+                  Utilisez le chat concierge en bas à droite de l&apos;écran — disponible sur toutes les pages du site.
                 </p>
               </div>
             </div>
             <div className="space-y-3">
               <div className="text-[10px] text-white/40 bg-white/3 border border-white/5 p-2.5 rounded-lg">
-                💡 Réponse moyenne en moins de 10 minutes via notre chat en ligne.
+                💡 Réponse instantanée 24/7 via le bouton « Concierge ».
               </div>
-              <Link
-                to="/client/support"
-                className="w-full py-3 rounded-xl bg-[#7dd3fc] text-black text-xs font-semibold hover:bg-white transition flex items-center justify-center gap-2"
+              <button
+                type="button"
+                onClick={openChat}
+                className="w-full py-3 rounded-xl bg-or-vif text-charbon text-xs font-semibold hover:bg-white transition flex items-center justify-center gap-2 cursor-pointer"
               >
-                Parler au support
+                Ouvrir le chat
                 <ArrowRight className="h-3.5 w-3.5" />
-              </Link>
+              </button>
             </div>
           </div>
         </div>
@@ -281,7 +284,7 @@ function ClientDashboard() {
             return (
               <div
                 key={act.title}
-                className="rounded-xl border border-white/5 bg-[#0f0f12] p-5 flex flex-col justify-between group hover:border-[#7dd3fc]/20 transition-all"
+                className="rounded-xl border border-white/5 bg-charbon p-5 flex flex-col justify-between group hover:border-or-vif/20 transition-all"
               >
                 <div className="space-y-4">
                   <div className={`h-10 w-10 rounded-lg bg-gradient-to-br ${act.color} flex items-center justify-center border`}>
@@ -302,7 +305,7 @@ function ClientDashboard() {
                   </Link>
                   <Link
                     to={act.manageTo}
-                    className="inline-flex items-center gap-1 text-[11px] text-[#7dd3fc] font-medium px-3 py-1.5 rounded-lg bg-[#7dd3fc]/10 hover:bg-[#7dd3fc]/20 transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] text-or-vif font-medium px-3 py-1.5 rounded-lg bg-or-vif/10 hover:bg-or-vif/20 transition-colors"
                   >
                     Mes demandes
                     <ArrowRight className="h-3 w-3" />

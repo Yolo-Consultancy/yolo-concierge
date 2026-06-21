@@ -51,15 +51,12 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
   const isActive = (to: string, exact?: boolean) =>
     exact ? path === to : path === to || path.startsWith(`${to}/`);
 
-  const accentActive =
-    portalId === "vehicules"
-      ? "bg-[#7dd3fc] text-black"
-      : "bg-gold text-gold-foreground";
+  const accentActive = "bg-or-vif text-charbon";
 
   return (
     <div className="min-h-screen bg-muted/30 text-foreground flex">
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-[#0a0a0a] border-r border-white/10 flex flex-col transition-transform lg:translate-x-0 ${
+        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-charbon border-r border-white/10 flex flex-col transition-transform lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >

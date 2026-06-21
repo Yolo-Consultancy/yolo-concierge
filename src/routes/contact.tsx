@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Mail, MapPin, MessageCircle, Phone, Clock, Check, AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { SiteHeader } from "@/components/SiteHeader";
+import { PortalHomeLink } from "@/components/PortalHomeLink";
 import { PortalHeader } from "@/components/PortalHeader";
 import { getPortal } from "@/config/portals";
 import { publicApi } from "@/lib/api/client";
@@ -16,6 +17,7 @@ import {
 } from "@/config/contact";
 import { toast } from "sonner";
 import { allCountries } from "country-telephone-data";
+import { useClientContactPrefill } from "@/lib/client/form-prefill";
 
 const contactSearchSchema = z.object({
   portal: z.enum(["vehicules", "demenagement", "sur-mesure"]).optional().catch(undefined),
@@ -45,27 +47,19 @@ function getFlagEmoji(countryCode: string) {
 function ContactPage() {
   const { portal: portalId } = Route.useSearch();
   const portal = portalId ? getPortal(portalId) : null;
-  const accentText = portal?.accentClass ?? "text-[#7dd3fc]";
-  const accentBgBtn =
-    portal?.id === "vehicules"
-      ? "bg-[#7dd3fc] text-black hover:bg-white"
-      : portal
-        ? "bg-gold text-gold-foreground hover:opacity-90"
-        : "bg-[#7dd3fc] text-black hover:bg-white";
-  const phoneCardIcon = portal?.id === "vehicules" ? "text-[#7dd3fc]" : portal ? "text-gold" : "text-[#7dd3fc]";
-  const phoneCardBg = portal?.id === "vehicules" ? "bg-[#7dd3fc]/10" : portal ? "bg-gold/10" : "bg-[#7dd3fc]/10";
-  const phoneCardBorder = portal?.id === "vehicules" ? "border-[#7dd3fc]/30" : portal ? "border-gold/30" : "border-[#7dd3fc]/30";
-  const phoneCardBtn = portal?.id === "vehicules"
-    ? "bg-[#7dd3fc]/15 border-[#7dd3fc]/30 text-[#7dd3fc] hover:bg-[#7dd3fc]/25"
-    : portal
-      ? "bg-gold/15 border-gold/30 text-gold hover:bg-gold/25"
-      : "bg-[#7dd3fc]/15 border-[#7dd3fc]/30 text-[#7dd3fc] hover:bg-[#7dd3fc]/25";
-  const successBorder = portal?.id === "vehicules" ? "border-[#7dd3fc]/30 bg-[#7dd3fc]/5" : portal ? "border-gold/30 bg-gold/5" : "border-[#7dd3fc]/30 bg-[#7dd3fc]/5";
-  const focusBorder = portal?.id === "vehicules" ? "focus:border-[#7dd3fc]" : portal ? "focus:border-gold" : "focus:border-[#7dd3fc]";
+  const { account, fields } = useClientContactPrefill();
+  const accentText = portal?.accentClass ?? "text-or-vif";
+  const accentBgBtn = "bg-or-vif text-charbon hover:bg-white";
+  const phoneCardIcon = "text-or-vif";
+  const phoneCardBg = "bg-or-vif/10";
+  const phoneCardBorder = "border-or-vif/30";
+  const phoneCardBtn = "bg-or-vif/15 border-or-vif/30 text-or-vif hover:bg-or-vif/25";
+  const successBorder = "border-or-vif/30 bg-or-vif/5";
+  const focusBorder = "focus:border-or-vif";
   const inputBase =
     "w-full bg-white/5 border border-white/15 rounded-xl px-4 py-3.5 text-sm text-white placeholder:text-white/30 transition";
   const inputCls = `${inputBase} ${focusBorder} focus:outline-none`;
-  const selectCls = `${inputCls} bg-[#0f0f0f] [color-scheme:dark]`;
+  const selectCls = `${inputCls} bg-charbon [color-scheme:dark]`;
 
   const [settings, setSettings] = useState({
     whatsappNumber: "243828863897",
@@ -88,6 +82,18 @@ function ContactPage() {
   useEffect(() => {
     getSettings().then(setSettings).catch(() => undefined);
   }, []);
+
+  useEffect(() => {
+    if (!account) return;
+    setForm((prev) => ({
+      ...prev,
+      firstName: prev.firstName || fields.firstName,
+      lastName: prev.lastName || fields.lastName,
+      email: prev.email || fields.email,
+      phone: prev.phone || fields.phone,
+      countryCode: fields.countryCode,
+    }));
+  }, [account, fields]);
 
   const phoneDisplay = formatPhoneDisplay(settings.whatsappNumber);
   const telHref = `tel:+${settings.whatsappNumber.replace(/\D/g, "")}`;
@@ -122,8 +128,8 @@ function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white font-sans">
-      <div className="relative border-b border-white/10 bg-linear-to-b from-[#111] to-[#0a0a0a] pb-16 pt-28">
+    <div className="min-h-screen bg-charbon text-white font-sans">
+      <div className="relative border-b border-white/10 bg-linear-to-b from-charbon to-charbon pb-16 pt-28">
         {portalId ? <PortalHeader portalId={portalId} /> : <SiteHeader />}
         <div className="mx-auto max-w-7xl px-6 text-center">
           <p className={`text-xs uppercase tracking-[0.45em] mb-4 ${accentText}`}>
@@ -139,7 +145,7 @@ function ContactPage() {
 
       <div className="mx-auto max-w-7xl px-6 py-14">
         <div className="grid gap-5 md:grid-cols-3 mb-16">
-          <article className="rounded-[28px] border border-white/10 bg-[#0f0f11] p-6 text-center">
+          <article className="rounded-[28px] border border-white/10 bg-charbon p-6 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/10">
               <MessageCircle className="h-7 w-7 text-emerald-400" />
             </div>
@@ -155,7 +161,7 @@ function ContactPage() {
             </a>
           </article>
 
-          <article className="rounded-[28px] border border-white/10 bg-[#0f0f11] p-6 text-center">
+          <article className="rounded-[28px] border border-white/10 bg-charbon p-6 text-center">
             <div className={`mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl ${phoneCardBg}`}>
               <Phone className={`h-7 w-7 ${phoneCardIcon}`} />
             </div>
@@ -169,7 +175,7 @@ function ContactPage() {
             </a>
           </article>
 
-          <article className="rounded-[28px] border border-white/10 bg-[#0f0f11] p-6 text-center">
+          <article className="rounded-[28px] border border-white/10 bg-charbon p-6 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5">
               <Mail className="h-7 w-7 text-white/80" />
             </div>
@@ -199,7 +205,12 @@ function ContactPage() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-5 rounded-[28px] border border-white/10 bg-[#0f0f11] p-6 md:p-8">
+              <form onSubmit={handleSubmit} className="space-y-5 rounded-[28px] border border-white/10 bg-charbon p-6 md:p-8">
+                {account && (
+                  <p className="text-xs text-or-vif/90 bg-or-vif/10 border border-or-vif/20 rounded-lg px-3 py-2">
+                    Coordonnées préremplies depuis votre compte YOLO.
+                  </p>
+                )}
                 <div className="grid gap-5 sm:grid-cols-2">
                   <div>
                     <label className="block text-xs uppercase tracking-wider text-white/50 mb-2">Prénom *</label>
@@ -241,12 +252,12 @@ function ContactPage() {
                     <select
                       value={form.countryCode}
                       onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
-                      className={`w-36 shrink-0 rounded-xl border border-white/15 bg-[#0f0f0f] px-3 py-3.5 text-sm text-white focus:outline-none ${focusBorder}`}
+                      className={`w-36 shrink-0 rounded-xl border border-white/15 bg-charbon px-3 py-3.5 text-sm text-white focus:outline-none ${focusBorder}`}
                     >
                       {sortedCountries.map((country) => {
                         const dial = `+${country.dialCode}`;
                         return (
-                          <option key={`${country.iso2}-${country.dialCode}`} value={dial} className="bg-[#0f0f0f]">
+                          <option key={`${country.iso2}-${country.dialCode}`} value={dial} className="bg-charbon">
                             {getFlagEmoji(country.iso2)} {dial}
                           </option>
                         );
@@ -271,7 +282,7 @@ function ContactPage() {
                     className={selectCls}
                   >
                     {contactConfig.subjects.map((s) => (
-                      <option key={s} value={s} className="bg-[#0f0f0f]">{s}</option>
+                      <option key={s} value={s} className="bg-charbon">{s}</option>
                     ))}
                   </select>
                 </div>
@@ -300,7 +311,7 @@ function ContactPage() {
           </div>
 
           <aside className="lg:col-span-5 space-y-6">
-            <div className="rounded-[28px] border border-white/10 bg-[#0f0f11] p-6">
+            <div className="rounded-[28px] border border-white/10 bg-charbon p-6">
               <div className="flex items-center gap-3 mb-4">
                 <MapPin className={`h-5 w-5 ${accentText}`} />
                 <h3 className="font-display text-xl">Visitez-nous</h3>
@@ -320,7 +331,7 @@ function ContactPage() {
               </a>
             </div>
 
-            <div className="rounded-[28px] border border-white/10 bg-[#0f0f11] p-6">
+            <div className="rounded-[28px] border border-white/10 bg-charbon p-6">
               <div className="flex items-center gap-3 mb-4">
                 <Clock className={`h-5 w-5 ${accentText}`} />
                 <h3 className="font-display text-xl">Heures d&apos;ouverture</h3>
@@ -335,7 +346,7 @@ function ContactPage() {
               </ul>
             </div>
 
-            <div className="rounded-[28px] border border-white/10 bg-[#0f0f11] p-6">
+            <div className="rounded-[28px] border border-white/10 bg-charbon p-6">
               <h3 className="font-display text-xl mb-4">Pourquoi Choisir YOLO ?</h3>
               <ul className="space-y-3">
                 {contactConfig.whyChoose.map((item) => (
@@ -368,12 +379,14 @@ function ContactPage() {
 
       <footer className="border-t border-white/10 py-8 px-6 text-center text-xs text-white/40 uppercase tracking-widest">
         © {new Date().getFullYear()} YOLO Le Concierge ·{" "}
-        {portal ? (
-          <Link to={portal.publicPath as "/location-vehicules"} className="hover:text-white">
-            Retour au portail {portal.name}
-          </Link>
-        ) : (
-          <Link to="/" className="hover:text-white">Retour à l&apos;accueil</Link>
+        <PortalHomeLink variant="footer" className="inline-flex hover:text-white" />
+        {portal && (
+          <>
+            {" · "}
+            <Link to={portal.publicPath as "/location-vehicules"} className="hover:text-white normal-case tracking-normal">
+              {portal.name}
+            </Link>
+          </>
         )}
       </footer>
     </div>

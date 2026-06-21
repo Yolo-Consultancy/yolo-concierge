@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Link } from "@tanstack/react-router";
-import { Menu, LogOut, User, Shield } from "lucide-react";
+import { Menu, LogOut, User, Shield, LayoutGrid } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   getClientSession,
@@ -20,6 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { PortalHomeLink } from "@/components/PortalHomeLink";
 
 type PortalHeaderProps = {
   portalId: PortalId;
@@ -53,7 +54,7 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
     refreshAuth();
   };
 
-  const accentDot = portal.id === "vehicules" ? "text-[#7dd3fc]" : "text-gold";
+  const accentDot = portal.accentClass;
   const loginSearch = connexionSearch(portalId, "login");
   const registerSearch = connexionSearch(portalId, "register");
 
@@ -119,14 +120,17 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
   return (
     <header className="absolute top-0 left-0 right-0 z-50">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-        <Link to={portal.publicPath as "/location-vehicules"} className="flex flex-col gap-0.5">
-          <span className="font-display text-2xl font-bold text-white drop-shadow-lg">
-            YOLO<span className={accentDot}>.</span>
-          </span>
-          <span className="text-[10px] uppercase tracking-[0.3em] text-white/70 hidden sm:inline">
-            {portal.name}
-          </span>
-        </Link>
+        <div className="flex items-center gap-3 min-w-0">
+          <Link to={portal.publicPath as "/location-vehicules"} className="flex flex-col gap-0.5 shrink-0">
+            <span className="font-display text-2xl font-bold text-white drop-shadow-lg">
+              YOLO<span className={accentDot}>.</span>
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.3em] text-white/70 hidden sm:inline">
+              {portal.name}
+            </span>
+          </Link>
+          <PortalHomeLink variant="pill" accentClass={portal.accentClass} />
+        </div>
 
         <nav className="hidden md:flex items-center gap-6 text-sm text-white/90">
           {portal.publicNav.map((item) => renderNavItem(item))}
@@ -135,11 +139,7 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
             {client ? (
               <Link
                 to={portal.clientPath as "/client"}
-                className={`inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-white transition-colors ${
-                  portal.id === "vehicules"
-                    ? "border-[#7dd3fc]/40 bg-[#7dd3fc]/10 hover:bg-[#7dd3fc]/20"
-                    : "border-gold/40 bg-gold/10 hover:bg-gold/20"
-                }`}
+                className="inline-flex items-center gap-2 rounded-full border border-or-vif/40 bg-or-vif/10 px-4 py-1.5 text-white transition-colors hover:bg-or-vif/20"
               >
                 <User className={`h-3.5 w-3.5 ${portal.accentClass}`} />
                 <span>{client.firstName}</span>
@@ -156,9 +156,7 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
                 <Link
                   to="/connexion"
                   search={loginSearch}
-                  className={`inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-black font-medium transition-colors text-sm ${
-                    portal.id === "vehicules" ? "bg-[#7dd3fc] hover:bg-white" : "bg-gold text-gold-foreground hover:opacity-90"
-                  }`}
+                  className="inline-flex items-center gap-2 rounded-full bg-or-vif px-4 py-1.5 text-sm font-medium text-charbon transition-colors hover:bg-white"
                 >
                   Se connecter
                 </Link>
@@ -196,12 +194,21 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
               <Menu className="h-5 w-5" />
             </button>
           </SheetTrigger>
-          <SheetContent side="right" className="border-white/10 bg-[#0f0f0f] text-white">
+          <SheetContent side="right" className="border-white/10 bg-charbon text-white">
             <SheetTitle className="font-display text-2xl text-white">
               YOLO<span className={accentDot}>.</span>
             </SheetTitle>
             <p className="text-xs text-white/50 mt-1 uppercase tracking-widest">{portal.name}</p>
             <nav className="mt-8 flex flex-col gap-2">
+              <SheetClose asChild>
+                <Link
+                  to="/"
+                  className="inline-flex items-center gap-2 rounded-lg border border-or-vif/30 bg-or-vif/10 px-3 py-3 text-base font-medium text-white"
+                >
+                  <LayoutGrid className={`h-4 w-4 ${portal.accentClass}`} />
+                  Tous les portails
+                </Link>
+              </SheetClose>
               {portal.publicNav.map((item) => renderNavItem(item, true))}
               <div className="border-t border-white/10 my-4" />
               {client ? (

@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { Menu } from "lucide-react";
+import { Menu, LayoutGrid } from "lucide-react";
+import { PortalHomeLink } from "@/components/PortalHomeLink";
 import { useState } from "react";
 import { getVehicleById } from "@/lib/admin/store";
 import { formatPrice, type Vehicle } from "@/lib/vehicles";
@@ -36,18 +37,18 @@ export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
     };
   },
   notFoundComponent: () => (
-    <div className="bg-[#0a0a0a] min-h-screen flex items-center justify-center text-white">
+    <div className="bg-charbon min-h-screen flex items-center justify-center text-white">
       <div className="text-center">
         <p className="font-display text-3xl mb-4">Véhicule introuvable</p>
-        <Link to="/location-vehicules" className="text-[#7dd3fc] hover:text-white">← Retour à la flotte</Link>
+        <Link to="/location-vehicules" className="text-or-vif hover:text-white">← Retour à la flotte</Link>
       </div>
     </div>
   ),
   errorComponent: ({ reset }) => (
-    <div className="bg-[#0a0a0a] min-h-screen flex items-center justify-center text-white">
+    <div className="bg-charbon min-h-screen flex items-center justify-center text-white">
       <div className="text-center">
         <p className="font-display text-3xl mb-4">Une erreur est survenue</p>
-        <button onClick={() => reset()} className="text-[#7dd3fc] hover:text-white">Réessayer</button>
+        <button onClick={() => reset()} className="text-or-vif hover:text-white">Réessayer</button>
       </div>
     </div>
   ),
@@ -62,14 +63,17 @@ function VehicleDetail() {
   const [tab, setTab] = useState<"performance" | "drivetrain" | "equipment">("performance");
 
   return (
-    <div className="bg-[#0a0a0a] text-white min-h-screen font-sans">
+    <div className="bg-charbon text-white min-h-screen font-sans">
       <header className="border-b border-white/10">
         <div className="mx-auto max-w-7xl flex items-center justify-between px-6 py-5">
-          <Link to="/" className="font-display text-2xl tracking-tight">
-            YOLO<span className="text-[#7dd3fc]">.</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/" className="font-display text-2xl tracking-tight">
+              YOLO<span className="text-or-vif">.</span>
+            </Link>
+            <PortalHomeLink variant="pill" />
+          </div>
           <nav className="hidden md:flex items-center gap-10 text-xs uppercase tracking-[0.2em] text-white/80">
-            <Link to="/" className="hover:text-white">Accueil</Link>
+            <PortalHomeLink variant="nav" />
             <Link to="/location-vehicules" className="hover:text-white">Flotte</Link>
           </nav>
           <Sheet>
@@ -82,14 +86,15 @@ function VehicleDetail() {
                 <Menu className="h-5 w-5" />
               </button>
             </SheetTrigger>
-            <SheetContent side="right" className="border-white/10 bg-[#0f0f0f] text-white">
+            <SheetContent side="right" className="border-white/10 bg-charbon text-white">
               <SheetTitle className="font-display text-2xl text-white">
-                YOLO<span className="text-[#7dd3fc]">.</span>
+                YOLO<span className="text-or-vif">.</span>
               </SheetTitle>
               <nav className="mt-10 flex flex-col gap-3">
                 <SheetClose asChild>
-                  <Link to="/" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
-                    Accueil
+                  <Link to="/" className="inline-flex items-center gap-2 rounded-lg border border-or-vif/30 bg-or-vif/10 px-3 py-3 text-base font-medium text-white">
+                    <LayoutGrid className="h-4 w-4 text-or-vif" />
+                    Tous les portails
                   </Link>
                 </SheetClose>
                 <SheetClose asChild>
@@ -157,7 +162,7 @@ function VehicleDetail() {
                 <button
                   key={i}
                   onClick={() => setActiveImg(i)}
-                  className={`aspect-4/3 rounded-lg overflow-hidden border-2 ${i === activeImg ? "border-[#7dd3fc]" : "border-transparent opacity-60 hover:opacity-100"}`}
+                  className={`aspect-4/3 rounded-lg overflow-hidden border-2 ${i === activeImg ? "border-or-vif" : "border-transparent opacity-60 hover:opacity-100"}`}
                 >
                   <img src={src} alt="" className="h-full w-full object-cover" />
                 </button>
@@ -166,7 +171,7 @@ function VehicleDetail() {
           </div>
 
           <aside className="bg-[#111] border border-white/10 rounded-2xl p-6 h-fit">
-            <p className="font-display text-4xl text-[#7dd3fc]">
+            <p className="font-display text-4xl text-or-vif">
               $ {formatPrice(vehicle.pricePerDay)} <span className="text-base text-white/70 font-sans">/jour</span>
             </p>
             <p className="text-xs text-white/50 mt-1">À partir de</p>
@@ -184,7 +189,7 @@ function VehicleDetail() {
 
             <button
               onClick={() => setBookingOpen(true)}
-              className="mt-6 w-full bg-[#7dd3fc] text-black py-3.5 rounded-xl font-medium text-sm hover:bg-white transition cursor-pointer"
+              className="mt-6 w-full bg-or-vif text-black py-3.5 rounded-xl font-medium text-sm hover:bg-white transition cursor-pointer"
             >
               Réserver Maintenant
             </button>
@@ -234,7 +239,7 @@ function VehicleDetail() {
               <button
                 key={k}
                 onClick={() => setTab(k)}
-                className={`px-5 py-2.5 rounded-full text-sm transition ${tab === k ? "bg-[#7dd3fc] text-black" : "border border-white/20 hover:bg-white/5"}`}
+                className={`px-5 py-2.5 rounded-full text-sm transition ${tab === k ? "bg-or-vif text-black" : "border border-white/20 hover:bg-white/5"}`}
               >
                 {l}
               </button>
@@ -297,8 +302,8 @@ function SpecMini({ label, value }: { label: string; value: string }) {
 
 function KeyStat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[#0a0a0a] p-6 text-center">
-      <p className="font-display text-2xl md:text-3xl text-[#7dd3fc]">{value}</p>
+    <div className="bg-charbon p-6 text-center">
+      <p className="font-display text-2xl md:text-3xl text-or-vif">{value}</p>
       <p className="text-xs uppercase tracking-widest text-white/50 mt-2">{label}</p>
     </div>
   );

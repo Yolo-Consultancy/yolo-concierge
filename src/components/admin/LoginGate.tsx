@@ -52,18 +52,18 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
 
   // ── Style helpers ────────────────────────────────────────────────────────
   const inputCls =
-    "w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#7dd3fc]/60 focus:ring-2 focus:ring-[#7dd3fc]/20 transition";
+    "w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-or-vif/60 focus:ring-2 focus:ring-or-vif/20 transition";
   const inputCls2 = // with right padding for the eye button
-    "w-full pl-10 pr-11 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-[#7dd3fc]/60 focus:ring-2 focus:ring-[#7dd3fc]/20 transition";
+    "w-full pl-10 pr-11 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-or-vif/60 focus:ring-2 focus:ring-or-vif/20 transition";
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-charbon flex items-center justify-center px-4">
       {/* Background radial glow */}
       <div
         className="pointer-events-none fixed inset-0"
         style={{
           background:
-            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(125,211,252,0.08) 0%, transparent 70%)",
+            "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(237,179,43,0.08) 0%, transparent 70%)",
         }}
       />
 
@@ -71,7 +71,7 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
         {/* Logo */}
         <div className="text-center mb-10">
           <p className="font-display text-4xl font-bold text-white">
-            YOLO<span className="text-[#7dd3fc]">.</span>
+            YOLO<span className="text-or-vif">.</span>
           </p>
           <p className="mt-1 text-xs uppercase tracking-[0.4em] text-white/40">
             Espace Administrateur
@@ -90,7 +90,7 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
                 onClick={() => { setTab(t); setLoginError(""); setRegError(""); }}
                 className={`flex-1 py-4 text-sm font-medium transition flex items-center justify-center gap-2 ${
                   tab === t
-                    ? "text-[#7dd3fc] border-b-2 border-[#7dd3fc] bg-[#7dd3fc]/5"
+                    ? "text-or-vif border-b-2 border-or-vif bg-or-vif/5"
                     : "text-white/40 hover:text-white/60"
                 }`}
               >
@@ -174,7 +174,7 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
                   <button
                     type="submit"
                     disabled={loginLoading || !loginEmail || !loginPassword}
-                    className="w-full mt-2 py-3 rounded-xl bg-[#7dd3fc] text-black text-sm font-semibold hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full mt-2 py-3 rounded-xl bg-or-vif text-black text-sm font-semibold hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {loginLoading ? (
                       <>
@@ -197,7 +197,7 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
                     <button
                       type="button"
                       onClick={() => setTab("register")}
-                      className="text-[#7dd3fc] hover:underline"
+                      className="text-or-vif hover:underline"
                     >
                       Créer un compte
                     </button>
@@ -357,7 +357,7 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
                   <button
                     type="submit"
                     disabled={regLoading || !reg.name || !reg.email || !reg.password || !reg.confirmPassword}
-                    className="w-full mt-2 py-3 rounded-xl bg-[#7dd3fc] text-black text-sm font-semibold hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="w-full mt-2 py-3 rounded-xl bg-or-vif text-black text-sm font-semibold hover:bg-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     {regLoading ? (
                       <>
@@ -380,7 +380,7 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
                     <button
                       type="button"
                       onClick={() => setTab("login")}
-                      className="text-[#7dd3fc] hover:underline"
+                      className="text-or-vif hover:underline"
                     >
                       Se connecter
                     </button>

@@ -33,25 +33,25 @@ export function buildAdminEmailHtml(booking: Booking): string {
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Nouvelle Réservation YOLO</title>
 </head>
-<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Helvetica Neue',Arial,sans-serif;color:#fff;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:40px 20px;">
+<body style="margin:0;padding:0;background:#2B2B2B;font-family:'Helvetica Neue',Arial,sans-serif;color:#fff;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#2B2B2B;padding:40px 20px;">
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background:#111;border-radius:16px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;max-width:600px;">
 
           <!-- Header -->
           <tr>
-            <td style="background:linear-gradient(135deg,#0f0f0f 0%,#1a1a2e 100%);padding:36px 40px 28px;border-bottom:1px solid rgba(255,255,255,0.08);">
+            <td style="background:linear-gradient(135deg,#2B2B2B 0%,#1a1a2e 100%);padding:36px 40px 28px;border-bottom:1px solid rgba(255,255,255,0.08);">
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td>
                     <span style="font-size:28px;font-weight:700;letter-spacing:-0.5px;color:#fff;">
-                      YOLO<span style="color:#7dd3fc;">.</span>
+                      YOLO<span style="color:#EDB32B;">.</span>
                     </span>
                     <p style="margin:4px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:3px;color:rgba(255,255,255,0.4);">Le Concierge</p>
                   </td>
                   <td align="right">
-                    <span style="display:inline-block;background:rgba(125,211,252,0.15);border:1px solid rgba(125,211,252,0.3);color:#7dd3fc;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:6px 14px;border-radius:20px;">
+                    <span style="display:inline-block;background:rgba(237,179,43,0.15);border:1px solid rgba(237,179,43,0.3);color:#EDB32B;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:6px 14px;border-radius:20px;">
                       🔔 Nouvelle Réservation
                     </span>
                   </td>
@@ -62,9 +62,9 @@ export function buildAdminEmailHtml(booking: Booking): string {
 
           <!-- Booking ID banner -->
           <tr>
-            <td style="background:rgba(125,211,252,0.06);padding:14px 40px;border-bottom:1px solid rgba(255,255,255,0.06);">
+            <td style="background:rgba(237,179,43,0.06);padding:14px 40px;border-bottom:1px solid rgba(255,255,255,0.06);">
               <p style="margin:0;font-size:12px;color:rgba(255,255,255,0.4);">
-                Réservation <strong style="color:#7dd3fc;">#${booking.id.toUpperCase()}</strong>
+                Réservation <strong style="color:#EDB32B;">#${booking.id.toUpperCase()}</strong>
                 &nbsp;·&nbsp;
                 Reçue le <strong style="color:rgba(255,255,255,0.7);">${new Date(booking.createdAt).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" })}</strong>
               </p>
@@ -85,7 +85,7 @@ export function buildAdminEmailHtml(booking: Booking): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
                 <tr>
                   <td style="background:rgba(255,255,255,0.03);padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#7dd3fc;font-weight:600;">🚗 Véhicule</span>
+                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#EDB32B;font-weight:600;">🚗 Véhicule</span>
                   </td>
                 </tr>
                 <tr>
@@ -107,7 +107,7 @@ export function buildAdminEmailHtml(booking: Booking): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
                 <tr>
                   <td style="background:rgba(255,255,255,0.03);padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#7dd3fc;font-weight:600;">📅 Dates &amp; Durée</span>
+                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#EDB32B;font-weight:600;">📅 Dates &amp; Durée</span>
                   </td>
                 </tr>
                 <tr>
@@ -123,7 +123,7 @@ export function buildAdminEmailHtml(booking: Booking): string {
                       </tr>
                       <tr style="border-top:1px solid rgba(255,255,255,0.04);">
                         <td style="font-size:13px;color:rgba(255,255,255,0.5);">Durée totale</td>
-                        <td style="font-size:13px;font-weight:600;color:#7dd3fc;">${booking.days} jour${booking.days > 1 ? "s" : ""}</td>
+                        <td style="font-size:13px;font-weight:600;color:#EDB32B;">${booking.days} jour${booking.days > 1 ? "s" : ""}</td>
                       </tr>
                     </table>
                   </td>
@@ -134,7 +134,7 @@ export function buildAdminEmailHtml(booking: Booking): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
                 <tr>
                   <td style="background:rgba(255,255,255,0.03);padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#7dd3fc;font-weight:600;">📍 Lieu</span>
+                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#EDB32B;font-weight:600;">📍 Lieu</span>
                   </td>
                 </tr>
                 <tr>
@@ -153,7 +153,7 @@ export function buildAdminEmailHtml(booking: Booking): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
                 <tr>
                   <td style="background:rgba(255,255,255,0.03);padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#7dd3fc;font-weight:600;">👤 Chauffeur</span>
+                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#EDB32B;font-weight:600;">👤 Chauffeur</span>
                   </td>
                 </tr>
                 <tr>
@@ -179,7 +179,7 @@ export function buildAdminEmailHtml(booking: Booking): string {
               <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;">
                 <tr>
                   <td style="background:rgba(255,255,255,0.03);padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.06);">
-                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#7dd3fc;font-weight:600;">👤 Client</span>
+                    <span style="font-size:11px;text-transform:uppercase;letter-spacing:2px;color:#EDB32B;font-weight:600;">👤 Client</span>
                   </td>
                 </tr>
                 <tr>
@@ -196,7 +196,7 @@ export function buildAdminEmailHtml(booking: Booking): string {
                       ${(booking as Booking & { clientEmail?: string }).clientEmail ? `
                       <tr style="border-top:1px solid rgba(255,255,255,0.04);">
                         <td style="font-size:13px;color:rgba(255,255,255,0.5);">E-mail</td>
-                        <td style="font-size:13px;font-weight:600;color:#7dd3fc;"><a href="mailto:${(booking as Booking & { clientEmail?: string }).clientEmail}" style="color:#7dd3fc;">${(booking as Booking & { clientEmail?: string }).clientEmail}</a></td>
+                        <td style="font-size:13px;font-weight:600;color:#EDB32B;"><a href="mailto:${(booking as Booking & { clientEmail?: string }).clientEmail}" style="color:#EDB32B;">${(booking as Booking & { clientEmail?: string }).clientEmail}</a></td>
                       </tr>` : ""}
                     </table>
                   </td>
@@ -204,13 +204,13 @@ export function buildAdminEmailHtml(booking: Booking): string {
               </table>
 
               <!-- Total -->
-              <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:12px;border:1px solid rgba(125,211,252,0.25);background:rgba(125,211,252,0.05);overflow:hidden;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:12px;border:1px solid rgba(237,179,43,0.25);background:rgba(237,179,43,0.05);overflow:hidden;">
                 <tr>
                   <td style="padding:24px 28px;">
                     <table width="100%" cellpadding="6" cellspacing="0">
                       <tr>
                         <td style="font-size:13px;color:rgba(255,255,255,0.5);">Montant estimé</td>
-                        <td align="right" style="font-size:28px;font-weight:700;color:#7dd3fc;">${C}${formatPrice(booking.totalPrice)}</td>
+                        <td align="right" style="font-size:28px;font-weight:700;color:#EDB32B;">${C}${formatPrice(booking.totalPrice)}</td>
                       </tr>
                       <tr>
                         <td colspan="2" style="font-size:11px;color:rgba(255,255,255,0.3);padding-top:2px;">
@@ -229,7 +229,7 @@ export function buildAdminEmailHtml(booking: Booking): string {
           <tr>
             <td style="padding:0 40px 36px;text-align:center;">
               <a href="${typeof window !== "undefined" ? window.location.origin : ""}/admin/reservations"
-                style="display:inline-block;margin-top:8px;background:#7dd3fc;color:#000;font-weight:700;font-size:13px;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
+                style="display:inline-block;margin-top:8px;background:#EDB32B;color:#000;font-weight:700;font-size:13px;padding:14px 32px;border-radius:10px;text-decoration:none;letter-spacing:0.3px;">
                 Voir dans l'espace Admin →
               </a>
             </td>
@@ -275,14 +275,14 @@ export function buildDriverMissionEmailHtml(
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Nouvelle mission YOLO</title>
 </head>
-<body style="margin:0;padding:0;background:#0a0a0a;font-family:'Helvetica Neue',Arial,sans-serif;color:#fff;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0a;padding:40px 20px;">
+<body style="margin:0;padding:0;background:#2B2B2B;font-family:'Helvetica Neue',Arial,sans-serif;color:#fff;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#2B2B2B;padding:40px 20px;">
     <tr>
       <td align="center">
         <table width="600" cellpadding="0" cellspacing="0" style="background:#111;border-radius:16px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;max-width:600px;">
           <tr>
-            <td style="background:linear-gradient(135deg,#0f0f0f 0%,#1a1a2e 100%);padding:36px 40px 28px;border-bottom:1px solid rgba(255,255,255,0.08);">
-              <span style="font-size:28px;font-weight:700;color:#fff;">YOLO<span style="color:#7dd3fc;">.</span></span>
+            <td style="background:linear-gradient(135deg,#2B2B2B 0%,#1a1a2e 100%);padding:36px 40px 28px;border-bottom:1px solid rgba(255,255,255,0.08);">
+              <span style="font-size:28px;font-weight:700;color:#fff;">YOLO<span style="color:#EDB32B;">.</span></span>
               <p style="margin:8px 0 0;font-size:11px;text-transform:uppercase;letter-spacing:3px;color:rgba(255,255,255,0.4);">Nouvelle mission</p>
             </td>
           </tr>
@@ -293,7 +293,7 @@ export function buildDriverMissionEmailHtml(
                 Vous avez été affecté(e) à une nouvelle mission terrain.
               </p>
               <table width="100%" cellpadding="0" cellspacing="0" style="border-radius:12px;border:1px solid rgba(255,255,255,0.08);overflow:hidden;margin-bottom:20px;">
-                <tr><td style="padding:14px 20px;background:rgba(125,211,252,0.08);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#7dd3fc;">Détails de la mission</td></tr>
+                <tr><td style="padding:14px 20px;background:rgba(237,179,43,0.08);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#EDB32B;">Détails de la mission</td></tr>
                 <tr><td style="padding:16px 20px;font-size:14px;color:rgba(255,255,255,0.8);">
                   <p style="margin:0 0 8px;"><strong style="color:#fff;">Référence :</strong> #${mission.id.toUpperCase()}</p>
                   <p style="margin:0 0 8px;"><strong style="color:#fff;">Type :</strong> ${missionTypeLabels[mission.type]}</p>

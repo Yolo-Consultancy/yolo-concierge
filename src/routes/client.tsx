@@ -4,12 +4,11 @@ import { useEffect, useState, createContext, useContext } from "react";
 import {
   LayoutDashboard,
   CalendarCheck,
-  MessageSquare,
+  ClipboardList,
   LogOut,
   Menu,
   X,
-  Compass,
-  ClipboardList,
+  LayoutGrid,
 } from "lucide-react";
 import { hydrateCurrentClient, logoutClient, type ClientAccount } from "@/lib/client/auth";
 import { connexionSearch } from "@/lib/auth/redirect";
@@ -76,7 +75,6 @@ function ClientShell() {
     { to: "/client/reservations", label: "Mes réservations", icon: CalendarCheck },
     { to: "/client/demenagement", label: "Déménagement", icon: ClipboardList },
     { to: "/client/sur-mesure", label: "Sur mesure", icon: ClipboardList },
-    { to: "/client/support", label: "Support", icon: MessageSquare },
   ];
 
   const isActive = (to: string, exact?: boolean) =>
@@ -84,14 +82,14 @@ function ClientShell() {
 
   return (
     <ClientContext.Provider value={{ account }}>
-      <div className="min-h-screen bg-[#070708] text-white flex flex-col lg:flex-row font-sans">
+      <div className="min-h-screen bg-charbon text-white flex flex-col lg:flex-row font-sans">
         {/* Mobile Topbar */}
-        <header className="lg:hidden shrink-0 sticky top-0 z-30 bg-[#0f0f11]/90 backdrop-blur border-b border-white/5 flex items-center justify-between px-6 h-16">
+        <header className="lg:hidden shrink-0 sticky top-0 z-30 bg-charbon/90 backdrop-blur border-b border-white/5 flex items-center justify-between px-6 h-16">
           <Link to="/client" className="flex items-center gap-2">
             <span className="font-display text-xl font-bold tracking-tight text-white">
-              YOLO<span className="text-[#7dd3fc]">.</span>
+              YOLO<span className="text-or-vif">.</span>
             </span>
-            <span className="text-[9px] uppercase tracking-widest text-[#7dd3fc]">Espace client</span>
+            <span className="text-[9px] uppercase tracking-widest text-or-vif">Espace client</span>
           </Link>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
@@ -104,7 +102,7 @@ function ClientShell() {
 
         {/* Sidebar navigation */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-72 bg-[#0c0c0e] border-r border-white/5 flex flex-col transition-transform duration-300 lg:sticky lg:h-screen lg:translate-x-0 ${
+          className={`fixed inset-y-0 left-0 z-40 w-72 bg-charbon border-r border-white/5 flex flex-col transition-transform duration-300 lg:sticky lg:h-screen lg:translate-x-0 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -113,9 +111,9 @@ function ClientShell() {
             <div>
               <Link to="/location-vehicules" className="flex items-center gap-2">
                 <span className="font-display text-2xl font-bold tracking-tight text-white">
-                  YOLO<span className="text-[#7dd3fc]">.</span>
+                  YOLO<span className="text-or-vif">.</span>
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-[#7dd3fc]">Espace client</span>
+                <span className="text-[10px] uppercase tracking-[0.25em] text-or-vif">Espace client</span>
               </Link>
             </div>
             <button
@@ -129,7 +127,7 @@ function ClientShell() {
           {/* Client User Profile Info Card */}
           <div className="p-6 border-b border-white/5 bg-white/[0.01]">
             <div className="flex items-center gap-4">
-              <div className="h-10 w-10 rounded-full bg-[#7dd3fc]/10 border border-[#7dd3fc]/20 flex items-center justify-center text-[#7dd3fc] font-bold">
+              <div className="h-10 w-10 rounded-full bg-or-vif/10 border border-or-vif/20 flex items-center justify-center text-or-vif font-bold">
                 {account.firstName[0].toUpperCase()}
                 {account.lastName[0].toUpperCase()}
               </div>
@@ -154,7 +152,7 @@ function ClientShell() {
                   onClick={() => setSidebarOpen(false)}
                   className={`flex items-center gap-3.5 px-4 py-3 rounded-xl text-sm font-medium transition-all ${
                     active
-                      ? "bg-[#7dd3fc] text-black shadow-lg shadow-[#7dd3fc]/10"
+                      ? "bg-or-vif text-black shadow-lg shadow-or-vif/10"
                       : "text-white/60 hover:text-white hover:bg-white/5"
                   }`}
                 >
@@ -171,8 +169,8 @@ function ClientShell() {
               to="/"
               className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs text-white/40 hover:text-white hover:bg-white/5 transition-all"
             >
-              <Compass className="h-4 w-4" />
-              Portails YOLO
+              <LayoutGrid className="h-4 w-4 text-or-vif" />
+              Tous les portails
             </Link>
             <button
               onClick={handleLogout}
@@ -193,9 +191,9 @@ function ClientShell() {
         )}
 
         {/* Main content page area */}
-        <main className="flex-1 min-w-0 p-6 lg:p-10 flex flex-col bg-[#070708] relative overflow-y-auto">
+        <main className="flex-1 min-w-0 p-6 lg:p-10 flex flex-col bg-charbon relative overflow-y-auto">
           {/* Glow */}
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-[#7dd3fc]/2.5 blur-[120px] pointer-events-none" />
+          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-or-vif/2.5 blur-[120px] pointer-events-none" />
           <div className="relative z-10 flex-1 flex flex-col">
             <Outlet />
           </div>

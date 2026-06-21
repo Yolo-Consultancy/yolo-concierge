@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Link } from "@tanstack/react-router";
-import { Menu, LogOut, User, Shield } from "lucide-react";
+import { Menu, LogOut, User, Shield, LayoutGrid } from "lucide-react";
+import { PortalHomeLink } from "@/components/PortalHomeLink";
 import { useEffect, useState } from "react";
 import {
   getClientSession,
@@ -41,15 +42,19 @@ export function SiteHeader() {
   return (
     <header className="absolute top-0 left-0 right-0 z-50">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="font-display text-2xl font-bold text-white drop-shadow-lg">
-            YOLO<span className="text-gold">.</span>
-          </span>
-          <span className="text-xs uppercase tracking-[0.3em] text-white/80 hidden sm:inline">
-            Le Concierge
-          </span>
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link to="/" className="flex items-center gap-2">
+            <span className="font-display text-2xl font-bold text-white drop-shadow-lg">
+              YOLO<span className="text-gold">.</span>
+            </span>
+            <span className="text-xs uppercase tracking-[0.3em] text-white/80 hidden sm:inline">
+              Le Concierge
+            </span>
+          </Link>
+          <PortalHomeLink variant="pill" accentClass="text-gold" />
+        </div>
         <nav className="hidden md:flex items-center gap-6 text-sm text-white/90">
+          <PortalHomeLink variant="nav" accentClass="text-gold" />
           <Link to="/location-vehicules" className="hover:text-gold transition-colors">Véhicules</Link>
           <Link to="/demenagement" className="hover:text-gold transition-colors">Déménagement</Link>
           <Link to="/services-sur-mesure" className="hover:text-gold transition-colors">Sur Mesure</Link>
@@ -69,9 +74,9 @@ export function SiteHeader() {
               {isAdmin && (
                 <Link
                   to="/admin"
-                  className="inline-flex items-center gap-2 rounded-full border border-[#7dd3fc]/40 bg-[#7dd3fc]/10 px-4 py-1.5 text-white hover:bg-[#7dd3fc]/20 transition-colors"
+                  className="inline-flex items-center gap-2 rounded-full border border-or-vif/40 bg-or-vif/10 px-4 py-1.5 text-white hover:bg-or-vif/20 transition-colors"
                 >
-                  <Shield className="h-3.5 w-3.5 text-[#7dd3fc]" />
+                  <Shield className="h-3.5 w-3.5 text-or-vif" />
                   <span>Admin</span>
                 </Link>
               )}
@@ -105,14 +110,15 @@ export function SiteHeader() {
               <Menu className="h-5 w-5" />
             </button>
           </SheetTrigger>
-          <SheetContent side="right" className="border-white/10 bg-[#0f0f0f] text-white">
+          <SheetContent side="right" className="border-white/10 bg-charbon text-white">
             <SheetTitle className="font-display text-2xl text-white">
               YOLO<span className="text-gold">.</span>
             </SheetTitle>
             <nav className="mt-10 flex flex-col gap-3">
               <SheetClose asChild>
-                <Link to="/" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
-                  Accueil
+                <Link to="/" className="inline-flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/10 px-3 py-3 text-base font-medium text-white">
+                  <LayoutGrid className="h-4 w-4 text-gold" />
+                  Tous les portails
                 </Link>
               </SheetClose>
               <SheetClose asChild>
@@ -149,8 +155,8 @@ export function SiteHeader() {
                   )}
                   {isAdmin && (
                     <SheetClose asChild>
-                      <Link to="/admin" className="inline-flex items-center gap-2 rounded-lg bg-[#7dd3fc]/10 border border-[#7dd3fc]/30 px-3 py-3 text-base text-white hover:bg-[#7dd3fc]/20">
-                        <Shield className="h-4 w-4 text-[#7dd3fc]" /> Espace Admin
+                      <Link to="/admin" className="inline-flex items-center gap-2 rounded-lg bg-or-vif/10 border border-or-vif/30 px-3 py-3 text-base text-white hover:bg-or-vif/20">
+                        <Shield className="h-4 w-4 text-or-vif" /> Espace Admin
                       </Link>
                     </SheetClose>
                   )}

@@ -10,6 +10,7 @@ import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehic
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
 import { PortalHeader } from "@/components/PortalHeader";
+import { PortalHomeLink } from "@/components/PortalHomeLink";
 import { ClientReviewsSection } from "@/components/ClientReviewsSection";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -70,7 +71,7 @@ function FleetPagination({
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
           aria-label="Page précédente"
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc] disabled:pointer-events-none disabled:opacity-30"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-or-vif/40 hover:text-or-vif disabled:pointer-events-none disabled:opacity-30"
         >
           <ChevronLeft className="h-4 w-4" />
           Précédent
@@ -85,8 +86,8 @@ function FleetPagination({
               aria-current={p === page ? "page" : undefined}
               className={`h-9 min-w-9 rounded-full px-3 text-sm transition ${
                 p === page
-                  ? "bg-[#7dd3fc] text-black font-medium"
-                  : "border border-white/10 text-white/70 hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc]"
+                  ? "bg-or-vif text-black font-medium"
+                  : "border border-white/10 text-white/70 hover:border-or-vif/40 hover:text-or-vif"
               }`}
             >
               {p}
@@ -98,7 +99,7 @@ function FleetPagination({
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
           aria-label="Page suivante"
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-[#7dd3fc]/40 hover:text-[#7dd3fc] disabled:pointer-events-none disabled:opacity-30"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-or-vif/40 hover:text-or-vif disabled:pointer-events-none disabled:opacity-30"
         >
           Suivant
           <ChevronRight className="h-4 w-4" />
@@ -147,7 +148,7 @@ function LocationVehicules() {
   };
 
   return (
-    <div className="bg-[#0a0a0a] text-white min-h-screen font-sans">
+    <div className="bg-charbon text-white min-h-screen font-sans">
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <PortalHeader portalId="vehicules" />
         <img src={carHero} alt="Supercar de luxe" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1080} />
@@ -163,7 +164,7 @@ function LocationVehicules() {
             partout à Kinshasa et dans ses quartiers premium.
           </p>
           <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="#flotte" className="inline-flex items-center gap-2 bg-[#7dd3fc] text-black px-8 py-4 rounded-full text-sm font-medium hover:bg-white transition">
+            <a href="#flotte" className="inline-flex items-center gap-2 bg-or-vif text-black px-8 py-4 rounded-full text-sm font-medium hover:bg-white transition">
               Découvrir notre flotte
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
             </a>
@@ -181,7 +182,7 @@ function LocationVehicules() {
       <section id="flotte" className="py-24 px-6">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.4em] text-[#7dd3fc] mb-4">Sélection</p>
+            <p className="text-xs uppercase tracking-[0.4em] text-or-vif mb-4">Sélection</p>
             <h2 className="font-display text-4xl md:text-6xl">Supercars en Vedette</h2>
           </div>
 
@@ -190,7 +191,7 @@ function LocationVehicules() {
               <article
                 key={v.id}
                 style={{ animationDelay: `${idx * 80}ms` }}
-                className="group vehicle-card animate-vehicle-in rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,#151515_0%,#090909_100%)] shadow-[0_22px_60px_-22px_rgba(125,211,252,0.28)] overflow-hidden hover:border-[#7dd3fc]/60 hover:vehicle-card-hover"
+                className="group vehicle-card animate-vehicle-in rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,#151515_0%,#090909_100%)] shadow-[0_22px_60px_-22px_rgba(237,179,43,0.28)] overflow-hidden hover:border-or-vif/60 hover:vehicle-card-hover"
               >
                 <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }} className="block p-3 pb-0">
                   <div className="relative aspect-5/4 overflow-hidden rounded-[26px] bg-black">
@@ -207,7 +208,7 @@ function LocationVehicules() {
                       <div className="absolute top-0 -left-1/2 h-full w-1/3 bg-linear-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-[shine_1.1s_ease-out]" />
                     </div>
                     <div className="absolute left-3 top-3 flex items-center gap-2">
-                      <span className="rounded-full bg-black/65 px-3 py-1 text-[10px] uppercase tracking-[0.30em] text-[#7dd3fc] backdrop-blur">{v.category}</span>
+                      <span className="rounded-full bg-black/65 px-3 py-1 text-[10px] uppercase tracking-[0.30em] text-or-vif backdrop-blur">{v.category}</span>
                       <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.30em] text-white/80 backdrop-blur">{v.year}</span>
                     </div>
                     <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
@@ -215,14 +216,14 @@ function LocationVehicules() {
                         <p className="text-[10px] uppercase tracking-[0.35em] text-white/60">À partir de</p>
                         <p className="font-display text-2xl text-white">$ {formatPrice(v.pricePerDay)} <span className="text-xs text-white/70">/jour</span></p>
                       </div>
-                      <span className="rounded-full border border-white/15 bg-black/50 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-[#7dd3fc] backdrop-blur">Disponible</span>
+                      <span className="rounded-full border border-white/15 bg-black/50 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-or-vif backdrop-blur">Disponible</span>
                     </div>
                   </div>
                 </Link>
                 <div className="p-6 pt-5">
                   <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }} className="block">
-                    <h3 className="font-display text-2xl leading-tight text-[#7dd3fc] hover:text-white transition">
-                      {v.brand} <span className="text-[#7dd3fc]">{v.name}</span>
+                    <h3 className="font-display text-2xl leading-tight text-or-vif hover:text-white transition">
+                      {v.brand} <span className="text-or-vif">{v.name}</span>
                     </h3>
                   </Link>
                   
@@ -234,14 +235,14 @@ function LocationVehicules() {
                   <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-white/10 pt-5">
                     <button
                       onClick={() => openBooking(v.id)}
-                      className="inline-flex flex-1 items-center justify-center rounded-full bg-[#7dd3fc] px-4 py-2.5 text-xs uppercase tracking-[0.25em] text-black transition hover:bg-white"
+                      className="inline-flex flex-1 items-center justify-center rounded-full bg-or-vif px-4 py-2.5 text-xs uppercase tracking-[0.25em] text-black transition hover:bg-white"
                     >
                       Réserver
                     </button>
                     <Link
                       to="/location-vehicules/$vehicleId"
                       params={{ vehicleId: v.id }}
-                      className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.03] px-4 py-2.5 text-xs uppercase tracking-[0.25em] text-[#7dd3fc] transition hover:bg-white/10 hover:text-white"
+                      className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.03] px-4 py-2.5 text-xs uppercase tracking-[0.25em] text-or-vif transition hover:bg-white/10 hover:text-white"
                     >
                       Détails
                     </Link>
@@ -258,7 +259,7 @@ function LocationVehicules() {
       <section id="destinations" className="py-24 px-6 bg-black">
         <div className="mx-auto max-w-7xl">
           <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.4em] text-[#7dd3fc] mb-4">Kinshasa</p>
+            <p className="text-xs uppercase tracking-[0.4em] text-or-vif mb-4">Kinshasa</p>
             <h2 className="font-display text-4xl md:text-6xl">Destinations Populaires</h2>
           </div>
 
@@ -268,7 +269,7 @@ function LocationVehicules() {
                 <img src={d.image} alt={d.name} width={960} height={1280} loading="lazy" className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition duration-700" />
                 <div className="absolute inset-0 bg-linear-to-t from-black via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 p-7 text-left">
-                  <p className="text-[10px] uppercase tracking-[0.3em] text-[#7dd3fc] mb-2">Location Premium</p>
+                  <p className="text-[10px] uppercase tracking-[0.3em] text-or-vif mb-2">Location Premium</p>
                   <p className="font-display text-3xl">{d.name}</p>
                 </div>
               </button>
@@ -289,9 +290,9 @@ function LocationVehicules() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10">
             {reasons.map((r) => (
-              <div key={r.title} className="bg-[#0a0a0a] p-8">
-                <div className="w-10 h-10 rounded-full bg-[#7dd3fc]/10 flex items-center justify-center mb-5">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#7dd3fc" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
+              <div key={r.title} className="bg-charbon p-8">
+                <div className="w-10 h-10 rounded-full bg-or-vif/10 flex items-center justify-center mb-5">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
                 </div>
                 <h3 className="font-display text-xl mb-2">{r.title}</h3>
                 <p className="text-sm text-white/60 leading-relaxed">{r.desc}</p>
@@ -307,7 +308,7 @@ function LocationVehicules() {
           <p className="text-white/70 text-lg mb-10 max-w-2xl mx-auto">
             Explorez notre collection ou parlez avec notre concierge pour trouver la supercar parfaite.
           </p>
-          <button onClick={() => openBooking()} className="inline-flex items-center gap-2 bg-[#7dd3fc] text-black px-10 py-4 rounded-full text-sm font-medium hover:bg-white transition">
+          <button onClick={() => openBooking()} className="inline-flex items-center gap-2 bg-or-vif text-black px-10 py-4 rounded-full text-sm font-medium hover:bg-white transition">
             Réserver maintenant
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
           </button>
@@ -317,7 +318,8 @@ function LocationVehicules() {
       <ClientReviewsSection />
 
       <footer className="border-t border-white/10 py-8 px-6 text-center text-xs text-white/40 uppercase tracking-widest">
-        © {new Date().getFullYear()} YOLO Le Concierge · <Link to="/" className="hover:text-white">Retour à l'accueil</Link>
+        © {new Date().getFullYear()} YOLO Le Concierge ·{" "}
+        <PortalHomeLink variant="footer" className="inline-flex hover:text-white" />
       </footer>
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={prefilledVehicle} />}

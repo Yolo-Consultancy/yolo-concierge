@@ -29,6 +29,9 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-gold: var(--gold);
   --color-gold-foreground: var(--gold-foreground);
+  --color-charbon: var(--charbon);
+  --color-or-vif: var(--or-vif);
+  --color-or-bronze: var(--or-bronze);
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-border: var(--border);
@@ -94,28 +97,33 @@
 }
 
 :root {
+  /* Charte YOLO */
+  --charbon: #2B2B2B;
+  --or-vif: #EDB32B;
+  --or-bronze: #B6812C;
+
   --radius: 0.5rem;
   --background: oklch(0.99 0.005 80);
-  --foreground: oklch(0.15 0.02 60);
+  --foreground: var(--charbon);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.15 0.02 60);
+  --card-foreground: var(--charbon);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.15 0.02 60);
-  --primary: oklch(0.18 0.015 60);
+  --popover-foreground: var(--charbon);
+  --primary: var(--charbon);
   --primary-foreground: oklch(0.98 0.01 80);
   --secondary: oklch(0.96 0.01 80);
-  --secondary-foreground: oklch(0.18 0.015 60);
+  --secondary-foreground: var(--charbon);
   --muted: oklch(0.95 0.008 80);
   --muted-foreground: oklch(0.45 0.015 60);
-  --accent: oklch(0.72 0.13 70);
-  --accent-foreground: oklch(0.15 0.02 60);
-  --gold: oklch(0.72 0.13 70);
-  --gold-foreground: oklch(0.15 0.02 60);
+  --accent: var(--or-vif);
+  --accent-foreground: var(--charbon);
+  --gold: var(--or-vif);
+  --gold-foreground: var(--charbon);
   --destructive: oklch(0.55 0.22 27);
   --destructive-foreground: oklch(0.98 0.01 80);
   --border: oklch(0.9 0.01 70);
   --input: oklch(0.92 0.01 70);
-  --ring: oklch(0.72 0.13 70);
+  --ring: var(--or-vif);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -128,27 +136,29 @@
   --sidebar-accent: oklch(0.96 0.01 80);
   --sidebar-accent-foreground: oklch(0.18 0.015 60);
   --sidebar-border: oklch(0.9 0.01 70);
-  --sidebar-ring: oklch(0.72 0.13 70);
+  --sidebar-ring: var(--or-vif);
 }
 
 .dark {
-  --background: oklch(0.12 0.01 60);
+  --background: var(--charbon);
   --foreground: oklch(0.98 0.01 80);
-  --card: oklch(0.18 0.015 60);
+  --card: var(--charbon);
   --card-foreground: oklch(0.98 0.01 80);
-  --popover: oklch(0.18 0.015 60);
+  --popover: var(--charbon);
   --popover-foreground: oklch(0.98 0.01 80);
-  --primary: oklch(0.72 0.13 70);
-  --primary-foreground: oklch(0.15 0.02 60);
+  --primary: var(--or-vif);
+  --primary-foreground: var(--charbon);
   --secondary: oklch(0.22 0.015 60);
   --secondary-foreground: oklch(0.98 0.01 80);
   --muted: oklch(0.22 0.015 60);
   --muted-foreground: oklch(0.7 0.015 60);
-  --accent: oklch(0.72 0.13 70);
-  --accent-foreground: oklch(0.15 0.02 60);
+  --accent: var(--or-vif);
+  --accent-foreground: var(--charbon);
+  --gold: var(--or-vif);
+  --gold-foreground: var(--charbon);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.72 0.13 70);
+  --ring: var(--or-vif);
 }
 
 @layer base {
@@ -203,6 +213,6 @@
 }
 @utility vehicle-card-hover {
   transform: translateY(-6px);
-  box-shadow: 0 30px 60px -20px rgba(125, 211, 252, 0.25);
+  box-shadow: 0 30px 60px -20px rgba(237, 179, 43, 0.25);
 }
 

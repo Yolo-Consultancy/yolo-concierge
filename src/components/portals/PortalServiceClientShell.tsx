@@ -57,16 +57,13 @@ export function PortalServiceClientShell({ portalId }: { portalId: PortalId }) {
   const isActive = (to: string, exact?: boolean) =>
     exact ? path === to : path === to || path.startsWith(`${to}/`);
 
-  const accentActive =
-    portalId === "vehicules"
-      ? "bg-[#7dd3fc] text-black shadow-lg shadow-[#7dd3fc]/10"
-      : "bg-gold text-gold-foreground shadow-lg shadow-gold/10";
+  const accentActive = "bg-or-vif text-charbon shadow-lg shadow-or-vif/10";
 
   return (
     <PortalClientContext.Provider value={{ account, portalId }}>
-      <div className="min-h-screen bg-[#070708] text-white flex">
+      <div className="min-h-screen bg-charbon text-white flex">
         <aside
-          className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 border-r border-white/10 bg-[#0a0a0a] flex flex-col transition-transform lg:translate-x-0 ${
+          className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 border-r border-white/10 bg-charbon flex flex-col transition-transform lg:translate-x-0 ${
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >

@@ -37,7 +37,7 @@ type ImprovementTypeId = (typeof IMPROVEMENT_TYPES)[number]["id"];
 const choiceBtnCls = (active: boolean) =>
   `py-2.5 px-3 rounded-xl border text-sm font-medium transition ${
     active
-      ? "border-[#7dd3fc]/60 bg-[#7dd3fc]/10 text-[#7dd3fc]"
+      ? "border-or-vif/60 bg-or-vif/10 text-or-vif"
       : "border-white/10 bg-white/5 text-white/60 hover:text-white"
   }`;
 
@@ -46,7 +46,7 @@ const yesNoBtnCls = (active: boolean, tone: "no" | "yes") =>
     active
       ? tone === "no"
         ? "border-emerald-400/60 bg-emerald-400/10 text-emerald-300"
-        : "border-[#7dd3fc]/60 bg-[#7dd3fc]/10 text-[#7dd3fc]"
+        : "border-or-vif/60 bg-or-vif/10 text-or-vif"
       : "border-white/10 bg-white/5 text-white/60 hover:text-white"
   }`;
 
@@ -157,7 +157,7 @@ function EvaluerPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#070708] flex items-center justify-center text-white/50">
+      <div className="min-h-screen bg-charbon flex items-center justify-center text-white/50">
         Chargement...
       </div>
     );
@@ -165,8 +165,8 @@ function EvaluerPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#070708] flex items-center justify-center p-4">
-        <div className="max-w-md w-full text-center rounded-2xl border border-white/10 bg-[#0f0f11] p-8">
+      <div className="min-h-screen bg-charbon flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center rounded-2xl border border-white/10 bg-charbon p-8">
           <p className="text-red-400 text-sm">{error}</p>
         </div>
       </div>
@@ -175,8 +175,8 @@ function EvaluerPage() {
 
   if (done) {
     return (
-      <div className="min-h-screen bg-[#070708] flex items-center justify-center p-4">
-        <div className="max-w-md w-full text-center rounded-2xl border border-white/10 bg-[#0f0f11] p-10">
+      <div className="min-h-screen bg-charbon flex items-center justify-center p-4">
+        <div className="max-w-md w-full text-center rounded-2xl border border-white/10 bg-charbon p-10">
           <CheckCircle className="h-12 w-12 text-emerald-400 mx-auto mb-4" />
           <h1 className="font-display text-2xl font-bold text-white mb-2">Merci !</h1>
           <p className="text-white/50 text-sm">
@@ -188,18 +188,18 @@ function EvaluerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#070708] flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-[#7dd3fc]/5 blur-[120px] pointer-events-none" />
+    <div className="min-h-screen bg-charbon flex items-center justify-center p-4 relative overflow-hidden">
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-or-vif/5 blur-[120px] pointer-events-none" />
 
       <div className="w-full max-w-lg relative z-10">
         <div className="text-center mb-8">
           <span className="font-display text-3xl font-bold text-white">
-            YOLO<span className="text-[#7dd3fc]">.</span>
+            YOLO<span className="text-or-vif">.</span>
           </span>
           <p className="text-sm text-white/50 mt-2">Comment s'est passée votre course ?</p>
         </div>
 
-        <div className="bg-[#0f0f11]/80 border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-xl">
+        <div className="bg-charbon/80 border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-xl">
           {info?.clientName && (
             <p className="text-white/70 text-sm mb-1">
               Bonjour <strong className="text-white">{info.clientName}</strong>,
@@ -275,7 +275,7 @@ function EvaluerPage() {
                     value={improvementOther}
                     onChange={(e) => setImprovementOther(e.target.value)}
                     placeholder="Décrivez ce que nous pourrions améliorer..."
-                    className="w-full mt-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#7dd3fc]"
+                    className="w-full mt-3 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-or-vif"
                   />
                 )}
               </div>
@@ -284,7 +284,7 @@ function EvaluerPage() {
             <button
               type="submit"
               disabled={saving}
-              className="w-full py-3.5 rounded-xl bg-[#7dd3fc] text-black text-sm font-semibold hover:bg-white transition disabled:opacity-50"
+              className="w-full py-3.5 rounded-xl bg-or-vif text-black text-sm font-semibold hover:bg-white transition disabled:opacity-50"
             >
               {saving ? "Envoi..." : "Envoyer mon avis"}
             </button>

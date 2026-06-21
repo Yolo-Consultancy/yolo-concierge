@@ -84,9 +84,9 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-muted/30 text-foreground">
       {/* Topbar mobile */}
-      <header className="lg:hidden sticky top-0 z-30 bg-[#0a0a0a] border-b border-white/10 flex items-center justify-between px-4 h-14">
+      <header className="lg:hidden sticky top-0 z-30 bg-charbon border-b border-white/10 flex items-center justify-between px-4 h-14">
         <Link to="/admin" className="font-display text-lg font-semibold text-white">
-          {adminConfig.brand.title}<span className="text-[#7dd3fc]">.</span>
+          {adminConfig.brand.title}<span className="text-or-vif">.</span>
         </Link>
         <button onClick={() => setOpen(true)} className="p-2 rounded text-white/70 hover:bg-white/10 hover:text-white">
           <Menu className="h-5 w-5" />
@@ -96,7 +96,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       <div className="flex">
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-[#0a0a0a] border-r border-white/10 flex flex-col transition-transform lg:translate-x-0 ${
+          className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-charbon border-r border-white/10 flex flex-col transition-transform lg:translate-x-0 ${
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -104,14 +104,14 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             className="pointer-events-none absolute inset-x-0 top-0 h-40"
             style={{
               background:
-                "radial-gradient(ellipse 100% 80% at 50% 0%, rgba(125,211,252,0.12) 0%, transparent 70%)",
+                "radial-gradient(ellipse 100% 80% at 50% 0%, rgba(237,179,43,0.12) 0%, transparent 70%)",
             }}
           />
 
           <div className="relative h-16 px-5 flex items-center justify-between border-b border-white/10">
             <div>
               <p className="font-display text-lg font-semibold leading-tight text-white">
-                {adminConfig.brand.title}<span className="text-[#7dd3fc]">.</span>
+                {adminConfig.brand.title}<span className="text-or-vif">.</span>
               </p>
               <p className="text-[10px] uppercase tracking-widest text-white/40">
                 {adminConfig.brand.subtitle} · Location
@@ -134,7 +134,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                   onClick={() => setOpen(false)}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                     active
-                      ? "bg-[#7dd3fc] text-black shadow-sm shadow-[#7dd3fc]/20"
+                      ? "bg-or-vif text-black shadow-sm shadow-or-vif/20"
                       : "text-white/55 hover:bg-white/5 hover:text-white"
                   }`}
                 >

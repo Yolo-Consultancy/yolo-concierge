@@ -21,6 +21,7 @@ import type { ClientAccount } from "@/lib/client/auth";
 import { toast } from "sonner";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import { useClientAccount } from "./client";
+import { useConciergeChat } from "@/components/ConciergeChatWidget";
 
 export const Route = createFileRoute("/client/reservations")({
   component: ClientReservations,
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/client/reservations")({
 function ClientReservations() {
   const { ask, dialog } = useConfirmDialog();
   const { account } = useClientAccount() as { account: ClientAccount };
+  const { openChat } = useConciergeChat();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [vehicles, setVehicles] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState<"active" | "history">("active");
@@ -100,7 +102,7 @@ function ClientReservations() {
         </div>
         <Link
           to="/location-vehicules"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#7dd3fc] px-5 py-2.5 text-xs font-semibold text-black hover:bg-white transition cursor-pointer self-start"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-or-vif px-5 py-2.5 text-xs font-semibold text-black hover:bg-white transition cursor-pointer self-start"
         >
           <Car className="h-4 w-4" />
           Réserver un véhicule
@@ -112,23 +114,23 @@ function ClientReservations() {
         <button
           onClick={() => setActiveTab("active")}
           className={`pb-4 text-sm font-semibold tracking-wide transition-all relative ${
-            activeTab === "active" ? "text-[#7dd3fc]" : "text-white/40 hover:text-white/60"
+            activeTab === "active" ? "text-or-vif" : "text-white/40 hover:text-white/60"
           }`}
         >
           Réservations actives ({activeBookings.length})
           {activeTab === "active" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#7dd3fc] rounded-full" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-or-vif rounded-full" />
           )}
         </button>
         <button
           onClick={() => setActiveTab("history")}
           className={`pb-4 text-sm font-semibold tracking-wide transition-all relative ${
-            activeTab === "history" ? "text-[#7dd3fc]" : "text-white/40 hover:text-white/60"
+            activeTab === "history" ? "text-or-vif" : "text-white/40 hover:text-white/60"
           }`}
         >
           Historique des commandes ({historyBookings.length})
           {activeTab === "history" && (
-            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#7dd3fc] rounded-full" />
+            <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-or-vif rounded-full" />
           )}
         </button>
       </div>
@@ -141,7 +143,7 @@ function ClientReservations() {
             return (
               <div
                 key={b.id}
-                className="rounded-2xl border border-white/10 bg-[#0f0f12] overflow-hidden flex flex-col md:flex-row"
+                className="rounded-2xl border border-white/10 bg-charbon overflow-hidden flex flex-col md:flex-row"
               >
                 {/* Vehicle Thumbnail Column */}
                 <div className="w-full md:w-80 h-48 md:h-auto bg-black shrink-0 relative">
@@ -185,7 +187,7 @@ function ClientReservations() {
                       <div className="space-y-1">
                         <span className="text-white/40 uppercase tracking-wider block font-medium">Dates & Durée</span>
                         <div className="flex items-center gap-1.5 text-white/90">
-                          <Calendar className="h-3.5 w-3.5 text-[#7dd3fc]" />
+                          <Calendar className="h-3.5 w-3.5 text-or-vif" />
                           <span>{b.startDate} au {b.endDate}</span>
                         </div>
                         <span className="text-white/60 block pl-5">{b.days} jour{b.days > 1 ? "s" : ""} de location</span>
@@ -194,7 +196,7 @@ function ClientReservations() {
                       <div className="space-y-1">
                         <span className="text-white/40 uppercase tracking-wider block font-medium">Lieu de livraison</span>
                         <div className="flex items-center gap-1.5 text-white/90">
-                          <MapPin className="h-3.5 w-3.5 text-[#7dd3fc]" />
+                          <MapPin className="h-3.5 w-3.5 text-or-vif" />
                           <span className="truncate">{b.pickupLocation}</span>
                         </div>
                       </div>
@@ -202,7 +204,7 @@ function ClientReservations() {
                       <div className="space-y-1">
                         <span className="text-white/40 uppercase tracking-wider block font-medium">Option Chauffeur</span>
                         <div className="flex items-center gap-1.5 text-white/90">
-                          <User className="h-3.5 w-3.5 text-[#7dd3fc]" />
+                          <User className="h-3.5 w-3.5 text-or-vif" />
                           <span>
                             {b.withChauffeur ? (
                               b.driverName ? `Chauffeur : ${b.driverName}` : "Chauffeur YOLO affecté"
@@ -239,12 +241,13 @@ function ClientReservations() {
                           Annuler ma demande
                         </button>
                       )}
-                      <Link
-                        to="/client/support"
-                        className="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 text-white text-xs font-semibold transition flex items-center justify-center gap-1"
+                      <button
+                        type="button"
+                        onClick={openChat}
+                        className="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 text-white text-xs font-semibold transition flex items-center justify-center gap-1 cursor-pointer"
                       >
-                        Support Concierge
-                      </Link>
+                        Contacter le concierge
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -253,7 +256,7 @@ function ClientReservations() {
           })}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-white/10 bg-[#0f0f12]/30 p-12 text-center flex flex-col items-center justify-center space-y-4">
+        <div className="rounded-2xl border border-dashed border-white/10 bg-charbon/30 p-12 text-center flex flex-col items-center justify-center space-y-4">
           <Car className="h-12 w-12 text-white/20" />
           <div className="space-y-2 max-w-md mx-auto">
             <h3 className="font-semibold text-lg text-white">Aucune réservation trouvée</h3>
@@ -265,7 +268,7 @@ function ClientReservations() {
           </div>
           <Link
             to="/location-vehicules"
-            className="px-6 py-3 rounded-full bg-[#7dd3fc] text-black text-xs font-semibold hover:bg-white transition shadow-lg shadow-[#7dd3fc]/10"
+            className="px-6 py-3 rounded-full bg-or-vif text-black text-xs font-semibold hover:bg-white transition shadow-lg shadow-or-vif/10"
           >
             Découvrir notre flotte de luxe
           </Link>

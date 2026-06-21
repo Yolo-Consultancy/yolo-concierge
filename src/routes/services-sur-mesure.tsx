@@ -1,10 +1,12 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PortalHeader } from "@/components/PortalHeader";
+import { PortalHomeLink } from "@/components/PortalHomeLink";
 import servicesImg from "@/assets/portal-services.jpg";
 import { submitServiceRequest } from "@/lib/portals/service-requests";
 import { toast } from "sonner";
+import { useClientContactPrefill } from "@/lib/client/form-prefill";
 
 export const Route = createFileRoute("/services-sur-mesure")({
   head: () => ({
@@ -25,6 +27,7 @@ const categories = [
 ];
 
 function SurMesure() {
+  const { account, fields, fullName, phoneWithCountry } = useClientContactPrefill();
   const [sent, setSent] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
@@ -34,6 +37,16 @@ function SurMesure() {
     category: "",
     message: "",
   });
+
+  useEffect(() => {
+    if (!account) return;
+    setForm((prev) => ({
+      ...prev,
+      name: prev.name || fullName,
+      email: prev.email || fields.email,
+      phone: prev.phone || phoneWithCountry,
+    }));
+  }, [account, fields, fullName, phoneWithCountry]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -109,6 +122,11 @@ function SurMesure() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
+              {account && (
+                <p className="text-xs text-gold/90 bg-gold/10 border border-gold/20 rounded-md px-3 py-2">
+                  Coordonnées préremplies depuis votre compte.
+                </p>
+              )}
               <input
                 required
                 placeholder="Votre nom"
@@ -161,7 +179,7 @@ function SurMesure() {
       </section>
 
       <div className="mx-auto max-w-7xl px-6 pb-12">
-        <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">← Retour à l'accueil</Link>
+        <PortalHomeLink variant="footer" className="inline-flex text-muted-foreground hover:text-foreground" />
       </div>
     </main>
   );

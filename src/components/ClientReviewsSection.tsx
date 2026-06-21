@@ -57,7 +57,7 @@ function GoogleLogo({ className = "h-5 w-5" }: { className?: string }) {
 
 function ReviewCard({ review }: { review: PublicReview }) {
   return (
-    <article className="h-full rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,#151515_0%,#090909_100%)] p-6 shadow-[0_18px_50px_-24px_rgba(125,211,252,0.35)]">
+    <article className="h-full rounded-[28px] border border-white/10 bg-[linear-gradient(180deg,#151515_0%,#090909_100%)] p-6 shadow-[0_18px_50px_-24px_rgba(237,179,43,0.35)]">
       <div className="flex items-start gap-4">
         {review.photoUri ? (
           <img
@@ -68,7 +68,7 @@ function ReviewCard({ review }: { review: PublicReview }) {
             referrerPolicy="no-referrer"
           />
         ) : (
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#7dd3fc]/15 text-sm font-semibold text-[#7dd3fc]">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-or-vif/15 text-sm font-semibold text-or-vif">
             {clientInitial(review.clientName)}
           </div>
         )}
@@ -104,16 +104,19 @@ export function ClientReviewsSection() {
       .finally(() => setLoading(false));
   }, []);
 
-  const reviews = data?.reviews ?? [];
-  const averageScore = data?.averageScore ?? 0;
-  const totalCount = data?.totalCount ?? 0;
+  const reviews = (data?.reviews ?? []).filter((r) => r.score >= 3);
+  const averageScore =
+    reviews.length > 0
+      ? Math.round((reviews.reduce((sum, r) => sum + r.score, 0) / reviews.length) * 10) / 10
+      : (data?.averageScore ?? 0);
+  const totalCount = reviews.length;
   const isGoogle = data?.source === "google" || data?.source === "mixed";
 
   return (
     <section id="avis" className="py-24 px-6 bg-black">
       <div className="mx-auto max-w-7xl">
         <div className="text-center mb-12">
-          <p className="text-xs uppercase tracking-[0.4em] text-[#7dd3fc] mb-4">Témoignages</p>
+          <p className="text-xs uppercase tracking-[0.4em] text-or-vif mb-4">Témoignages</p>
           <h2 className="font-display text-4xl md:text-6xl mb-4">Ce Que Disent Nos Clients</h2>
           <p className="text-white/65 text-lg max-w-2xl mx-auto">
             Vrais avis de vrais clients qui ont vécu notre service de location de voitures de luxe
@@ -126,7 +129,7 @@ export function ClientReviewsSection() {
           </p>
         )}
 
-        <div className="mx-auto mb-12 max-w-xl rounded-[32px] border border-white/10 bg-[#0f0f11] p-8 text-center">
+        <div className="mx-auto mb-12 max-w-xl rounded-[32px] border border-white/10 bg-charbon p-8 text-center">
           <div className="mb-4 flex justify-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/4 px-4 py-2">
               <GoogleLogo />
@@ -135,7 +138,7 @@ export function ClientReviewsSection() {
               </span>
             </div>
           </div>
-          <p className="font-display text-5xl text-[#7dd3fc] mb-2">
+          <p className="font-display text-5xl text-or-vif mb-2">
             {loading ? "—" : averageScore > 0 ? averageScore.toFixed(1) : "—"}
           </p>
           <div className="mb-3 flex justify-center">
@@ -170,8 +173,8 @@ export function ClientReviewsSection() {
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-0 border-white/15 bg-[#0f0f11] text-white hover:bg-white/10 hover:text-[#7dd3fc] disabled:opacity-30" />
-              <CarouselNext className="right-0 border-white/15 bg-[#0f0f11] text-white hover:bg-white/10 hover:text-[#7dd3fc] disabled:opacity-30" />
+              <CarouselPrevious className="left-0 border-white/15 bg-charbon text-white hover:bg-white/10 hover:text-or-vif disabled:opacity-30" />
+              <CarouselNext className="right-0 border-white/15 bg-charbon text-white hover:bg-white/10 hover:text-or-vif disabled:opacity-30" />
             </Carousel>
           </div>
         )}
