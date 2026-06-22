@@ -84,7 +84,7 @@ function ClientShell() {
     <ClientContext.Provider value={{ account }}>
       <div className="min-h-screen bg-charbon text-white flex flex-col lg:flex-row font-sans">
         {/* Mobile Topbar */}
-        <header className="lg:hidden shrink-0 sticky top-0 z-30 bg-charbon/90 backdrop-blur border-b border-white/5 flex items-center justify-between px-6 h-16">
+        <header className="lg:hidden fixed top-0 inset-x-0 z-40 bg-charbon/95 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 h-16">
           <Link to="/client" className="flex items-center gap-2">
             <span className="font-display text-xl font-bold tracking-tight text-white">
               YOLO<span className="text-or-vif">.</span>
@@ -102,7 +102,7 @@ function ClientShell() {
 
         {/* Sidebar navigation */}
         <aside
-          className={`fixed inset-y-0 left-0 z-40 w-72 bg-charbon border-r border-white/5 flex flex-col transition-transform duration-300 lg:sticky lg:h-screen lg:translate-x-0 ${
+          className={`fixed top-16 bottom-0 left-0 z-40 w-72 bg-charbon border-r border-white/5 flex flex-col transition-transform duration-300 lg:top-0 lg:bottom-auto lg:sticky lg:h-screen lg:translate-x-0 ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -191,7 +191,7 @@ function ClientShell() {
         )}
 
         {/* Main content page area */}
-        <main className="flex-1 min-w-0 p-6 lg:p-10 flex flex-col bg-charbon relative overflow-y-auto">
+        <main className="flex-1 min-w-0 p-6 lg:p-10 pt-[5.5rem] lg:pt-10 flex flex-col bg-charbon relative overflow-y-auto">
           {/* Glow */}
           <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-or-vif/2.5 blur-[120px] pointer-events-none" />
           <div className="relative z-10 flex-1 flex flex-col">

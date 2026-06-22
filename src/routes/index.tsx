@@ -47,8 +47,8 @@ function Index() {
   return (
     <main className="min-h-screen bg-background">
       {/* Top brand strip */}
-      <header className="border-b border-border">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-5">
+      <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:py-5">
           <Link to="/" className="flex items-center gap-3">
             <span className="font-display text-2xl font-bold tracking-tight">
               YOLO<span className="text-gold">.</span>
@@ -65,7 +65,7 @@ function Index() {
       </header>
 
       {/* Intro */}
-      <section className="mx-auto max-w-7xl px-6 pt-16 pb-10">
+      <section className="mx-auto max-w-7xl px-6 pt-24 md:pt-28 pb-10">
         <p className="text-xs text-center uppercase tracking-[0.4em] text-gold mb-4">Choisissez votre portail</p>
         <h1 className="font-display text-5xl text-center md:text-7xl font-semibold leading-[0.95] max-w-4xl">
           Une seule plateforme,<br />
