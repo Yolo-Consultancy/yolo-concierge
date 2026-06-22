@@ -127,6 +127,48 @@ function ClientDashboard() {
         </div>
       </div>
 
+      {/* Services shortcuts */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-semibold text-white/80">Réserver un nouveau service</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {actions.map((act) => {
+            const Icon = act.icon;
+            return (
+              <div
+                key={act.title}
+                className="rounded-xl border border-white/5 bg-charbon p-5 flex flex-col group hover:border-or-vif/20 transition-all"
+              >
+                <div className="space-y-4">
+                  <div className={`h-10 w-10 rounded-lg bg-gradient-to-br ${act.color} flex items-center justify-center border`}>
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-white text-sm">{act.title}</h3>
+                    <p className="text-xs text-white/40 mt-1 leading-relaxed">{act.description}</p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-2 mt-5">
+                  <Link
+                    to={act.bookTo}
+                    className="inline-flex items-center justify-center gap-1.5 text-xs text-charbon font-semibold px-4 py-2.5 rounded-lg bg-or-vif hover:bg-white transition-colors"
+                  >
+                    Nouvelle demande
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                  <Link
+                    to={act.manageTo}
+                    className="inline-flex items-center justify-center gap-1.5 text-[11px] text-or-vif font-medium px-3 py-2 rounded-lg border border-or-vif/20 bg-or-vif/5 hover:bg-or-vif/10 transition-colors"
+                  >
+                    Mes demandes
+                    <ArrowRight className="h-3 w-3" />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="rounded-xl border border-white/5 bg-charbon p-5 flex items-center gap-4">
@@ -272,48 +314,6 @@ function ClientDashboard() {
               </button>
             </div>
           </div>
-        </div>
-      </div>
-
-      {/* Services shortcuts */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold text-white/80">Réserver un nouveau service</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {actions.map((act) => {
-            const Icon = act.icon;
-            return (
-              <div
-                key={act.title}
-                className="rounded-xl border border-white/5 bg-charbon p-5 flex flex-col justify-between group hover:border-or-vif/20 transition-all"
-              >
-                <div className="space-y-4">
-                  <div className={`h-10 w-10 rounded-lg bg-gradient-to-br ${act.color} flex items-center justify-center border`}>
-                    <Icon className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-white text-sm">{act.title}</h3>
-                    <p className="text-xs text-white/40 mt-1 leading-relaxed">{act.description}</p>
-                  </div>
-                </div>
-                <div className="flex flex-wrap gap-2 mt-5">
-                  <Link
-                    to={act.bookTo}
-                    className="inline-flex items-center gap-1 text-[11px] text-white/70 hover:text-white font-medium px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/20 transition-colors"
-                  >
-                    Nouvelle demande
-                    <ArrowRight className="h-3 w-3" />
-                  </Link>
-                  <Link
-                    to={act.manageTo}
-                    className="inline-flex items-center gap-1 text-[11px] text-or-vif font-medium px-3 py-1.5 rounded-lg bg-or-vif/10 hover:bg-or-vif/20 transition-colors"
-                  >
-                    Mes demandes
-                    <ArrowRight className="h-3 w-3" />
-                  </Link>
-                </div>
-              </div>
-            );
-          })}
         </div>
       </div>
     </div>
