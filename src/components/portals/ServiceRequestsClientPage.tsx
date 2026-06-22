@@ -17,7 +17,11 @@ export function ServiceRequestsClientPage({ portalId }: { portalId: PortalId }) 
 
   useEffect(() => {
     listMyServiceRequests(portal.serviceType)
-      .then(setItems)
+      .then((data) =>
+        setItems(
+          [...data].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
+        ),
+      )
       .catch(() => toast.error("Impossible de charger vos demandes."))
       .finally(() => setLoading(false));
   }, [portal.serviceType]);

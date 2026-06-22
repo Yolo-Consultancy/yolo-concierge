@@ -63,15 +63,16 @@ function ClientReservations() {
     });
   }, [bookings, account]);
 
-  // Split into active and history
+  // Split into active and history — most recent first (by createdAt)
   const { activeBookings, historyBookings } = useMemo(() => {
     const active = clientBookings.filter((b) => ["en_attente", "confirmee", "payee"].includes(b.status));
     const history = clientBookings.filter((b) => ["terminee", "annulee"].includes(b.status));
-    
-    // Sort active by date ascending, history by date descending
+    const byNewest = (a: Booking, b: Booking) =>
+      (b.createdAt || b.startDate).localeCompare(a.createdAt || a.startDate);
+
     return {
-      activeBookings: active.sort((a, b) => a.startDate.localeCompare(b.startDate)),
-      historyBookings: history.sort((a, b) => b.startDate.localeCompare(a.startDate)),
+      activeBookings: active.sort(byNewest),
+      historyBookings: history.sort(byNewest),
     };
   }, [clientBookings]);
 
