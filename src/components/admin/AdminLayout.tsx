@@ -82,7 +82,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     exact ? path === to : path === to || path.startsWith(`${to}/`);
 
   return (
-    <div className="min-h-screen bg-muted/30 text-foreground">
+    <div className="min-h-screen bg-muted/30 text-foreground font-sans" data-yolo-space>
       {/* Topbar mobile */}
       <header className="lg:hidden sticky top-0 z-30 bg-charbon border-b border-white/10 flex items-center justify-between px-4 h-14">
         <Link to="/admin" className="font-display text-lg font-semibold text-white">

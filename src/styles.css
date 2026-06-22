@@ -187,6 +187,23 @@
   p {
     line-height: var(--leading-relaxed);
   }
+
+  /* Espaces connectés — même typographie que le site public */
+  [data-yolo-space] {
+    font-family: var(--font-body-family);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  [data-yolo-space] :is(h1, h2, h3, h4, .font-display) {
+    font-family: var(--font-display-family);
+    letter-spacing: var(--tracking-tight);
+    line-height: var(--leading-tight);
+  }
+
+  [data-yolo-space] :is(input, textarea, select, button) {
+    font-family: inherit;
+  }
 }
 
 /* ============================================================

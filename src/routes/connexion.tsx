@@ -105,7 +105,7 @@ function ConnexionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-charbon flex items-center justify-center p-4 relative overflow-hidden font-sans">
+    <div className="min-h-screen bg-charbon flex items-center justify-center p-4 relative overflow-hidden font-sans" data-yolo-space>
       <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-or-vif/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-or-vif/5 blur-[120px] pointer-events-none" />
 

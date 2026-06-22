@@ -61,7 +61,7 @@ export function PortalServiceClientShell({ portalId }: { portalId: PortalId }) {
 
   return (
     <PortalClientContext.Provider value={{ account, portalId }}>
-      <div className="min-h-screen bg-charbon text-white flex">
+      <div className="min-h-screen bg-charbon text-white flex font-sans" data-yolo-space>
         <aside
           className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 border-r border-white/10 bg-charbon flex flex-col transition-transform lg:translate-x-0 ${
             open ? "translate-x-0" : "-translate-x-full"

@@ -54,7 +54,7 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
   const accentActive = "bg-or-vif text-charbon";
 
   return (
-    <div className="min-h-screen bg-muted/30 text-foreground flex">
+    <div className="min-h-screen bg-muted/30 text-foreground flex font-sans" data-yolo-space>
       <aside
         className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-charbon border-r border-white/10 flex flex-col transition-transform lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"

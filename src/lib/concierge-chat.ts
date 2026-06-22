@@ -90,24 +90,51 @@ export function buildConciergeAutoReply(
   return "Merci pour votre message. Un concierge YOLO vous répondra rapidement. Connectez-vous pour un suivi personnalisé.";
 }
 
+export function computeTypingDelay(userText: string, replyText?: string): number {
+  const base = 700;
+  const perChar = 20;
+  const length = (replyText ?? userText).length;
+  return Math.min(3000, Math.max(base, length * perChar));
+}
+
+export function appendGuestUserMessage(messages: ChatMessage[], userText: string): ChatMessage[] {
+  const now = new Date().toISOString();
+  const next: ChatMessage[] = [
+    ...messages,
+    { id: `client-${now}`, sender: "client", text: userText.trim(), timestamp: now },
+  ];
+  saveGuestMessages(next);
+  return next;
+}
+
+export function appendGuestAgentReply(
+  messages: ChatMessage[],
+  userText: string,
+  contact?: {
+    firstName?: string;
+    phone?: string;
+    countryCode?: string;
+  },
+): ChatMessage[] {
+  const next: ChatMessage[] = [
+    ...messages,
+    {
+      id: `agent-${Date.now()}`,
+      sender: "agent",
+      text: buildConciergeAutoReply(userText, contact),
+      timestamp: new Date().toISOString(),
+    },
+  ];
+  saveGuestMessages(next);
+  return next;
+}
+
 export function appendGuestExchange(messages: ChatMessage[], userText: string, contact?: {
   firstName?: string;
   phone?: string;
   countryCode?: string;
 }): ChatMessage[] {
-  const now = new Date().toISOString();
-  const next: ChatMessage[] = [
-    ...messages,
-    { id: `client-${now}`, sender: "client", text: userText.trim(), timestamp: now },
-    {
-      id: `agent-${now}`,
-      sender: "agent",
-      text: buildConciergeAutoReply(userText, contact),
-      timestamp: new Date(Date.now() + 400).toISOString(),
-    },
-  ];
-  saveGuestMessages(next);
-  return next;
+  return appendGuestAgentReply(appendGuestUserMessage(messages, userText), userText, contact);
 }
 
 export const CONCIERGE_SUGGESTIONS = [

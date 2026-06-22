@@ -57,7 +57,7 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
     "w-full pl-10 pr-11 py-3 rounded-xl bg-white/5 border border-white/10 text-white text-sm placeholder:text-white/20 focus:outline-none focus:border-or-vif/60 focus:ring-2 focus:ring-or-vif/20 transition";
 
   return (
-    <div className="min-h-screen bg-charbon flex items-center justify-center px-4">
+    <div className="min-h-screen bg-charbon flex items-center justify-center px-4 font-sans" data-yolo-space>
       {/* Background radial glow */}
       <div
         className="pointer-events-none fixed inset-0"

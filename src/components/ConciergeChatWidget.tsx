@@ -11,8 +11,11 @@ import {
 } from "@/lib/client/support";
 import { getCurrentClient, hydrateCurrentClient, type ClientAccount } from "@/lib/client/auth";
 import {
-  appendGuestExchange,
+  appendGuestAgentReply,
+  appendGuestUserMessage,
+  buildConciergeAutoReply,
   clearGuestMessages,
+  computeTypingDelay,
   CONCIERGE_SUGGESTIONS,
   loadGuestMessages,
 } from "@/lib/concierge-chat";
@@ -99,19 +102,48 @@ function ConciergeChatPanel({
 
   const handleSend = async (textToSend: string) => {
     if (!textToSend.trim() || isTyping) return;
+    const trimmed = textToSend.trim();
+    setInputText("");
     setIsTyping(true);
+
     try {
       if (account) {
-        const updated = await sendSupportMessage(textToSend.trim());
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `client-pending-${Date.now()}`,
+            sender: "client",
+            text: trimmed,
+            timestamp: new Date().toISOString(),
+          },
+        ]);
+
+        const replyPreview = buildConciergeAutoReply(trimmed, {
+          firstName: account.firstName,
+          phone: account.phone,
+          countryCode: account.countryCode,
+        });
+
+        const [updated] = await Promise.all([
+          sendSupportMessage(trimmed),
+          new Promise<void>((resolve) =>
+            setTimeout(resolve, computeTypingDelay(trimmed, replyPreview)),
+          ),
+        ]);
         setMessages(updated);
       } else {
-        setMessages((prev) =>
-          appendGuestExchange(prev, textToSend, undefined),
+        setMessages((prev) => appendGuestUserMessage(prev, trimmed));
+        const replyPreview = buildConciergeAutoReply(trimmed);
+        await new Promise<void>((resolve) =>
+          setTimeout(resolve, computeTypingDelay(trimmed, replyPreview)),
         );
+        setMessages((prev) => appendGuestAgentReply(prev, trimmed));
       }
-      setInputText("");
     } catch {
       toast.error("Envoi du message impossible.");
+      if (account) {
+        await loadMessages(account);
+      }
     } finally {
       setIsTyping(false);
     }
@@ -136,7 +168,8 @@ function ConciergeChatPanel({
 
   return (
     <div
-      className="fixed bottom-24 right-4 z-[60] flex w-[min(100vw-2rem,380px)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-charbon shadow-[0_24px_80px_-20px_rgba(0,0,0,0.85)]"
+      className="fixed bottom-24 right-4 z-[60] flex w-[min(100vw-2rem,380px)] flex-col overflow-hidden rounded-2xl border border-white/10 bg-charbon shadow-[0_24px_80px_-20px_rgba(0,0,0,0.85)] font-sans"
+      data-yolo-space
       style={{ height: "min(520px, calc(100vh - 7rem))" }}
       role="dialog"
       aria-label="Chat concierge YOLO"
