@@ -51,6 +51,8 @@ import { Route as AdminSurMesureParametresRouteImport } from './routes/admin-sur
 import { Route as AdminSurMesureDemandesRouteImport } from './routes/admin-sur-mesure.demandes'
 import { Route as AdminSurMesureClientsRouteImport } from './routes/admin-sur-mesure.clients'
 import { Route as AdminDemenagementParametresRouteImport } from './routes/admin-demenagement.parametres'
+import { Route as AdminDemenagementMissionsRouteImport } from './routes/admin-demenagement.missions'
+import { Route as AdminDemenagementDemenageursRouteImport } from './routes/admin-demenagement.demenageurs'
 import { Route as AdminDemenagementDemandesRouteImport } from './routes/admin-demenagement.demandes'
 import { Route as AdminDemenagementClientsRouteImport } from './routes/admin-demenagement.clients'
 
@@ -272,6 +274,18 @@ const AdminDemenagementParametresRoute =
     path: '/parametres',
     getParentRoute: () => AdminDemenagementRoute,
   } as any)
+const AdminDemenagementMissionsRoute =
+  AdminDemenagementMissionsRouteImport.update({
+    id: '/missions',
+    path: '/missions',
+    getParentRoute: () => AdminDemenagementRoute,
+  } as any)
+const AdminDemenagementDemenageursRoute =
+  AdminDemenagementDemenageursRouteImport.update({
+    id: '/demenageurs',
+    path: '/demenageurs',
+    getParentRoute: () => AdminDemenagementRoute,
+  } as any)
 const AdminDemenagementDemandesRoute =
   AdminDemenagementDemandesRouteImport.update({
     id: '/demandes',
@@ -301,6 +315,8 @@ export interface FileRoutesByFullPath {
   '/services-sur-mesure': typeof ServicesSurMesureRoute
   '/admin-demenagement/clients': typeof AdminDemenagementClientsRoute
   '/admin-demenagement/demandes': typeof AdminDemenagementDemandesRoute
+  '/admin-demenagement/demenageurs': typeof AdminDemenagementDemenageursRoute
+  '/admin-demenagement/missions': typeof AdminDemenagementMissionsRoute
   '/admin-demenagement/parametres': typeof AdminDemenagementParametresRoute
   '/admin-sur-mesure/clients': typeof AdminSurMesureClientsRoute
   '/admin-sur-mesure/demandes': typeof AdminSurMesureDemandesRoute
@@ -340,6 +356,8 @@ export interface FileRoutesByTo {
   '/services-sur-mesure': typeof ServicesSurMesureRoute
   '/admin-demenagement/clients': typeof AdminDemenagementClientsRoute
   '/admin-demenagement/demandes': typeof AdminDemenagementDemandesRoute
+  '/admin-demenagement/demenageurs': typeof AdminDemenagementDemenageursRoute
+  '/admin-demenagement/missions': typeof AdminDemenagementMissionsRoute
   '/admin-demenagement/parametres': typeof AdminDemenagementParametresRoute
   '/admin-sur-mesure/clients': typeof AdminSurMesureClientsRoute
   '/admin-sur-mesure/demandes': typeof AdminSurMesureDemandesRoute
@@ -387,6 +405,8 @@ export interface FileRoutesById {
   '/services-sur-mesure': typeof ServicesSurMesureRoute
   '/admin-demenagement/clients': typeof AdminDemenagementClientsRoute
   '/admin-demenagement/demandes': typeof AdminDemenagementDemandesRoute
+  '/admin-demenagement/demenageurs': typeof AdminDemenagementDemenageursRoute
+  '/admin-demenagement/missions': typeof AdminDemenagementMissionsRoute
   '/admin-demenagement/parametres': typeof AdminDemenagementParametresRoute
   '/admin-sur-mesure/clients': typeof AdminSurMesureClientsRoute
   '/admin-sur-mesure/demandes': typeof AdminSurMesureDemandesRoute
@@ -435,6 +455,8 @@ export interface FileRouteTypes {
     | '/services-sur-mesure'
     | '/admin-demenagement/clients'
     | '/admin-demenagement/demandes'
+    | '/admin-demenagement/demenageurs'
+    | '/admin-demenagement/missions'
     | '/admin-demenagement/parametres'
     | '/admin-sur-mesure/clients'
     | '/admin-sur-mesure/demandes'
@@ -474,6 +496,8 @@ export interface FileRouteTypes {
     | '/services-sur-mesure'
     | '/admin-demenagement/clients'
     | '/admin-demenagement/demandes'
+    | '/admin-demenagement/demenageurs'
+    | '/admin-demenagement/missions'
     | '/admin-demenagement/parametres'
     | '/admin-sur-mesure/clients'
     | '/admin-sur-mesure/demandes'
@@ -520,6 +544,8 @@ export interface FileRouteTypes {
     | '/services-sur-mesure'
     | '/admin-demenagement/clients'
     | '/admin-demenagement/demandes'
+    | '/admin-demenagement/demenageurs'
+    | '/admin-demenagement/missions'
     | '/admin-demenagement/parametres'
     | '/admin-sur-mesure/clients'
     | '/admin-sur-mesure/demandes'
@@ -867,6 +893,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminDemenagementParametresRouteImport
       parentRoute: typeof AdminDemenagementRoute
     }
+    '/admin-demenagement/missions': {
+      id: '/admin-demenagement/missions'
+      path: '/missions'
+      fullPath: '/admin-demenagement/missions'
+      preLoaderRoute: typeof AdminDemenagementMissionsRouteImport
+      parentRoute: typeof AdminDemenagementRoute
+    }
+    '/admin-demenagement/demenageurs': {
+      id: '/admin-demenagement/demenageurs'
+      path: '/demenageurs'
+      fullPath: '/admin-demenagement/demenageurs'
+      preLoaderRoute: typeof AdminDemenagementDemenageursRouteImport
+      parentRoute: typeof AdminDemenagementRoute
+    }
     '/admin-demenagement/demandes': {
       id: '/admin-demenagement/demandes'
       path: '/demandes'
@@ -913,6 +953,8 @@ const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 interface AdminDemenagementRouteChildren {
   AdminDemenagementClientsRoute: typeof AdminDemenagementClientsRoute
   AdminDemenagementDemandesRoute: typeof AdminDemenagementDemandesRoute
+  AdminDemenagementDemenageursRoute: typeof AdminDemenagementDemenageursRoute
+  AdminDemenagementMissionsRoute: typeof AdminDemenagementMissionsRoute
   AdminDemenagementParametresRoute: typeof AdminDemenagementParametresRoute
   AdminDemenagementIndexRoute: typeof AdminDemenagementIndexRoute
 }
@@ -920,6 +962,8 @@ interface AdminDemenagementRouteChildren {
 const AdminDemenagementRouteChildren: AdminDemenagementRouteChildren = {
   AdminDemenagementClientsRoute: AdminDemenagementClientsRoute,
   AdminDemenagementDemandesRoute: AdminDemenagementDemandesRoute,
+  AdminDemenagementDemenageursRoute: AdminDemenagementDemenageursRoute,
+  AdminDemenagementMissionsRoute: AdminDemenagementMissionsRoute,
   AdminDemenagementParametresRoute: AdminDemenagementParametresRoute,
   AdminDemenagementIndexRoute: AdminDemenagementIndexRoute,
 }

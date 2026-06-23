@@ -7,6 +7,7 @@ import {
   Users,
   Settings,
   FileText,
+  Truck,
 } from "lucide-react";
 
 export type PortalId = "vehicules" | "demenagement" | "sur-mesure";
@@ -101,6 +102,8 @@ export const PORTALS: Record<PortalId, PortalConfig> = {
     adminNav: [
       { to: "/admin-demenagement", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
       { to: "/admin-demenagement/demandes", label: "Demandes", icon: ClipboardList },
+      { to: "/admin-demenagement/missions", label: "Missions", icon: CalendarCheck },
+      { to: "/admin-demenagement/demenageurs", label: "Déménageurs", icon: Truck },
       { to: "/admin-demenagement/clients", label: "Clients", icon: Users },
       { to: "/admin-demenagement/parametres", label: "Paramètres", icon: Settings },
     ],
