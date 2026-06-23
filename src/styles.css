@@ -204,6 +204,15 @@
   [data-yolo-space] :is(input, textarea, select, button) {
     font-family: inherit;
   }
+
+  [data-yolo-space] select {
+    color-scheme: dark;
+  }
+
+  [data-yolo-space] select option {
+    background-color: var(--charbon);
+    color: #ffffff;
+  }
 }
 
 /* ============================================================

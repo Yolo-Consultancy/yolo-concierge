@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { api, clientApi, publicApi } from "@/lib/api/client";
 import type { ServiceType } from "@/config/portals";
+import type { DemenagementQuoteData } from "@/lib/demenagement/quote";
 
 export type ServiceRequestStatus = "nouveau" | "en_cours" | "traite" | "annule";
 
@@ -14,6 +15,7 @@ export type ServiceRequest = {
   serviceType: ServiceType | "general";
   status: ServiceRequestStatus;
   handled: boolean;
+  quoteData?: DemenagementQuoteData | null;
   createdAt: string;
 };
 
@@ -24,6 +26,7 @@ export async function submitServiceRequest(payload: {
   subject: string;
   message: string;
   serviceType: ServiceType;
+  quoteData?: DemenagementQuoteData | null;
 }) {
   return publicApi.post<ServiceRequest>("/contact", payload);
 }

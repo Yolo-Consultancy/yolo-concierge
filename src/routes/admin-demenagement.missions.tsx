@@ -47,6 +47,14 @@ function DemenagementMissionsPage() {
   const [saving, setSaving] = useState(false);
   const [busyMoverIds, setBusyMoverIds] = useState<string[]>([]);
   const activeMovers = movers.filter((m) => m.active);
+  const linkedContactIds = new Set(
+    items.map((m) => m.contactMessageId).filter(Boolean),
+  );
+  const availableDemandes = demandes.filter(
+    (d) =>
+      !linkedContactIds.has(d.id) ||
+      (editing?.contactMessageId && d.id === editing.contactMessageId),
+  );
 
   const refresh = () => {
     listMovingMissions().then(setItems);
@@ -180,7 +188,7 @@ function DemenagementMissionsPage() {
                 onChange={(e) => setEditing({ ...editing, contactMessageId: e.target.value })}
               >
                 <option value="">— Demande client associée —</option>
-                {demandes.map((d) => (
+                {availableDemandes.map((d) => (
                   <option key={d.id} value={d.id}>
                     {d.name} · {d.subject}
                   </option>

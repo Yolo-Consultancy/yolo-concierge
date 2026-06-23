@@ -10,6 +10,7 @@ import {
   type ServiceRequest,
   type ServiceRequestStatus,
 } from "@/lib/portals/service-requests";
+import { DemenagementQuoteDetails, isDemenagementQuote } from "@/components/portals/DemenagementQuoteDetails";
 import { toast } from "sonner";
 
 export function ServiceRequestsAdminPage({ portalId }: { portalId: PortalId }) {
@@ -68,7 +69,11 @@ export function ServiceRequestsAdminPage({ portalId }: { portalId: PortalId }) {
                 </span>
               </div>
               <p className="text-sm font-medium mt-2">{item.subject}</p>
-              <p className="text-sm text-muted-foreground mt-2 whitespace-pre-wrap">{item.message}</p>
+              {isDemenagementQuote(item.quoteData) ? (
+                <DemenagementQuoteDetails quote={item.quoteData} />
+              ) : (
+                <p className="text-sm text-muted-foreground mt-2 whitespace-pre-wrap">{item.message}</p>
+              )}
               <div className="flex flex-wrap gap-2 mt-4">
                 {(["en_cours", "traite", "annule"] as ServiceRequestStatus[]).map((s) => (
                   <button
