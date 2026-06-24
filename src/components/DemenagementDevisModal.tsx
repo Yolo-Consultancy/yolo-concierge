@@ -1,8 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { X, ChevronLeft, ChevronRight, Check, MapPin, User, Calendar as CalendarIcon, Home } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Check, MapPin, User, Calendar as CalendarIcon, Home, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
 import { KINSHASA_COMMUNES } from "@/config/kinshasa-communes";
@@ -30,35 +30,39 @@ import {
 
 const STEPS = ["Coordonnées", "Départ & Arrivée", "Détails", "Confirmation"] as const;
 
-const SELECT_OPTION_CLS = "bg-charbon text-white";
-
-const inputCls =
-  "w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-or-vif focus:outline-none [color-scheme:dark]";
-const selectCls = `${inputCls} bg-charbon text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:text-white/40`;
-const labelCls = "block text-xs font-medium text-white/60 mb-1.5 uppercase tracking-wider";
+const inputCls = "yolo-form-input";
+const selectCls = `${inputCls} yolo-form-select cursor-pointer disabled:cursor-not-allowed disabled:opacity-50`;
 
 const CALENDAR_CLASS_NAMES = {
-  caption_label: "text-white font-medium",
-  button_previous: "text-white hover:bg-white/10",
-  button_next: "text-white hover:bg-white/10",
-  day: "text-white",
-  weekday: "text-white/50",
-  outside: "text-white/25",
-  disabled: "text-white/25 opacity-40",
-  today: "bg-white/10 text-white rounded-md",
+  caption_label: "text-charbon font-semibold font-display",
+  button_previous: "text-charbon hover:bg-black/5",
+  button_next: "text-charbon hover:bg-black/5",
+  weekday: "text-charbon/55 font-semibold",
+  day_button:
+    "text-charbon font-semibold hover:bg-black/6 data-[selected-single=true]:!bg-or-vif data-[selected-single=true]:!text-charbon",
+  outside: "text-charbon/30",
+  disabled: "text-charbon/35 opacity-100",
+  today: "bg-black/6 text-charbon font-bold rounded-md",
 } as const;
 
 const CALENDAR_MODIFIERS_CLASS_NAMES = {
-  selected:
-    "[&_button]:!bg-or-vif [&_button]:!text-charbon [&_button]:!font-semibold [&_button]:!rounded-md",
-  enCours:
-    "[&_button]:!bg-blue-500/35 [&_button]:!text-blue-100 [&_button]:!font-semibold [&_button]:!rounded-md [&_button]:!opacity-100 [&_button]:disabled:!opacity-100 [&_button]:line-through [&_button]:hover:!bg-blue-500/35 [&_button]:hover:!text-blue-100",
+  selected: "rdp-selected",
+  enCours: "rdp-enCours",
 } as const;
 
 type Props = {
   open: boolean;
   onClose: () => void;
 };
+
+function SectionTitle({ icon: Icon, children }: { icon: LucideIcon; children: ReactNode }) {
+  return (
+    <p className="text-sm font-medium text-charbon flex items-center gap-2 font-display">
+      <Icon className="h-4 w-4 text-or-bronze shrink-0" />
+      {children}
+    </p>
+  );
+}
 
 function LocationFields({
   title,
@@ -73,13 +77,13 @@ function LocationFields({
   const quartiers = commune?.quartiers ?? [];
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] p-4 space-y-3">
-      <p className="text-sm font-semibold text-or-vif flex items-center gap-2">
-        <MapPin className="h-4 w-4" />
+    <div className="rounded-xl border border-black/8 bg-white p-4 space-y-3 shadow-sm">
+      <p className="text-sm font-semibold text-charbon flex items-center gap-2 font-display">
+        <MapPin className="h-4 w-4 text-or-bronze" />
         {title}
       </p>
       <div>
-        <label className={labelCls}>Commune *</label>
+        <label className="yolo-form-label">Commune *</label>
         <select
           className={selectCls}
           value={value.communeId}
@@ -87,36 +91,32 @@ function LocationFields({
             onChange({ communeId: e.target.value, quartier: "", avenue: value.avenue })
           }
         >
-          <option value="" className={SELECT_OPTION_CLS}>
-            — Choisir une commune —
-          </option>
+          <option value="">— Choisir une commune —</option>
           {KINSHASA_COMMUNES.map((c) => (
-            <option key={c.id} value={c.id} className={SELECT_OPTION_CLS}>
+            <option key={c.id} value={c.id}>
               {c.alias ? `${c.name} (${c.alias})` : c.name}
             </option>
           ))}
         </select>
       </div>
       <div>
-        <label className={labelCls}>Quartier *</label>
+        <label className="yolo-form-label">Quartier *</label>
         <select
           className={selectCls}
           value={value.quartier}
           disabled={!value.communeId}
           onChange={(e) => onChange({ ...value, quartier: e.target.value })}
         >
-          <option value="" className={SELECT_OPTION_CLS}>
-            — Choisir un quartier —
-          </option>
+          <option value="">— Choisir un quartier —</option>
           {quartiers.map((q) => (
-            <option key={q} value={q} className={SELECT_OPTION_CLS}>
+            <option key={q} value={q}>
               {q}
             </option>
           ))}
         </select>
       </div>
       <div>
-        <label className={labelCls}>Avenue / rue proche *</label>
+        <label className="yolo-form-label">Avenue / rue proche</label>
         <input
           className={inputCls}
           placeholder="Ex. Avenue Kasa-Vubu, près de..."
@@ -138,11 +138,12 @@ function FloorFields({
   onChange: (v: FloorInfo) => void;
 }) {
   return (
-    <div className="space-y-3 pt-2 border-t border-white/5">
-      <p className="text-xs font-medium text-white/70">{title}</p>
-      <label className="flex items-center gap-2 text-sm text-white/80">
+    <div className="space-y-3 pt-3 border-t border-black/8">
+      <p className="text-xs font-semibold text-charbon font-display uppercase tracking-wide">{title}</p>
+      <label className="flex items-center gap-2 text-sm text-charbon cursor-pointer">
         <input
           type="checkbox"
+          className="accent-or-vif"
           checked={value.isElevated}
           onChange={(e) =>
             onChange({
@@ -157,7 +158,7 @@ function FloorFields({
       {value.isElevated && (
         <>
           <div>
-            <label className={labelCls}>Niveau / étage *</label>
+            <label className="yolo-form-label">Niveau / étage *</label>
             <input
               type="number"
               min={1}
@@ -169,9 +170,10 @@ function FloorFields({
               }
             />
           </div>
-          <label className="flex items-center gap-2 text-sm text-white/80">
+          <label className="flex items-center gap-2 text-sm text-charbon cursor-pointer">
             <input
               type="checkbox"
+              className="accent-or-vif"
               checked={value.hasElevator}
               onChange={(e) => onChange({ ...value, hasElevator: e.target.checked })}
             />
@@ -184,7 +186,7 @@ function FloorFields({
 }
 
 function isLocationValid(loc: LocationAddress) {
-  return !!(loc.communeId && loc.quartier.trim() && loc.avenue.trim());
+  return !!(loc.communeId && loc.quartier.trim());
 }
 
 function parseLocalDate(iso: string) {
@@ -266,7 +268,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
     }
     if (step === 1) {
       if (!isLocationValid(quote.departure) || !isLocationValid(quote.arrival)) {
-        toast.error("Complétez commune, quartier et avenue pour le départ et l'arrivée.");
+        toast.error("Complétez la commune et le quartier pour le départ et l'arrivée.");
         return false;
       }
       return true;
@@ -319,71 +321,107 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4">
-      <div className="w-full sm:max-w-xl bg-charbon border border-white/10 sm:rounded-2xl shadow-2xl max-h-[95vh] flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between border-b border-white/10 px-5 py-4 shrink-0">
+    <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4 font-sans">
+      <div
+        className="w-full sm:max-w-xl bg-[var(--yolo-cream)] border border-black/10 sm:rounded-2xl shadow-2xl max-h-[95vh] flex flex-col overflow-hidden"
+        data-yolo-form
+      >
+        <div className="flex items-center justify-between border-b yolo-form-divider px-5 py-4 shrink-0 bg-white">
           <div>
-            <p className="font-display text-lg font-semibold text-white">Demande de devis</p>
-            <p className="text-[10px] text-white/45 uppercase tracking-widest mt-0.5">
-              Déménagement Kinshasa · Étape {step + 1}/{STEPS.length}
+            <p className="font-display text-xl font-bold text-charbon leading-tight">Demande de devis</p>
+            <p className="text-[11px] yolo-form-muted uppercase tracking-[0.15em] mt-1 font-medium">
+              Déménagement Kinshasa · {STEPS[step]}
             </p>
           </div>
-          <button type="button" onClick={onClose} className="p-2 rounded-lg hover:bg-white/10 text-white/60">
+          <button
+            type="button"
+            onClick={onClose}
+            className="p-2 rounded-lg hover:bg-black/5 text-charbon/50 hover:text-charbon transition"
+          >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex gap-1 px-5 pt-4 shrink-0">
-          {STEPS.map((s, i) => (
-            <div
-              key={s}
-              className={`h-1 flex-1 rounded-full transition-colors ${i <= step ? "bg-or-vif" : "bg-white/10"}`}
-            />
-          ))}
+        <div className="px-5 pt-4 shrink-0 bg-white border-b yolo-form-divider pb-4">
+          <div className="flex gap-1 mb-2">
+            {STEPS.map((_, i) => (
+              <div
+                key={STEPS[i]}
+                className={`h-1 flex-1 rounded-full transition-colors ${i <= step ? "bg-or-vif" : "bg-black/10"}`}
+              />
+            ))}
+          </div>
+          <p className="text-xs yolo-form-muted">
+            Étape {step + 1} sur {STEPS.length}
+          </p>
         </div>
 
         <div className="flex-1 overflow-y-auto px-5 py-6">
           {done ? (
             <div className="text-center py-8 space-y-4">
-              <div className="mx-auto h-14 w-14 rounded-full bg-or-vif/20 flex items-center justify-center">
-                <Check className="h-7 w-7 text-or-vif" />
+              <div className="mx-auto h-14 w-14 bg-or-vif flex items-center justify-center">
+                <Check className="h-7 w-7 text-charbon" strokeWidth={3} />
               </div>
-              <h3 className="font-display text-xl text-white">Demande enregistrée</h3>
-              <p className="text-sm text-white/60 max-w-xs mx-auto">
-                Un concierge YOLO étudiera votre devis et vous contactera sous 24h.
+              <h3 className="font-display text-xl font-bold text-charbon">Demande enregistrée</h3>
+              <p className="text-sm yolo-form-muted max-w-xs mx-auto leading-relaxed">
+                Un concierge YOLO étudiera votre devis et vous contactera sous 24 h.
               </p>
             </div>
           ) : step === 0 ? (
             <div className="space-y-4">
-              <p className="text-sm text-white/60 flex items-center gap-2">
-                <User className="h-4 w-4 text-or-vif" />
+              <SectionTitle icon={User}>
                 Vos coordonnées
                 {account && (
-                  <span className="text-[10px] text-or-vif/80 ml-auto">Compte connecté — prérempli</span>
+                  <span className="text-[10px] text-or-bronze ml-auto font-normal normal-case tracking-normal">
+                    Compte connecté — prérempli
+                  </span>
                 )}
-              </p>
+              </SectionTitle>
               <div className="grid sm:grid-cols-2 gap-3">
                 <div>
-                  <label className={labelCls}>Prénom *</label>
-                  <input className={inputCls} value={contact.firstName} onChange={(e) => setContact({ ...contact, firstName: e.target.value })} />
+                  <label className="yolo-form-label">Prénom *</label>
+                  <input
+                    className={inputCls}
+                    value={contact.firstName}
+                    onChange={(e) => setContact({ ...contact, firstName: e.target.value })}
+                  />
                 </div>
                 <div>
-                  <label className={labelCls}>Nom *</label>
-                  <input className={inputCls} value={contact.lastName} onChange={(e) => setContact({ ...contact, lastName: e.target.value })} />
+                  <label className="yolo-form-label">Nom *</label>
+                  <input
+                    className={inputCls}
+                    value={contact.lastName}
+                    onChange={(e) => setContact({ ...contact, lastName: e.target.value })}
+                  />
                 </div>
               </div>
               <div>
-                <label className={labelCls}>E-mail *</label>
-                <input type="email" className={inputCls} value={contact.email} onChange={(e) => setContact({ ...contact, email: e.target.value })} />
+                <label className="yolo-form-label">E-mail *</label>
+                <input
+                  type="email"
+                  className={inputCls}
+                  value={contact.email}
+                  onChange={(e) => setContact({ ...contact, email: e.target.value })}
+                />
               </div>
               <div className="flex gap-2">
                 <div className="w-24">
-                  <label className={labelCls}>Indicatif</label>
-                  <input className={inputCls} value={contact.countryCode} onChange={(e) => setContact({ ...contact, countryCode: e.target.value })} />
+                  <label className="yolo-form-label">Indicatif</label>
+                  <input
+                    className={inputCls}
+                    value={contact.countryCode}
+                    onChange={(e) => setContact({ ...contact, countryCode: e.target.value })}
+                  />
                 </div>
                 <div className="flex-1">
-                  <label className={labelCls}>Téléphone *</label>
-                  <input className={inputCls} value={contact.phone} onChange={(e) => setContact({ ...contact, phone: e.target.value.replace(/\D/g, "") })} />
+                  <label className="yolo-form-label">Téléphone *</label>
+                  <input
+                    className={inputCls}
+                    value={contact.phone}
+                    onChange={(e) =>
+                      setContact({ ...contact, phone: e.target.value.replace(/\D/g, "") })
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -402,18 +440,15 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
             </div>
           ) : step === 2 ? (
             <div className="space-y-5">
-              <p className="text-sm text-white/60 flex items-center gap-2">
-                <Home className="h-4 w-4 text-or-vif" />
-                À propos du déménagement
-              </p>
+              <SectionTitle icon={Home}>À propos du déménagement</SectionTitle>
               <div>
-                <label className={labelCls}>Date souhaitée *</label>
+                <label className="yolo-form-label">Date souhaitée *</label>
                 {quote.moveDate && (
-                  <p className="mb-3 text-sm text-white">
+                  <p className="mb-3 text-sm text-charbon font-medium font-display capitalize">
                     {format(parseLocalDate(quote.moveDate), "EEEE d MMMM yyyy", { locale: fr })}
                   </p>
                 )}
-                <div className="rounded-xl border border-white/10 bg-white/2 overflow-hidden [&_[data-slot=calendar]_button]:text-white [&_[data-slot=calendar]_button]:hover:bg-white/10">
+                <div className="yolo-light-calendar rounded-xl border border-black/10 bg-white overflow-hidden shadow-sm">
                   <Calendar
                     mode="single"
                     selected={selectedMoveDate}
@@ -422,10 +457,10 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                     disabled={calendarDisabled}
                     modifiers={calendarModifiers}
                     modifiersClassNames={CALENDAR_MODIFIERS_CLASS_NAMES}
-                    className="w-full bg-charbon p-3 text-white [--cell-size:2.25rem]"
+                    className="w-full bg-white p-3 [--cell-size:2.75rem]"
                     classNames={CALENDAR_CLASS_NAMES}
                   />
-                  <p className="border-t border-white/10 px-4 py-2.5 text-xs text-white/50">
+                  <p className="border-t border-black/8 px-4 py-2.5 text-xs yolo-form-muted">
                     {loadingBusyDates
                       ? "Chargement des disponibilités…"
                       : "Dates bleues : déménagement en cours (non sélectionnables)."}
@@ -434,7 +469,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className={labelCls}>Nombre de chambres *</label>
+                  <label className="yolo-form-label">Nombre de chambres *</label>
                   <input
                     type="number"
                     min={1}
@@ -445,7 +480,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                   />
                 </div>
                 <div>
-                  <label className={labelCls}>Salons / pièces à vivre</label>
+                  <label className="yolo-form-label">Salons / pièces à vivre</label>
                   <input
                     type="number"
                     min={0}
@@ -456,20 +491,22 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                   />
                 </div>
               </div>
-              <FloorFields
-                title="Logement de départ"
-                value={quote.departureFloor}
-                onChange={(departureFloor) => setQuote({ ...quote, departureFloor })}
-              />
-              <FloorFields
-                title="Logement d'arrivée"
-                value={quote.arrivalFloor}
-                onChange={(arrivalFloor) => setQuote({ ...quote, arrivalFloor })}
-              />
+              <div className="rounded-xl border border-black/8 bg-white p-4 shadow-sm">
+                <FloorFields
+                  title="Logement de départ"
+                  value={quote.departureFloor}
+                  onChange={(departureFloor) => setQuote({ ...quote, departureFloor })}
+                />
+                <FloorFields
+                  title="Logement d'arrivée"
+                  value={quote.arrivalFloor}
+                  onChange={(arrivalFloor) => setQuote({ ...quote, arrivalFloor })}
+                />
+              </div>
               <div>
-                <label className={labelCls}>Informations complémentaires</label>
+                <label className="yolo-form-label">Informations complémentaires</label>
                 <textarea
-                  className={inputCls}
+                  className={`${inputCls} resize-none`}
                   rows={3}
                   placeholder="Objets fragiles, piano, accès difficile..."
                   value={quote.additionalNotes}
@@ -478,22 +515,29 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
               </div>
             </div>
           ) : (
-            <div className="space-y-4 text-sm text-white/80">
-              <p className="text-white font-medium flex items-center gap-2">
-                <CalendarIcon className="h-4 w-4 text-or-vif" />
-                Récapitulatif
-              </p>
-              <div className="rounded-xl border border-white/10 p-4 space-y-2 text-xs">
-                <p><span className="text-white/45">Client :</span> {contact.firstName} {contact.lastName}</p>
-                <p><span className="text-white/45">Contact :</span> {contact.email} · {contact.countryCode} {contact.phone}</p>
-                <p><span className="text-white/45">Date :</span> {quote.moveDate}</p>
-                <p><span className="text-white/45">Départ :</span> {formatLocation(quote.departure)}</p>
-                <p className="text-white/55 pl-2">{formatFloorInfo("Départ", quote.departureFloor)}</p>
-                <p><span className="text-white/45">Arrivée :</span> {formatLocation(quote.arrival)}</p>
-                <p className="text-white/55 pl-2">{formatFloorInfo("Arrivée", quote.arrivalFloor)}</p>
-                <p><span className="text-white/45">Volume :</span> {quote.bedrooms} chambre(s), {quote.livingRooms} salon(s)</p>
+            <div className="space-y-4">
+              <SectionTitle icon={CalendarIcon}>Récapitulatif</SectionTitle>
+              <div className="rounded-xl border border-black/8 bg-white p-4 space-y-2.5 text-sm shadow-sm">
+                <RecapRow label="Client" value={`${contact.firstName} ${contact.lastName}`} />
+                <RecapRow label="Contact" value={`${contact.email} · ${contact.countryCode} ${contact.phone}`} />
+                <RecapRow
+                  label="Date"
+                  value={
+                    quote.moveDate
+                      ? format(parseLocalDate(quote.moveDate), "d MMMM yyyy", { locale: fr })
+                      : "—"
+                  }
+                />
+                <RecapRow label="Départ" value={formatLocation(quote.departure)} />
+                <p className="text-xs yolo-form-muted pl-1">{formatFloorInfo("Départ", quote.departureFloor)}</p>
+                <RecapRow label="Arrivée" value={formatLocation(quote.arrival)} />
+                <p className="text-xs yolo-form-muted pl-1">{formatFloorInfo("Arrivée", quote.arrivalFloor)}</p>
+                <RecapRow
+                  label="Volume"
+                  value={`${quote.bedrooms} chambre(s), ${quote.livingRooms} salon(s)`}
+                />
                 {quote.additionalNotes && (
-                  <p><span className="text-white/45">Notes :</span> {quote.additionalNotes}</p>
+                  <RecapRow label="Notes" value={quote.additionalNotes} />
                 )}
               </div>
             </div>
@@ -501,11 +545,11 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
         </div>
 
         {!done && (
-          <div className="border-t border-white/10 px-5 py-4 flex justify-between gap-3 shrink-0">
+          <div className="border-t yolo-form-divider px-5 py-4 flex justify-between gap-3 shrink-0 bg-white">
             <button
               type="button"
               onClick={() => (step === 0 ? onClose() : setStep((s) => s - 1))}
-              className="inline-flex items-center gap-1 rounded-xl border border-white/15 px-4 py-2.5 text-sm text-white/80 hover:bg-white/5"
+              className="inline-flex items-center gap-1 rounded-lg border border-black/15 px-4 py-2.5 text-sm font-medium text-charbon hover:bg-[var(--yolo-cream)] transition"
             >
               <ChevronLeft className="h-4 w-4" />
               {step === 0 ? "Annuler" : "Retour"}
@@ -514,7 +558,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
               <button
                 type="button"
                 onClick={handleNext}
-                className="inline-flex items-center gap-1 rounded-xl bg-or-vif px-5 py-2.5 text-sm font-semibold text-charbon hover:bg-white"
+                className="inline-flex items-center gap-1 rounded-lg bg-or-vif px-5 py-2.5 text-sm font-semibold text-charbon hover:bg-charbon hover:text-white transition"
               >
                 Suivant
                 <ChevronRight className="h-4 w-4" />
@@ -524,7 +568,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                 type="button"
                 onClick={handleSubmit}
                 disabled={sending}
-                className="inline-flex items-center gap-1 rounded-xl bg-or-vif px-5 py-2.5 text-sm font-semibold text-charbon hover:bg-white disabled:opacity-50"
+                className="inline-flex items-center gap-1 rounded-lg bg-or-vif px-5 py-2.5 text-sm font-semibold text-charbon hover:bg-charbon hover:text-white transition disabled:opacity-50"
               >
                 {sending ? "Envoi..." : "Envoyer la demande"}
               </button>
@@ -533,5 +577,14 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
         )}
       </div>
     </div>
+  );
+}
+
+function RecapRow({ label, value }: { label: string; value: string }) {
+  return (
+    <p>
+      <span className="yolo-form-muted text-xs uppercase tracking-wide">{label} :</span>{" "}
+      <span className="text-charbon">{value}</span>
+    </p>
   );
 }

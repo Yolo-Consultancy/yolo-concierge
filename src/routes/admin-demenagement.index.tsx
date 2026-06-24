@@ -30,25 +30,25 @@ function AdminDemenagementDashboard() {
   return (
     <>
       <div className="mb-8">
-        <h1 className="font-display text-3xl font-semibold tracking-tight">Déménagement</h1>
-        <p className="text-muted-foreground text-sm mt-1">Back-office logistique YOLO</p>
+        <h1 className="yolo-page-title">Déménagement</h1>
+        <p className="yolo-page-subtitle">Back-office logistique YOLO</p>
       </div>
       <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-card rounded-xl border border-border p-6">
-          <p className="text-sm text-muted-foreground">Demandes totales</p>
-          <p className="text-4xl font-display font-semibold mt-1">{total}</p>
+        <div className="yolo-card rounded-xl p-6">
+          <p className="text-sm yolo-muted">Demandes totales</p>
+          <p className="text-4xl font-display font-semibold mt-1 text-[var(--yolo-ink)]">{total}</p>
         </div>
-        <div className="bg-card rounded-xl border border-amber-500/30 p-6">
-          <p className="text-sm text-muted-foreground">Nouvelles demandes</p>
-          <p className="text-4xl font-display font-semibold mt-1">{pending}</p>
+        <div className="yolo-card rounded-xl p-6 border-amber-500/30">
+          <p className="text-sm yolo-muted">Nouvelles demandes</p>
+          <p className="text-4xl font-display font-semibold mt-1 text-[var(--yolo-ink)]">{pending}</p>
         </div>
-        <div className="bg-card rounded-xl border border-border p-6">
-          <p className="text-sm text-muted-foreground">Missions actives</p>
-          <p className="text-4xl font-display font-semibold mt-1">{missionsActive}</p>
+        <div className="yolo-card rounded-xl p-6">
+          <p className="text-sm yolo-muted">Missions actives</p>
+          <p className="text-4xl font-display font-semibold mt-1 text-[var(--yolo-ink)]">{missionsActive}</p>
         </div>
-        <div className="bg-card rounded-xl border border-border p-6">
-          <p className="text-sm text-muted-foreground">Déménageurs actifs</p>
-          <p className="text-4xl font-display font-semibold mt-1">{moversCount}</p>
+        <div className="yolo-card rounded-xl p-6">
+          <p className="text-sm yolo-muted">Déménageurs actifs</p>
+          <p className="text-4xl font-display font-semibold mt-1 text-[var(--yolo-ink)]">{moversCount}</p>
         </div>
       </div>
       <div className="flex flex-wrap gap-4 mt-6 text-sm font-medium">

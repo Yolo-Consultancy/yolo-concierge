@@ -47,20 +47,20 @@ export function ServiceRequestsAdminPage({ portalId }: { portalId: PortalId }) {
         subtitle={`${portal.name} — ${items.length} demande(s), ${pending} nouvelle(s)`}
       />
       {loading ? (
-        <p className="text-sm text-muted-foreground">Chargement...</p>
+        <p className="text-sm yolo-muted">Chargement...</p>
       ) : items.length === 0 ? (
-        <p className="text-sm text-muted-foreground rounded-xl border border-dashed p-10 text-center">
+        <p className="text-sm yolo-muted yolo-card rounded-xl border-dashed p-10 text-center">
           Aucune demande pour le moment.
         </p>
       ) : (
         <div className="space-y-4">
           {items.map((item) => (
-            <article key={item.id} className="rounded-xl border border-border bg-card p-5">
+            <article key={item.id} className="yolo-card rounded-xl p-5">
               <div className="flex flex-wrap items-start justify-between gap-3 mb-2">
                 <div>
-                  <p className="font-medium">{item.name}</p>
-                  <p className="text-sm text-muted-foreground">{item.email} · {item.phone}</p>
-                  <p className="text-xs text-muted-foreground mt-1">
+                  <p className="font-medium text-[var(--yolo-ink)]">{item.name}</p>
+                  <p className="text-sm yolo-muted">{item.email} · {item.phone}</p>
+                  <p className="text-xs yolo-muted mt-1">
                     {new Date(item.createdAt).toLocaleString("fr-FR")}
                   </p>
                 </div>
@@ -68,11 +68,11 @@ export function ServiceRequestsAdminPage({ portalId }: { portalId: PortalId }) {
                   {STATUS_LABELS[item.status]}
                 </span>
               </div>
-              <p className="text-sm font-medium mt-2">{item.subject}</p>
+              <p className="text-sm font-medium mt-2 text-[var(--yolo-ink)]">{item.subject}</p>
               {isDemenagementQuote(item.quoteData) ? (
                 <DemenagementQuoteDetails quote={item.quoteData} />
               ) : (
-                <p className="text-sm text-muted-foreground mt-2 whitespace-pre-wrap">{item.message}</p>
+                <p className="text-sm yolo-muted mt-2 whitespace-pre-wrap">{item.message}</p>
               )}
               <div className="flex flex-wrap gap-2 mt-4">
                 {(["en_cours", "traite", "annule"] as ServiceRequestStatus[]).map((s) => (
@@ -80,7 +80,7 @@ export function ServiceRequestsAdminPage({ portalId }: { portalId: PortalId }) {
                     key={s}
                     onClick={() => handleStatus(item.id, s)}
                     disabled={item.status === s}
-                    className="text-xs px-3 py-1.5 rounded-md border border-input hover:bg-muted disabled:opacity-40"
+                    className="text-xs px-3 py-1.5 rounded-md border border-black/10 bg-white hover:bg-[var(--yolo-cream)] disabled:opacity-40 text-charbon"
                   >
                     {STATUS_LABELS[s]}
                   </button>

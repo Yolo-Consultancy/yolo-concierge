@@ -167,7 +167,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         )}
 
         {/* Contenu */}
-        <main className="flex-1 min-w-0 p-4 lg:p-8">{children}</main>
+        <main className="flex-1 min-w-0 p-4 lg:p-8 yolo-space-main">{children}</main>
       </div>
     </div>
   );
@@ -179,8 +179,8 @@ export function PageHeader({
   return (
     <div className="flex flex-wrap items-end justify-between gap-4 mb-6">
       <div>
-        <h1 className="font-display text-3xl font-semibold tracking-tight">{title}</h1>
-        {subtitle && <p className="text-muted-foreground text-sm mt-1">{subtitle}</p>}
+        <h1 className="yolo-page-title">{title}</h1>
+        {subtitle && <p className="yolo-page-subtitle">{subtitle}</p>}
       </div>
       {action}
     </div>

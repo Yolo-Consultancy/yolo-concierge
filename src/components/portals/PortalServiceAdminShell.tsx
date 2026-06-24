@@ -104,7 +104,7 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
         </div>
       </aside>
       {open && <div className="lg:hidden fixed inset-0 z-30 bg-black/40" onClick={() => setOpen(false)} />}
-      <main className="flex-1 min-w-0 p-4 lg:p-8">
+      <main className="flex-1 min-w-0 p-4 lg:p-8 yolo-space-main">
         <button onClick={() => setOpen(true)} className="lg:hidden mb-4 p-2 rounded border">
           <Menu className="h-5 w-5" />
         </button>

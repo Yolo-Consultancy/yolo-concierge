@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import carHero from "@/assets/car-hero.jpg";
 import destDakar from "@/assets/dest-dakar.jpg";
 import destAbidjan from "@/assets/dest-abidjan.jpg";
@@ -12,6 +12,9 @@ import { BookingModal } from "@/components/BookingModal";
 import { PortalHeader } from "@/components/PortalHeader";
 import { PortalHomeLink } from "@/components/PortalHomeLink";
 import { ClientReviewsSection } from "@/components/ClientReviewsSection";
+import { ScrollReveal } from "@/components/portal-ui/ScrollReveal";
+import { SectionLabel } from "@/components/portal-ui/SectionLabel";
+import { PortalButton } from "@/components/portal-ui/PortalButton";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Route = createFileRoute("/location-vehicules")({
@@ -148,107 +151,120 @@ function LocationVehicules() {
   };
 
   return (
-    <div className="bg-charbon text-white min-h-screen font-sans">
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <main className="min-h-screen font-sans antialiased" data-yolo-portal data-yolo-portal-vehicules>
+      <section className="relative min-h-[88vh] flex flex-col overflow-hidden bg-charbon text-white">
         <PortalHeader portalId="vehicules" />
-        <img src={carHero} alt="Supercar de luxe" className="absolute inset-0 h-full w-full object-cover" width={1920} height={1080} />
-        <div className="absolute inset-0 bg-linear-to-b from-black/70 via-black/40 to-black" />
-        <div className="relative z-10 text-center px-6 max-w-4xl">
-          <p className="text-xs md:text-sm uppercase tracking-[0.5em] text-white/70 mb-8">YOLO Le Concierge</p>
-          <h1 className="font-display text-5xl md:text-7xl lg:text-8xl font-normal leading-[1.05]">
-            Location de Supercars<br />
-            <span className="italic">à Kinshasa</span>
-          </h1>
-          <p className="mt-8 text-base md:text-lg text-white/80 max-w-2xl mx-auto">
-            Ferrari, Lamborghini, Porsche, Mercedes et plus, livrées à votre porte
-            partout à Kinshasa et dans ses quartiers premium.
-          </p>
-          <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="#flotte" className="inline-flex items-center gap-2 bg-or-vif text-black px-8 py-4 rounded-full text-sm font-medium hover:bg-white transition">
-              Découvrir notre flotte
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-            </a>
-            <Link
-              to="/contact"
-              search={{ portal: "vehicules" }}
-              className="inline-flex items-center gap-2 border border-white/30 text-white px-8 py-4 rounded-full text-sm font-medium hover:bg-white/10 transition"
-            >
-              Parler au concierge
-            </Link>
-          </div>
+        <img
+          src={carHero}
+          alt="Supercar de luxe à Kinshasa"
+          className="yolo-hero-image absolute inset-0 h-full w-full object-cover"
+          width={1920}
+          height={1080}
+        />
+        <div className="absolute inset-0 bg-linear-to-r from-charbon/92 via-charbon/50 to-charbon/25" />
+        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col justify-end px-6 pb-16 pt-28 md:pb-24">
+          <ScrollReveal>
+            <SectionLabel>Kinshasa · Location premium</SectionLabel>
+            <h1 className="max-w-2xl text-[clamp(2.4rem,5vw,3.75rem)] font-bold leading-[1.08]">
+              La voiture qu&apos;il vous faut,
+              <br />
+              <span className="text-or-vif">là où vous êtes.</span>
+            </h1>
+            <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-white/78">
+              Ferrari, Porsche, Mercedes, Range Rover — avec ou sans chauffeur, livrée à Gombe,
+              Ngaliema, à l&apos;aéroport ou à votre hôtel.
+            </p>
+            <div className="mt-9 flex flex-wrap gap-4">
+              <a href="#flotte">
+                <PortalButton variant="primary">
+                  Voir la flotte
+                  <ArrowRight className="h-4 w-4" />
+                </PortalButton>
+              </a>
+              <Link to="/contact" search={{ portal: "vehicules" }}>
+                <PortalButton variant="outline-light">Parler au concierge</PortalButton>
+              </Link>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 
-      <section id="flotte" className="py-24 px-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.4em] text-or-vif mb-4">Sélection</p>
-            <h2 className="font-display text-4xl md:text-6xl">Supercars en Vedette</h2>
-          </div>
+      <section className="border-b border-black/5 bg-white">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 py-10 md:grid-cols-4 md:py-12">
+          {[
+            { n: "24/7", u: "concierge disponible" },
+            { n: "0", u: "frais cachés" },
+            { n: "100%", u: "assurance incluse" },
+            { n: "Gombe", u: "livraison partout" },
+          ].map((s, i) => (
+            <ScrollReveal key={s.u} delayMs={i * 70} className="text-center md:text-left">
+              <p className="font-display text-3xl font-bold text-charbon md:text-4xl">{s.n}</p>
+              <p className="mt-1 text-sm text-[var(--yolo-muted)]">{s.u}</p>
+            </ScrollReveal>
+          ))}
+        </div>
+      </section>
+
+      <section id="flotte" className="yolo-section-light py-20 md:py-28 px-6">
+        <div className="mx-auto max-w-6xl">
+          <ScrollReveal className="mb-12 text-center md:mb-16">
+            <SectionLabel>Notre flotte</SectionLabel>
+            <h2 className="text-[clamp(1.85rem,3vw,2.75rem)] font-bold text-charbon">
+              Supercars &amp; berlines en vedette
+            </h2>
+          </ScrollReveal>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paginatedVehicles.map((v, idx) => (
-              <article
-                key={v.id}
-                style={{ animationDelay: `${idx * 80}ms` }}
-                className="group vehicle-card animate-vehicle-in rounded-[30px] border border-white/10 bg-[linear-gradient(180deg,#151515_0%,#090909_100%)] shadow-[0_22px_60px_-22px_rgba(237,179,43,0.28)] overflow-hidden hover:border-or-vif/60 hover:vehicle-card-hover"
-              >
-                <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }} className="block p-3 pb-0">
-                  <div className="relative aspect-5/4 overflow-hidden rounded-[26px] bg-black">
-                    <img
-                      src={v.image}
-                      alt={`${v.brand} ${v.name}`}
-                      width={1280}
-                      height={896}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-1200 ease-out group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-linear-to-t from-black via-black/15 to-transparent" />
-                    <div className="pointer-events-none absolute inset-0 overflow-hidden">
-                      <div className="absolute top-0 -left-1/2 h-full w-1/3 bg-linear-to-r from-transparent via-white/20 to-transparent opacity-0 group-hover:opacity-100 group-hover:animate-[shine_1.1s_ease-out]" />
-                    </div>
-                    <div className="absolute left-3 top-3 flex items-center gap-2">
-                      <span className="rounded-full bg-black/65 px-3 py-1 text-[10px] uppercase tracking-[0.30em] text-or-vif backdrop-blur">{v.category}</span>
-                      <span className="rounded-full bg-white/10 px-3 py-1 text-[10px] uppercase tracking-[0.30em] text-white/80 backdrop-blur">{v.year}</span>
-                    </div>
-                    <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between gap-3">
-                      <div>
-                        <p className="text-[10px] uppercase tracking-[0.35em] text-white/60">À partir de</p>
-                        <p className="font-display text-2xl text-white">$ {formatPrice(v.pricePerDay)} <span className="text-xs text-white/70">/jour</span></p>
-                      </div>
-                      <span className="rounded-full border border-white/15 bg-black/50 px-3 py-1 text-[10px] uppercase tracking-[0.35em] text-or-vif backdrop-blur">Disponible</span>
-                    </div>
-                  </div>
-                </Link>
-                <div className="p-6 pt-5">
+              <ScrollReveal key={v.id} delayMs={idx * 70}>
+                <article className="yolo-portal-card group overflow-hidden bg-white border border-black/8">
                   <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }} className="block">
-                    <h3 className="font-display text-2xl leading-tight text-or-vif hover:text-white transition">
-                      {v.brand} <span className="text-or-vif">{v.name}</span>
-                    </h3>
+                    <div className="relative aspect-5/4 overflow-hidden bg-charbon/5">
+                      <img
+                        src={v.image}
+                        alt={`${v.brand} ${v.name}`}
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute left-3 top-3 flex gap-2">
+                        <span className="rounded-sm bg-charbon/80 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-or-vif">
+                          {v.category}
+                        </span>
+                      </div>
+                    </div>
                   </Link>
-                  
-                  <div className="mt-4 flex flex-wrap gap-2 text-xs text-white/70">
-                    <span className="rounded-full border border-white/10 bg-white/3 px-3 py-1">{v.specs.hp} HP</span>
-                    <span className="rounded-full border border-white/10 bg-white/3 px-3 py-1">{v.specs.seats} places</span>
-                    <span className="rounded-full border border-white/10 bg-white/3 px-3 py-1">{v.specs.transmission}</span>
-                  </div>
-                  <div className="mt-6 flex flex-wrap items-center gap-2 border-t border-white/10 pt-5">
-                    <button
-                      onClick={() => openBooking(v.id)}
-                      className="inline-flex flex-1 items-center justify-center rounded-full bg-or-vif px-4 py-2.5 text-xs uppercase tracking-[0.25em] text-black transition hover:bg-white"
-                    >
-                      Réserver
-                    </button>
-                    <Link
-                      to="/location-vehicules/$vehicleId"
-                      params={{ vehicleId: v.id }}
-                      className="inline-flex items-center justify-center rounded-full border border-white/15 bg-white/[0.03] px-4 py-2.5 text-xs uppercase tracking-[0.25em] text-or-vif transition hover:bg-white/10 hover:text-white"
-                    >
-                      Détails
+                  <div className="p-5">
+                    <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }}>
+                      <h3 className="font-display text-xl font-semibold text-charbon hover:text-or-bronze transition">
+                        {v.brand} {v.name}
+                      </h3>
                     </Link>
+                    <p className="mt-1 text-sm text-[var(--yolo-muted)]">
+                      {v.specs.hp} ch · {v.specs.seats} places · {v.specs.transmission}
+                    </p>
+                    <p className="mt-3 font-display text-2xl font-bold text-charbon">
+                      $ {formatPrice(v.pricePerDay)}
+                      <span className="text-sm font-normal text-[var(--yolo-muted)]"> / jour</span>
+                    </p>
+                    <div className="mt-5 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => openBooking(v.id)}
+                        className="flex-1 bg-or-vif py-2.5 text-sm font-semibold text-charbon hover:bg-charbon hover:text-white transition"
+                      >
+                        Réserver
+                      </button>
+                      <Link
+                        to="/location-vehicules/$vehicleId"
+                        params={{ vehicleId: v.id }}
+                        className="inline-flex items-center justify-center border border-charbon/15 px-4 py-2.5 text-sm font-medium text-charbon hover:bg-charbon hover:text-white transition"
+                      >
+                        Détails
+                      </Link>
+                    </div>
                   </div>
-                </div>
-              </article>
+                </article>
+              </ScrollReveal>
             ))}
           </div>
 
@@ -256,73 +272,92 @@ function LocationVehicules() {
         </div>
       </section>
 
-      <section id="destinations" className="py-24 px-6 bg-black">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-16">
-            <p className="text-xs uppercase tracking-[0.4em] text-or-vif mb-4">Kinshasa</p>
-            <h2 className="font-display text-4xl md:text-6xl">Destinations Populaires</h2>
-          </div>
+      <section id="destinations" className="bg-charbon py-20 md:py-28 px-6 text-white">
+        <div className="mx-auto max-w-6xl">
+          <ScrollReveal className="mb-12 text-center md:mb-16">
+            <SectionLabel>Kinshasa</SectionLabel>
+            <h2 className="text-[clamp(1.85rem,3vw,2.75rem)] font-bold">Destinations populaires</h2>
+          </ScrollReveal>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {destinations.map((d) => (
-              <button key={d.name} onClick={() => openBooking()} className="relative aspect-3/4 rounded-2xl overflow-hidden group">
-                <img src={d.image} alt={d.name} width={960} height={1280} loading="lazy" className="absolute inset-0 h-full w-full object-cover group-hover:scale-110 transition duration-700" />
-                <div className="absolute inset-0 bg-linear-to-t from-black via-black/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 p-7 text-left">
-                  <p className="text-[10px] uppercase tracking-[0.3em] text-or-vif mb-2">Location Premium</p>
-                  <p className="font-display text-3xl">{d.name}</p>
-                </div>
-              </button>
+            {destinations.map((d, i) => (
+              <ScrollReveal key={d.name} delayMs={i * 80}>
+                <button
+                  type="button"
+                  onClick={() => openBooking()}
+                  className="relative aspect-3/4 w-full overflow-hidden group text-left"
+                >
+                  <img
+                    src={d.image}
+                    alt={d.name}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-linear-to-t from-charbon via-charbon/30 to-transparent" />
+                  <div className="absolute bottom-0 left-0 p-7">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-or-vif mb-2">
+                      Location premium
+                    </p>
+                    <p className="font-display text-3xl font-semibold">{d.name}</p>
+                  </div>
+                </button>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section id="pourquoi" className="py-24 px-6">
-        <div className="mx-auto max-w-7xl">
-          <div className="text-center mb-16 max-w-3xl mx-auto">
-            <h2 className="font-display text-4xl md:text-6xl mb-6">Pourquoi Choisir YOLO ?</h2>
-            <p className="text-white/70 text-lg">
-              La conciergerie de luxe automobile avec des prix transparents,
-              livraison à domicile et un support multilingue 24/7.
+      <section id="pourquoi" className="yolo-section-light py-20 md:py-28 px-6">
+        <div className="mx-auto max-w-6xl">
+          <ScrollReveal className="mb-12 text-center max-w-2xl mx-auto md:mb-16">
+            <SectionLabel>Pourquoi YOLO</SectionLabel>
+            <h2 className="text-[clamp(1.85rem,3vw,2.75rem)] font-bold text-charbon mb-4">
+              Une conciergerie automobile de confiance
+            </h2>
+            <p className="text-[var(--yolo-muted)] text-[17px] leading-relaxed">
+              Prix transparents, livraison à domicile et support multilingue 24/7.
             </p>
-          </div>
+          </ScrollReveal>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 rounded-2xl overflow-hidden border border-white/10">
-            {reasons.map((r) => (
-              <div key={r.title} className="bg-charbon p-8">
-                <div className="w-10 h-10 rounded-full bg-or-vif/10 flex items-center justify-center mb-5">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reasons.map((r, i) => (
+              <ScrollReveal key={r.title} delayMs={i * 70}>
+                <div className="yolo-portal-card bg-white border border-black/8 p-8 h-full">
+                  <div className="w-10 h-10 bg-or-vif/15 flex items-center justify-center mb-5 text-or-bronze">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
+                  </div>
+                  <h3 className="font-display text-xl font-semibold text-charbon mb-2">{r.title}</h3>
+                  <p className="text-sm text-[var(--yolo-muted)] leading-relaxed">{r.desc}</p>
                 </div>
-                <h3 className="font-display text-xl mb-2">{r.title}</h3>
-                <p className="text-sm text-white/60 leading-relaxed">{r.desc}</p>
-              </div>
+              </ScrollReveal>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 px-6">
-        <div className="mx-auto max-w-4xl text-center">
-          <h2 className="font-display text-4xl md:text-6xl mb-6">Prêt à Conduire Votre Voiture de Rêve ?</h2>
-          <p className="text-white/70 text-lg mb-10 max-w-2xl mx-auto">
-            Explorez notre collection ou parlez avec notre concierge pour trouver la supercar parfaite.
+      <section className="bg-charbon py-20 md:py-28 px-6 text-white">
+        <ScrollReveal className="mx-auto max-w-3xl text-center">
+          <h2 className="text-[clamp(1.85rem,3vw,2.75rem)] font-bold mb-4">
+            Prêt à prendre le volant ?
+          </h2>
+          <p className="text-white/70 text-[17px] mb-10 max-w-xl mx-auto leading-relaxed">
+            Explorez notre collection ou parlez avec notre concierge pour trouver la voiture idéale.
           </p>
-          <button onClick={() => openBooking()} className="inline-flex items-center gap-2 bg-or-vif text-black px-10 py-4 rounded-full text-sm font-medium hover:bg-white transition">
+          <PortalButton variant="primary" onClick={() => openBooking()}>
             Réserver maintenant
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-          </button>
-        </div>
+            <ArrowRight className="h-4 w-4" />
+          </PortalButton>
+        </ScrollReveal>
       </section>
 
       <ClientReviewsSection />
 
-      <footer className="border-t border-white/10 py-8 px-6 text-center text-xs text-white/40 uppercase tracking-widest">
+      <footer className="border-t border-black/10 py-8 px-6 text-center text-xs text-[var(--yolo-muted)] uppercase tracking-widest bg-[var(--yolo-cream)]">
         © {new Date().getFullYear()} YOLO Le Concierge ·{" "}
-        <PortalHomeLink variant="footer" className="inline-flex hover:text-white" />
+        <PortalHomeLink variant="footer" className="inline-flex hover:text-charbon" />
       </footer>
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={prefilledVehicle} />}
-    </div>
+    </main>
   );
 }

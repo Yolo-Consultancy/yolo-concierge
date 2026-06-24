@@ -18,7 +18,7 @@ import {
   resolveClientAccount,
 } from "@/lib/client/form-prefill";
 
-const SELECT_OPTION_CLS = "bg-charbon text-white";
+const SELECT_OPTION_CLS = "bg-white text-charbon";
 const KINSHASA_LOCATION_SUGGESTIONS = [
   "Showroom YOLO - Gombe",
   "Gombe",
@@ -147,7 +147,7 @@ function LocationAutocomplete({ value, onChange, placeholder, inputCls }: Locati
   return (
     <div className="relative" ref={containerRef}>
       <svg
-        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 z-10"
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-charbon/40 z-10"
         width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
       >
         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" /><circle cx="12" cy="10" r="3" />
@@ -160,7 +160,7 @@ function LocationAutocomplete({ value, onChange, placeholder, inputCls }: Locati
         className={`${inputCls} pl-11`}
       />
       {isOpen && filteredSuggestions.length > 0 && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-charbon border border-white/15 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
+        <div className="absolute top-full left-0 right-0 mt-2 bg-white border border-black/10 rounded-lg shadow-lg z-50 max-h-60 overflow-y-auto">
           {filteredSuggestions.map((location) => (
             <button
               key={location}
@@ -169,7 +169,7 @@ function LocationAutocomplete({ value, onChange, placeholder, inputCls }: Locati
                 onChange(location);
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-3 text-left text-sm text-white hover:bg-white/5 border-b border-white/5 last:border-b-0 transition"
+              className="w-full px-4 py-3 text-left text-sm text-charbon hover:bg-[var(--yolo-cream)] border-b border-black/5 last:border-b-0 transition"
             >
               {location}
             </button>
@@ -253,9 +253,8 @@ export function BookingModal({
 
   const selectedVehicle = vehicles.find((v) => v.id === form.vehicleId);
 
-  const inputCls =
-    "w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-or-vif";
-  const selectCls = `${inputCls} bg-charbon text-white [color-scheme:dark]`;
+  const inputCls = "yolo-form-input";
+  const selectCls = `${inputCls} yolo-form-select`;
 
   const formatDateRange = (range?: DateRange) => {
     if (!range?.from) return "";
@@ -357,23 +356,24 @@ export function BookingModal({
       onClick={onClose}
     >
       <div
-        className="bg-charbon border border-white/10 rounded-2xl w-full max-w-2xl my-8"
+        className="bg-[var(--yolo-cream)] border border-black/10 rounded-2xl w-full max-w-2xl my-8 shadow-2xl"
+        data-yolo-form
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-4">
+        <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b yolo-form-divider">
           <div>
-            <h3 className="font-display text-2xl text-white">Réservation</h3>
+            <h3 className="font-display text-2xl font-bold">Réservation</h3>
             {clientAccount && clientAccount !== "guest" ? (
-              <p className="text-xs text-or-vif mt-0.5 flex items-center gap-1.5">
+              <p className="text-xs text-or-bronze mt-0.5 flex items-center gap-1.5">
                 <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 5-2.3 5-5s-2.3-5-5-5-5 2.3-5 5 2.3 5 5 5zm0 2c-3.3 0-10 1.7-10 5v2h20v-2c0-3.3-6.7-5-10-5z"/></svg>
                 {clientAccount.firstName} {clientAccount.lastName}
               </p>
             ) : (
-              <p className="text-xs text-white/30 mt-0.5">Mode invité</p>
+              <p className="text-xs yolo-form-muted mt-0.5">Mode invité</p>
             )}
           </div>
-          <button onClick={onClose} className="text-white/50 hover:text-white" aria-label="Fermer">
+          <button onClick={onClose} className="text-charbon/50 hover:text-charbon" aria-label="Fermer">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
@@ -389,11 +389,11 @@ export function BookingModal({
               return (
                 <div key={label} className="flex-1 flex flex-col items-center text-center relative">
                   {i < STEPS.length - 1 && (
-                    <div className={`absolute top-4 left-1/2 w-full h-px ${i < step ? "bg-or-vif" : "bg-white/10"}`} />
+                    <div className={`absolute top-4 left-1/2 w-full h-px ${i < step ? "bg-or-vif" : "bg-black/10"}`} />
                   )}
                   <div
                     className={`relative z-10 w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium ${
-                      done || active ? "bg-or-vif text-black" : "bg-white/10 text-white/50"
+                      done || active ? "bg-or-vif text-charbon" : "bg-black/8 text-charbon/45"
                     } ${active ? "ring-4 ring-or-vif/20" : ""}`}
                   >
                     {done ? (
@@ -405,7 +405,7 @@ export function BookingModal({
                     )}
                   </div>
                   <span
-                    className={`mt-2 text-[11px] leading-tight ${active ? "text-or-vif font-medium" : "text-white/50"}`}
+                    className={`mt-2 text-[11px] leading-tight ${active ? "text-or-bronze font-medium" : "yolo-form-muted"}`}
                   >
                     {label}
                   </span>
@@ -415,25 +415,25 @@ export function BookingModal({
           </div>
         </div>
 
-        <div className="border-t border-white/10" />
+        <div className="border-t yolo-form-divider" />
 
         {/* Body */}
-        <div className="p-6 text-white">
+        <div className="p-6">
           {selectedVehicle && (
-            <div className="flex items-center gap-4 p-3 mb-6 rounded-xl border border-white/10 bg-white/2">
+            <div className="flex items-center gap-4 p-3 mb-6 rounded-xl border border-black/8 bg-white">
               <img
                 src={selectedVehicle.image}
                 alt={selectedVehicle.name}
                 className="w-20 h-14 object-cover rounded-lg"
               />
               <div className="flex-1 min-w-0">
-                <p className="font-display text-lg leading-tight">
+                <p className="font-display text-lg leading-tight font-semibold">
                   {selectedVehicle.brand} {selectedVehicle.name}
                 </p>
-                <p className="text-xs text-white/50">
+                <p className="text-xs yolo-form-muted">
                   {selectedVehicle.brand} {selectedVehicle.name} ({selectedVehicle.year})
                 </p>
-                <p className="text-sm text-or-vif mt-0.5">${formatPrice(selectedVehicle.pricePerDay)} /jour</p>
+                <p className="text-sm text-or-bronze mt-0.5 font-semibold">${formatPrice(selectedVehicle.pricePerDay)} /jour</p>
               </div>
             </div>
           )}
@@ -442,24 +442,24 @@ export function BookingModal({
           {step === 0 && (
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium mb-2">Sélectionnez vos dates de location *</label>
+                <label className="yolo-form-label">Sélectionnez vos dates de location *</label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <button type="button" className={`${inputCls} pl-11 text-left relative`}>
                       <svg
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-charbon/40"
                         width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
                       >
                         <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
                       </svg>
-                      <span className={form.dateRange ? "text-white" : "text-white/30"}>
-                        {form.dateRange || "Sélectionner la Plage de Dates"}
+                      <span className={form.dateRange ? "text-charbon" : "text-charbon/40"}>
+                        {form.dateRange || "Sélectionner la plage de dates"}
                       </span>
                     </button>
                   </PopoverTrigger>
                   <PopoverContent
                     align="start"
-                    className="w-auto border-white/10 bg-charbon p-0 text-white shadow-2xl"
+                    className="w-auto border-black/10 bg-white p-0 text-charbon shadow-2xl"
                   >
                     <Calendar
                       mode="range"
@@ -471,29 +471,29 @@ export function BookingModal({
                       modifiers={{ occupied: occupiedDates }}
                       modifiersClassNames={{
                         occupied:
-                          "[&_button]:!bg-or-vif [&_button]:!text-black [&_button]:!font-semibold [&_button]:!rounded-md [&_button]:!opacity-100 [&_button]:disabled:!opacity-100 [&_button]:hover:!bg-or-vif [&_button]:hover:!text-black [&_button]:![text-decoration:none]",
+                          "[&_button]:!bg-or-vif [&_button]:!text-charbon [&_button]:!font-semibold [&_button]:!rounded-md [&_button]:!opacity-100 [&_button]:disabled:!opacity-100 [&_button]:hover:!bg-or-vif [&_button]:hover:!text-charbon [&_button]:![text-decoration:none]",
                       }}
-                      className="bg-charbon text-white"
+                      className="bg-white text-charbon"
                       classNames={{
-                        caption_label: "text-white",
-                        day: "text-white",
-                        weekday: "text-white/50",
-                        outside: "text-white/25",
-                        disabled: "text-white/25 opacity-40",
-                        today: "bg-white/10 text-white",
-                        range_start: "bg-or-vif text-black rounded-l-md",
-                        range_middle: "bg-or-vif/20 text-white rounded-none",
-                        range_end: "bg-or-vif text-black rounded-r-md",
+                        caption_label: "text-charbon",
+                        day: "text-charbon",
+                        weekday: "text-charbon/50",
+                        outside: "text-charbon/25",
+                        disabled: "text-charbon/25 opacity-40",
+                        today: "bg-black/5 text-charbon",
+                        range_start: "bg-or-vif text-charbon rounded-l-md",
+                        range_middle: "bg-or-vif/20 text-charbon rounded-none",
+                        range_end: "bg-or-vif text-charbon rounded-r-md",
                       }}
                     />
-                    <p className="border-t border-white/10 px-4 py-2.5 text-xs text-white/50">
+                    <p className="border-t border-black/8 px-4 py-2.5 text-xs yolo-form-muted">
                       {loadingOccupied
                         ? "Chargement des disponibilités…"
                         : "Cases bleu YOLO : véhicule déjà réservé (non sélectionnable)."}
                     </p>
                   </PopoverContent>
                 </Popover>
-                <p className="text-xs text-white/40 mt-2 flex items-center gap-1.5">
+                <p className="text-xs yolo-form-muted mt-2 flex items-center gap-1.5">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <rect x="3" y="4" width="18" height="18" rx="2" />
                   </svg>
@@ -503,7 +503,7 @@ export function BookingModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Heure de Prise en Charge</label>
+                  <label className="yolo-form-label">Heure de prise en charge</label>
                   <select
                     value={form.pickupTime}
                     onChange={(e) => setForm({ ...form, pickupTime: e.target.value })}
@@ -513,7 +513,7 @@ export function BookingModal({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Heure de Retour</label>
+                  <label className="yolo-form-label">Heure de retour</label>
                   <select
                     value={form.returnTime}
                     onChange={(e) => setForm({ ...form, returnTime: e.target.value })}
@@ -530,7 +530,7 @@ export function BookingModal({
           {step === 1 && (
             <div className="space-y-5">
               <div>
-                <label className="block text-sm font-medium mb-2">Lieu de Prise en Charge</label>
+                <label className="yolo-form-label">Lieu de prise en charge</label>
                 <LocationAutocomplete
                   value={form.pickupLocation}
                   onChange={(value) => setForm({ ...form, pickupLocation: value })}
@@ -546,12 +546,12 @@ export function BookingModal({
                   onChange={(e) => setForm({ ...form, sameDropoff: e.target.checked })}
                   className="w-4 h-4 accent-or-vif"
                 />
-                <span className="text-sm">Retour au même endroit</span>
+                <span className="text-sm text-charbon">Retour au même endroit</span>
               </label>
 
               {!form.sameDropoff && (
                 <div>
-                  <label className="block text-sm font-medium mb-2">Lieu de Retour</label>
+                  <label className="yolo-form-label">Lieu de retour</label>
                   <LocationAutocomplete
                     value={form.dropoffLocation}
                     onChange={(value) => setForm({ ...form, dropoffLocation: value })}
@@ -568,13 +568,13 @@ export function BookingModal({
           {step === 2 && (
             <div className="space-y-5">
               {account && (
-                <p className="text-xs text-or-vif/90 bg-or-vif/10 border border-or-vif/20 rounded-lg px-3 py-2">
+                <p className="text-xs text-or-bronze bg-or-vif/10 border border-or-vif/25 rounded-lg px-3 py-2">
                   Coordonnées préremplies depuis votre compte YOLO. Vous pouvez les modifier si besoin.
                 </p>
               )}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-2">Prénom *</label>
+                  <label className="yolo-form-label">Prénom *</label>
                   <input
                     value={form.firstName}
                     onChange={(e) => setForm({ ...form, firstName: e.target.value })}
@@ -583,7 +583,7 @@ export function BookingModal({
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2">Nom *</label>
+                  <label className="yolo-form-label">Nom *</label>
                   <input
                     value={form.lastName}
                     onChange={(e) => setForm({ ...form, lastName: e.target.value })}
@@ -594,7 +594,7 @@ export function BookingModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Adresse E-mail *</label>
+                <label className="yolo-form-label">Adresse e-mail *</label>
                 <input
                   type="email"
                   value={form.email}
@@ -605,7 +605,7 @@ export function BookingModal({
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-2">Téléphone (optionnel)</label>
+                <label className="yolo-form-label">Téléphone (optionnel)</label>
                 <div className="flex gap-2">
                   <select
                     value={form.countryCode}
@@ -649,12 +649,12 @@ export function BookingModal({
                 title="Dates & Durée"
                 onEdit={() => setStep(0)}
               >
-                <p className="text-sm text-white/70">
-                  {form.dateRange} {days > 0 && <span className="text-white/90">({days} jour{days > 1 ? "s" : ""})</span>}
+                <p className="text-sm yolo-form-muted">
+                  {form.dateRange} {days > 0 && <span className="text-charbon font-medium">({days} jour{days > 1 ? "s" : ""})</span>}
                 </p>
-                <p className="text-sm text-white/70">
-                  Heure de Prise en Charge: <span className="text-white">{form.pickupTime}</span> · Heure de Retour:{" "}
-                  <span className="text-white">{form.returnTime}</span>
+                <p className="text-sm yolo-form-muted">
+                  Prise en charge: <span className="text-charbon">{form.pickupTime}</span> · Retour:{" "}
+                  <span className="text-charbon">{form.returnTime}</span>
                 </p>
               </SummaryCard>
 
@@ -667,12 +667,12 @@ export function BookingModal({
                 title="Lieu"
                 onEdit={() => setStep(1)}
               >
-                <p className="text-sm text-white/70">
-                  Prise en Charge: <span className="text-white">{form.pickupLocation}</span>
+                <p className="text-sm yolo-form-muted">
+                  Prise en charge: <span className="text-charbon">{form.pickupLocation}</span>
                 </p>
-                <p className="text-sm text-white/70">
+                <p className="text-sm yolo-form-muted">
                   Retour:{" "}
-                  <span className="text-white">{form.sameDropoff ? form.pickupLocation : form.dropoffLocation}</span>
+                  <span className="text-charbon">{form.sameDropoff ? form.pickupLocation : form.dropoffLocation}</span>
                 </p>
               </SummaryCard>
 
@@ -685,29 +685,29 @@ export function BookingModal({
                 title="Vos Coordonnées"
                 onEdit={() => setStep(2)}
               >
-                <p className="text-sm text-white">
+                <p className="text-sm text-charbon font-medium">
                   {form.firstName} {form.lastName}
                 </p>
-                <p className="text-sm text-white/60">{form.email}</p>
-                {form.phone && <p className="text-sm text-white/60">{form.countryCode} {form.phone}</p>}
+                <p className="text-sm yolo-form-muted">{form.email}</p>
+                {form.phone && <p className="text-sm yolo-form-muted">{form.countryCode} {form.phone}</p>}
               </SummaryCard>
 
               {selectedVehicle && (
-                <div className="rounded-xl border border-or-vif/30 bg-or-vif/5 p-4 space-y-2">
-                  <div className="flex items-center justify-between text-sm text-white/70">
+                <div className="rounded-xl border border-or-vif/30 bg-or-vif/10 p-4 space-y-2">
+                  <div className="flex items-center justify-between text-sm yolo-form-muted">
                     <span>
                       {C}{formatPrice(selectedVehicle.pricePerDay)} × {days} jour{days > 1 ? "s" : ""}
                     </span>
-                    <span className="text-white">{C}{formatPrice(vehicleTotal)}</span>
+                    <span className="text-charbon font-medium">{C}{formatPrice(vehicleTotal)}</span>
                   </div>
                   <div className="border-t border-or-vif/20 pt-2 flex items-center justify-between">
-                    <div className="flex items-center gap-2 text-or-vif text-sm">
+                    <div className="flex items-center gap-2 text-or-bronze text-sm font-medium">
                       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
                       </svg>
                       Total estimé
                     </div>
-                    <p className="font-display text-xl text-or-vif">{C}{formatPrice(grandTotal)}</p>
+                    <p className="font-display text-xl text-or-bronze font-bold">{C}{formatPrice(grandTotal)}</p>
                   </div>
                 </div>
               )}
@@ -716,18 +716,18 @@ export function BookingModal({
         </div>
 
         {/* Footer actions */}
-        <div className="border-t border-white/10 p-6 flex gap-3">
+        <div className="border-t yolo-form-divider p-6 flex gap-3">
           {step === 0 ? (
             <button
               onClick={onClose}
-              className="flex-1 py-3.5 rounded-xl border border-white/20 text-sm font-medium hover:bg-white/5 text-white"
+              className="flex-1 py-3.5 rounded-xl border border-black/15 text-sm font-medium hover:bg-white text-charbon"
             >
               Annuler
             </button>
           ) : (
             <button
               onClick={() => setStep(step - 1)}
-              className="flex-1 py-3.5 rounded-xl border border-white/20 text-sm font-medium hover:bg-white/5 text-white flex items-center justify-center gap-2"
+              className="flex-1 py-3.5 rounded-xl border border-black/15 text-sm font-medium hover:bg-white text-charbon flex items-center justify-center gap-2"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M19 12H5M12 19l-7-7 7-7" />
@@ -740,7 +740,7 @@ export function BookingModal({
             <button
               disabled={!canNext()}
               onClick={() => setStep(step + 1)}
-              className="flex-1 py-3.5 rounded-xl bg-or-vif text-black text-sm font-medium hover:bg-white transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="flex-1 py-3.5 rounded-xl bg-or-vif text-charbon text-sm font-semibold hover:bg-charbon hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               Suivant
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -751,7 +751,7 @@ export function BookingModal({
             <button
               disabled={submitting}
               onClick={handleConfirmBooking}
-              className="flex-1 py-3.5 rounded-xl bg-or-vif text-black text-sm font-medium hover:bg-white transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 py-3.5 rounded-xl bg-or-vif text-charbon text-sm font-semibold hover:bg-charbon hover:text-white transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" />
@@ -788,13 +788,13 @@ function SummaryCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/2 p-4">
+    <div className="rounded-xl border border-black/8 bg-white p-4">
       <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2 text-or-vif text-sm font-medium">
+        <div className="flex items-center gap-2 text-or-bronze text-sm font-medium">
           {icon}
           {title}
         </div>
-        <button onClick={onEdit} className="text-xs text-white/60 hover:text-white flex items-center gap-1.5">
+        <button onClick={onEdit} className="text-xs yolo-form-muted hover:text-charbon flex items-center gap-1.5">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
             <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />

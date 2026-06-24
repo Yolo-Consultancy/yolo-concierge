@@ -311,3 +311,214 @@
   transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* —— Design system unifié (portails + espaces connectés) —— */
+:root {
+  --yolo-cream: #f6f4f0;
+  --yolo-ink: #1e1e1e;
+  --yolo-muted: #5c5c5c;
+}
+
+@keyframes yolo-rise {
+  from { opacity: 0; transform: translateY(28px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes yolo-hero-image {
+  from { transform: scale(1.06); }
+  to { transform: scale(1); }
+}
+
+[data-yolo-portal] {
+  --font-display-family: "Barlow", "Roboto", system-ui, sans-serif;
+  --font-body-family: "Lato", system-ui, sans-serif;
+}
+
+[data-yolo-portal] :is(h1, h2, h3, .font-display) {
+  font-family: var(--font-display-family);
+  letter-spacing: -0.02em;
+}
+
+[data-yolo-portal] .yolo-reveal { opacity: 0; }
+
+[data-yolo-portal] .yolo-reveal.is-visible {
+  animation: yolo-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+[data-yolo-portal] .yolo-hero-image {
+  animation: yolo-hero-image 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+[data-yolo-portal-light] {
+  background: var(--yolo-cream);
+  color: var(--yolo-ink);
+}
+
+[data-yolo-portal-vehicules] .yolo-section-light,
+[data-yolo-portal-light] .yolo-section-light,
+[data-yolo-portal] .yolo-section-light {
+  background: var(--yolo-cream);
+  color: var(--yolo-ink);
+}
+
+[data-yolo-portal] .yolo-portal-card {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.45s ease;
+}
+
+[data-yolo-portal] .yolo-portal-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -24px rgba(30, 30, 30, 0.35);
+}
+
+[data-yolo-portal] .yolo-portal-card:hover img { transform: scale(1.04); }
+
+[data-yolo-portal] .yolo-portal-card img {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-yolo-space] .yolo-space-main {
+  background: var(--yolo-cream);
+  color: var(--yolo-ink);
+}
+
+[data-yolo-space] .yolo-space-main :is(h1, h2, h3, .font-display, .yolo-page-title) {
+  font-family: "Barlow", "Roboto", system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--yolo-ink);
+}
+
+[data-yolo-space] .yolo-page-title {
+  font-size: clamp(1.65rem, 2.2vw, 2.15rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+[data-yolo-space] .yolo-page-subtitle {
+  color: var(--yolo-muted);
+  font-size: 0.9375rem;
+  margin-top: 0.35rem;
+}
+
+[data-yolo-space] .yolo-card {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 24px -14px rgba(0, 0, 0, 0.12);
+}
+
+[data-yolo-space] .yolo-muted { color: var(--yolo-muted); }
+
+[data-yolo-space] .yolo-reveal { opacity: 0; }
+
+[data-yolo-space] .yolo-reveal.is-visible {
+  animation: yolo-rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+/* —— Modales & formulaires (réservation, contact) —— */
+[data-yolo-form] {
+  color: var(--yolo-ink);
+  font-family: "Lato", system-ui, sans-serif;
+}
+
+[data-yolo-form] :is(h1, h2, h3, h4, .font-display) {
+  font-family: "Barlow", "Roboto", system-ui, sans-serif;
+  letter-spacing: -0.02em;
+  color: var(--yolo-ink);
+}
+
+[data-yolo-form] select option {
+  background: #fff;
+  color: var(--yolo-ink);
+}
+
+[data-yolo-form] .yolo-form-label {
+  display: block;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--yolo-muted);
+  margin-bottom: 0.5rem;
+}
+
+[data-yolo-form] .yolo-form-input {
+  width: 100%;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 0.5rem;
+  padding: 0.875rem 1rem;
+  font-size: 0.875rem;
+  color: var(--yolo-ink);
+  transition: border-color 0.2s;
+}
+
+[data-yolo-form] .yolo-form-input::placeholder {
+  color: rgba(30, 30, 30, 0.4);
+}
+
+[data-yolo-form] .yolo-form-input:focus {
+  outline: none;
+  border-color: var(--or-vif);
+}
+
+[data-yolo-form] .yolo-form-select {
+  color-scheme: light;
+}
+
+[data-yolo-form] .yolo-form-divider {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+[data-yolo-form] .yolo-form-muted {
+  color: var(--yolo-muted);
+}
+
+/* Calendrier clair (devis déménagement, réservation…) */
+[data-yolo-form] [data-slot="calendar"] {
+  color: var(--yolo-ink);
+}
+
+[data-yolo-form] [data-slot="calendar"] button,
+[data-yolo-form] [data-slot="calendar"] .rdp-day_button {
+  color: var(--yolo-ink) !important;
+  font-weight: 600;
+}
+
+[data-yolo-form] [data-slot="calendar"] button:hover:not(:disabled) {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  color: var(--yolo-ink) !important;
+}
+
+[data-yolo-form] [data-slot="calendar"] button[data-selected-single="true"] {
+  background-color: var(--or-vif) !important;
+  color: var(--charbon) !important;
+}
+
+[data-yolo-form] [data-slot="calendar"] button:disabled {
+  opacity: 1 !important;
+  color: rgba(30, 30, 30, 0.35) !important;
+}
+
+[data-yolo-form] [data-slot="calendar"] .rdp-weekday {
+  color: var(--yolo-muted) !important;
+  font-weight: 600;
+}
+
+[data-yolo-form] [data-slot="calendar"] .rdp-outside button {
+  color: rgba(30, 30, 30, 0.3) !important;
+}
+
+[data-yolo-form] [data-slot="calendar"] .rdp-today:not(.rdp-selected) button {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  color: var(--yolo-ink) !important;
+}
+
+[data-yolo-form] [data-slot="calendar"] .rdp-en_cours button,
+[data-yolo-form] [data-slot="calendar"] .rdp-enCours button {
+  background-color: rgba(59, 130, 246, 0.28) !important;
+  color: #1e40af !important;
+  text-decoration: line-through;
+}
+
+[data-yolo-form] [data-slot="calendar"] .rdp-caption_label,
+[data-yolo-form] [data-slot="calendar"] .rdp-button_previous,
+[data-yolo-form] [data-slot="calendar"] .rdp-button_next {
+  color: var(--yolo-ink) !important;
+}
+

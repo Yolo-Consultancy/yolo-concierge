@@ -98,12 +98,12 @@ function ClientReservations() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="font-display text-3xl font-semibold tracking-tight text-white">Mes Réservations</h1>
-          <p className="text-xs text-white/50 mt-1">Consultez, suivez et gérez l'état de vos réservations de services.</p>
+          <h1 className="yolo-page-title">Mes Réservations</h1>
+          <p className="yolo-page-subtitle">Consultez, suivez et gérez l&apos;état de vos réservations de services.</p>
         </div>
         <Link
           to="/location-vehicules"
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-or-vif px-5 py-2.5 text-xs font-semibold text-black hover:bg-white transition cursor-pointer self-start"
+          className="inline-flex items-center justify-center gap-2 bg-or-vif px-5 py-2.5 text-xs font-semibold text-charbon hover:bg-charbon hover:text-white transition cursor-pointer self-start"
         >
           <Car className="h-4 w-4" />
           Réserver un véhicule
@@ -111,11 +111,11 @@ function ClientReservations() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-white/5 space-x-6">
+      <div className="flex border-b border-black/10 space-x-6">
         <button
           onClick={() => setActiveTab("active")}
           className={`pb-4 text-sm font-semibold tracking-wide transition-all relative ${
-            activeTab === "active" ? "text-or-vif" : "text-white/40 hover:text-white/60"
+            activeTab === "active" ? "text-or-bronze" : "yolo-muted hover:text-charbon"
           }`}
         >
           Réservations actives ({activeBookings.length})
@@ -126,7 +126,7 @@ function ClientReservations() {
         <button
           onClick={() => setActiveTab("history")}
           className={`pb-4 text-sm font-semibold tracking-wide transition-all relative ${
-            activeTab === "history" ? "text-or-vif" : "text-white/40 hover:text-white/60"
+            activeTab === "history" ? "text-or-bronze" : "yolo-muted hover:text-charbon"
           }`}
         >
           Historique des commandes ({historyBookings.length})
@@ -144,7 +144,7 @@ function ClientReservations() {
             return (
               <div
                 key={b.id}
-                className="rounded-2xl border border-white/10 bg-charbon overflow-hidden flex flex-col md:flex-row"
+                className="yolo-card rounded-2xl overflow-hidden flex flex-col md:flex-row"
               >
                 {/* Vehicle Thumbnail Column */}
                 <div className="w-full md:w-80 h-48 md:h-auto bg-black shrink-0 relative">
@@ -170,10 +170,10 @@ function ClientReservations() {
                     {/* Header line */}
                     <div className="flex items-start justify-between gap-4">
                       <div>
-                        <span className="text-[10px] text-white/40 uppercase tracking-widest block">Réf : {b.id}</span>
-                        <h3 className="text-xl font-semibold text-white mt-0.5">{b.vehicleName}</h3>
+                        <span className="text-[10px] yolo-muted uppercase tracking-widest block">Réf : {b.id}</span>
+                        <h3 className="text-xl font-semibold text-[var(--yolo-ink)] mt-0.5">{b.vehicleName}</h3>
                         {vehicle && (
-                          <p className="text-xs text-white/50">
+                          <p className="text-xs yolo-muted">
                             {vehicle.category} · {vehicle.specs.hp} HP · {vehicle.specs.transmission}
                           </p>
                         )}
@@ -184,28 +184,28 @@ function ClientReservations() {
                     </div>
 
                     {/* Meta info grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6 border-t border-white/5 pt-4 text-xs leading-relaxed">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6 border-t border-black/8 pt-4 text-xs leading-relaxed">
                       <div className="space-y-1">
-                        <span className="text-white/40 uppercase tracking-wider block font-medium">Dates & Durée</span>
-                        <div className="flex items-center gap-1.5 text-white/90">
-                          <Calendar className="h-3.5 w-3.5 text-or-vif" />
+                        <span className="yolo-muted uppercase tracking-wider block font-medium">Dates & Durée</span>
+                        <div className="flex items-center gap-1.5 text-[var(--yolo-ink)]">
+                          <Calendar className="h-3.5 w-3.5 text-or-bronze" />
                           <span>{b.startDate} au {b.endDate}</span>
                         </div>
-                        <span className="text-white/60 block pl-5">{b.days} jour{b.days > 1 ? "s" : ""} de location</span>
+                        <span className="yolo-muted block pl-5">{b.days} jour{b.days > 1 ? "s" : ""} de location</span>
                       </div>
 
                       <div className="space-y-1">
-                        <span className="text-white/40 uppercase tracking-wider block font-medium">Lieu de livraison</span>
-                        <div className="flex items-center gap-1.5 text-white/90">
-                          <MapPin className="h-3.5 w-3.5 text-or-vif" />
+                        <span className="yolo-muted uppercase tracking-wider block font-medium">Lieu de livraison</span>
+                        <div className="flex items-center gap-1.5 text-[var(--yolo-ink)]">
+                          <MapPin className="h-3.5 w-3.5 text-or-bronze" />
                           <span className="truncate">{b.pickupLocation}</span>
                         </div>
                       </div>
 
                       <div className="space-y-1">
-                        <span className="text-white/40 uppercase tracking-wider block font-medium">Option Chauffeur</span>
-                        <div className="flex items-center gap-1.5 text-white/90">
-                          <User className="h-3.5 w-3.5 text-or-vif" />
+                        <span className="yolo-muted uppercase tracking-wider block font-medium">Option Chauffeur</span>
+                        <div className="flex items-center gap-1.5 text-[var(--yolo-ink)]">
+                          <User className="h-3.5 w-3.5 text-or-bronze" />
                           <span>
                             {b.withChauffeur ? (
                               b.driverName ? `Chauffeur : ${b.driverName}` : "Chauffeur YOLO affecté"
@@ -219,13 +219,13 @@ function ClientReservations() {
                   </div>
 
                   {/* Pricing and Actions footer */}
-                  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-t border-white/5 pt-4">
+                  <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-t border-black/8 pt-4">
                     <div>
-                      <span className="text-xs text-white/40 block">Détail du prix</span>
+                      <span className="text-xs yolo-muted block">Détail du prix</span>
                       <div className="flex items-baseline gap-2 mt-1">
-                        <span className="text-xl font-bold text-white">${formatPrice(b.totalPrice)}</span>
+                        <span className="text-xl font-bold text-[var(--yolo-ink)]">${formatPrice(b.totalPrice)}</span>
                         {b.withChauffeur && (
-                          <span className="text-xs text-white/50">
+                          <span className="text-xs yolo-muted">
                             (incl. chauffeur : ${formatPrice(b.days * 80)})
                           </span>
                         )}
@@ -245,7 +245,7 @@ function ClientReservations() {
                       <button
                         type="button"
                         onClick={openChat}
-                        className="px-4 py-2 rounded-xl border border-white/10 hover:bg-white/5 text-white text-xs font-semibold transition flex items-center justify-center gap-1 cursor-pointer"
+                        className="px-4 py-2 rounded-xl border border-black/10 hover:bg-[var(--yolo-cream)] text-charbon text-xs font-semibold transition flex items-center justify-center gap-1 cursor-pointer"
                       >
                         Contacter le concierge
                       </button>
@@ -257,11 +257,11 @@ function ClientReservations() {
           })}
         </div>
       ) : (
-        <div className="rounded-2xl border border-dashed border-white/10 bg-charbon/30 p-12 text-center flex flex-col items-center justify-center space-y-4">
-          <Car className="h-12 w-12 text-white/20" />
+        <div className="yolo-card rounded-2xl border-dashed p-12 text-center flex flex-col items-center justify-center space-y-4">
+          <Car className="h-12 w-12 text-charbon/25" />
           <div className="space-y-2 max-w-md mx-auto">
-            <h3 className="font-semibold text-lg text-white">Aucune réservation trouvée</h3>
-            <p className="text-xs text-white/40 leading-relaxed">
+            <h3 className="font-semibold text-lg text-[var(--yolo-ink)]">Aucune réservation trouvée</h3>
+            <p className="text-xs yolo-muted leading-relaxed">
               {activeTab === "active"
                 ? "Vous n'avez aucune réservation active ou en attente. Louez un véhicule ou composez un service sur mesure pour démarrer."
                 : "Votre historique de réservations passées est vide."}
@@ -269,7 +269,7 @@ function ClientReservations() {
           </div>
           <Link
             to="/location-vehicules"
-            className="px-6 py-3 rounded-full bg-or-vif text-black text-xs font-semibold hover:bg-white transition shadow-lg shadow-or-vif/10"
+            className="px-6 py-3 bg-or-vif text-charbon text-xs font-semibold hover:bg-charbon hover:text-white transition"
           >
             Découvrir notre flotte de luxe
           </Link>

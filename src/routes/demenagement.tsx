@@ -5,7 +5,7 @@ import { ArrowRight, Check, Phone } from "lucide-react";
 import { PortalHeader } from "@/components/PortalHeader";
 import { PortalHomeLink } from "@/components/PortalHomeLink";
 import { DemenagementDevisModal } from "@/components/DemenagementDevisModal";
-import { ScrollReveal } from "@/components/demenagement/ScrollReveal";
+import { ScrollReveal } from "@/components/portal-ui/ScrollReveal";
 import { contactSearch } from "@/lib/auth/redirect";
 import demenagementHero from "@/assets/demenagement/service-van.png";
 import serviceVan from "@/assets/demenagement/service-van.png";
@@ -143,7 +143,7 @@ function Demenagement() {
   const openDevis = () => setDevisOpen(true);
 
   return (
-    <main className="min-h-screen font-sans antialiased" data-demenagement-site>
+    <main className="min-h-screen font-sans antialiased" data-yolo-portal data-demenagement-site>
       <DemenagementDevisModal open={devisOpen} onClose={() => setDevisOpen(false)} />
 
       {/* Hero */}

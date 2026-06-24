@@ -172,8 +172,7 @@ function DriverShell() {
           />
         )}
 
-        <main className="flex-1 min-w-0 p-6 lg:p-10 pt-[5.5rem] lg:pt-10 flex flex-col bg-charbon relative overflow-y-auto">
-          <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-amber-400/2.5 blur-[120px] pointer-events-none" />
+        <main className="flex-1 min-w-0 p-6 lg:p-10 pt-[5.5rem] lg:pt-10 flex flex-col yolo-space-main relative overflow-y-auto">
           <div className="relative z-10 flex-1 flex flex-col">
             <Outlet />
           </div>
