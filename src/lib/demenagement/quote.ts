@@ -5,6 +5,7 @@ export type LocationAddress = {
   communeId: string;
   quartier: string;
   avenue: string;
+  reference: string;
 };
 
 export type FloorInfo = {
@@ -27,7 +28,11 @@ export type DemenagementQuoteData = {
 
 export function formatLocation(addr: LocationAddress): string {
   const commune = getCommuneLabel(addr.communeId);
-  return [commune, addr.quartier, addr.avenue].filter(Boolean).join(" · ");
+  const parts = [commune, addr.quartier, addr.avenue].filter(Boolean);
+  if (addr.reference?.trim()) {
+    parts.push(`Réf. ${addr.reference.trim()}`);
+  }
+  return parts.join(" · ");
 }
 
 export function formatFloorInfo(label: string, floor: FloorInfo): string {
@@ -59,7 +64,7 @@ export function buildDemenagementQuoteMessage(data: DemenagementQuoteData): stri
 }
 
 export function emptyLocation(): LocationAddress {
-  return { communeId: "", quartier: "", avenue: "" };
+  return { communeId: "", quartier: "", avenue: "", reference: "" };
 }
 
 export function emptyFloor(): FloorInfo {

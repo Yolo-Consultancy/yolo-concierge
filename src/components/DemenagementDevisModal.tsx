@@ -88,7 +88,12 @@ function LocationFields({
           className={selectCls}
           value={value.communeId}
           onChange={(e) =>
-            onChange({ communeId: e.target.value, quartier: "", avenue: value.avenue })
+            onChange({
+              communeId: e.target.value,
+              quartier: "",
+              avenue: value.avenue,
+              reference: value.reference,
+            })
           }
         >
           <option value="">— Choisir une commune —</option>
@@ -122,6 +127,15 @@ function LocationFields({
           placeholder="Ex. Avenue Kasa-Vubu, près de..."
           value={value.avenue}
           onChange={(e) => onChange({ ...value, avenue: e.target.value })}
+        />
+      </div>
+      <div>
+        <label className="yolo-form-label">Référence / repère</label>
+        <input
+          className={inputCls}
+          placeholder="Ex. Immeuble CTC, face à la station, portail bleu..."
+          value={value.reference}
+          onChange={(e) => onChange({ ...value, reference: e.target.value })}
         />
       </div>
     </div>
