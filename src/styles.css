@@ -510,13 +510,42 @@
 }
 
 [data-yolo-form] [data-slot="calendar"] .rdp-en_cours button,
-[data-yolo-form] [data-slot="calendar"] .rdp-enCours button {
+[data-yolo-form] [data-slot="calendar"] .rdp-enCours button,
+[data-yolo-form] [data-slot="calendar"] .rdp-occupied button {
   background-color: rgba(59, 130, 246, 0.28) !important;
   color: #1e40af !important;
   text-decoration: line-through;
 }
 
-[data-yolo-form] [data-slot="calendar"] .rdp-caption_label,
+[data-yolo-form] [data-slot="calendar"] button[data-range-start="true"],
+[data-yolo-form] [data-slot="calendar"] button[data-range-end="true"] {
+  background-color: var(--or-vif) !important;
+  color: var(--charbon) !important;
+}
+
+[data-yolo-form] [data-slot="calendar"] button[data-range-middle="true"] {
+  background-color: rgba(237, 179, 43, 0.25) !important;
+  color: var(--charbon) !important;
+}
+
+[data-yolo-form] [data-slot="calendar"] .rdp-caption_label {
+  color: var(--yolo-ink) !important;
+}
+
+[data-yolo-form] .yolo-phone-field select {
+  appearance: none;
+  background-image: none;
+}
+
+[data-yolo-form] .yolo-phone-field .yolo-form-input {
+  border: none;
+  box-shadow: none;
+}
+
+[data-yolo-form] .yolo-phone-field .yolo-form-input:focus {
+  box-shadow: none;
+}
+
 [data-yolo-form] [data-slot="calendar"] .rdp-button_previous,
 [data-yolo-form] [data-slot="calendar"] .rdp-button_next {
   color: var(--yolo-ink) !important;

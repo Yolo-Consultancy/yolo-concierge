@@ -114,6 +114,22 @@ const STEPS = [
   "Vérifier",
 ] as const;
 
+const CALENDAR_CLASS_NAMES = {
+  caption_label: "text-charbon font-semibold font-display",
+  button_previous: "text-charbon hover:bg-black/5",
+  button_next: "text-charbon hover:bg-black/5",
+  weekday: "text-charbon/55 font-semibold",
+  day_button:
+    "text-charbon font-semibold hover:bg-black/6 data-[range-start=true]:!bg-or-vif data-[range-start=true]:!text-charbon data-[range-end=true]:!bg-or-vif data-[range-end=true]:!text-charbon data-[range-middle=true]:!bg-or-vif/25 data-[range-middle=true]:!text-charbon data-[selected-single=true]:!bg-or-vif data-[selected-single=true]:!text-charbon",
+  outside: "text-charbon/30",
+  disabled: "text-charbon/35 opacity-100",
+  today: "bg-black/6 text-charbon font-bold rounded-md",
+} as const;
+
+const CALENDAR_MODIFIERS_CLASS_NAMES = {
+  occupied: "rdp-occupied",
+} as const;
+
 interface LocationAutocompleteProps {
   value: string;
   onChange: (value: string) => void;
@@ -459,7 +475,8 @@ export function BookingModal({
                   </PopoverTrigger>
                   <PopoverContent
                     align="start"
-                    className="w-auto border-black/10 bg-white p-0 text-charbon shadow-2xl"
+                    data-yolo-form
+                    className="w-auto border-black/10 bg-[var(--yolo-cream)] p-0 text-charbon shadow-2xl"
                   >
                     <Calendar
                       mode="range"
@@ -469,22 +486,9 @@ export function BookingModal({
                       locale={fr}
                       disabled={[{ before: new Date() }, ...occupiedDates]}
                       modifiers={{ occupied: occupiedDates }}
-                      modifiersClassNames={{
-                        occupied:
-                          "[&_button]:!bg-or-vif [&_button]:!text-charbon [&_button]:!font-semibold [&_button]:!rounded-md [&_button]:!opacity-100 [&_button]:disabled:!opacity-100 [&_button]:hover:!bg-or-vif [&_button]:hover:!text-charbon [&_button]:![text-decoration:none]",
-                      }}
-                      className="bg-white text-charbon"
-                      classNames={{
-                        caption_label: "text-charbon",
-                        day: "text-charbon",
-                        weekday: "text-charbon/50",
-                        outside: "text-charbon/25",
-                        disabled: "text-charbon/25 opacity-40",
-                        today: "bg-black/5 text-charbon",
-                        range_start: "bg-or-vif text-charbon rounded-l-md",
-                        range_middle: "bg-or-vif/20 text-charbon rounded-none",
-                        range_end: "bg-or-vif text-charbon rounded-r-md",
-                      }}
+                      modifiersClassNames={CALENDAR_MODIFIERS_CLASS_NAMES}
+                      className="bg-[var(--yolo-cream)] text-charbon"
+                      classNames={CALENDAR_CLASS_NAMES}
                     />
                     <p className="border-t border-black/8 px-4 py-2.5 text-xs yolo-form-muted">
                       {loadingOccupied

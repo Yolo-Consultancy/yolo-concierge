@@ -90,7 +90,7 @@ function FleetPagination({
               className={`h-9 min-w-9 rounded-full px-3 text-sm transition ${
                 p === page
                   ? "bg-or-vif text-black font-medium"
-                  : "border border-white/10 text-white/70 hover:border-or-vif/40 hover:text-or-vif"
+                  : "border border-or-vif/25 bg-or-vif/15 text-white/85 hover:border-or-vif/50 hover:bg-or-vif/25 hover:text-or-vif"
               }`}
             >
               {p}
