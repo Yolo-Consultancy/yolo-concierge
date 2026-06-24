@@ -268,6 +268,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
   useEffect(() => {
     if (!open || !account?.id) return;
     setContact(clientContactFieldsFromAccount(account));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, account?.id]);
 
   if (!open) return null;
@@ -335,9 +336,9 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
   };
 
   return (
-    <div className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4 font-sans">
+    <div className="fixed inset-0 z-70 flex items-end sm:items-center justify-center bg-black/70 backdrop-blur-sm p-0 sm:p-4 font-sans">
       <div
-        className="w-full sm:max-w-xl bg-[var(--yolo-cream)] border border-black/10 sm:rounded-2xl shadow-2xl max-h-[95vh] flex flex-col overflow-hidden"
+        className="w-full sm:max-w-xl bg-(--yolo-cream) border border-black/10 sm:rounded-2xl shadow-2xl max-h-[95vh] flex flex-col overflow-hidden"
         data-yolo-form
       >
         <div className="flex items-center justify-between border-b yolo-form-divider px-5 py-4 shrink-0 bg-white">
@@ -563,7 +564,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
             <button
               type="button"
               onClick={() => (step === 0 ? onClose() : setStep((s) => s - 1))}
-              className="inline-flex items-center gap-1 rounded-lg border border-black/15 px-4 py-2.5 text-sm font-medium text-charbon hover:bg-[var(--yolo-cream)] transition"
+              className="inline-flex items-center gap-1 rounded-lg border border-black/15 px-4 py-2.5 text-sm font-medium text-charbon hover:bg-(--yolo-cream) transition"
             >
               <ChevronLeft className="h-4 w-4" />
               {step === 0 ? "Annuler" : "Retour"}
