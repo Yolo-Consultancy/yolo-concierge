@@ -197,7 +197,7 @@ function Demenagement() {
           ].map((s, i) => (
             <ScrollReveal key={s.u} delayMs={i * 80} className="text-center md:text-left">
               <p className="font-display text-3xl font-bold text-charbon md:text-4xl">{s.n}</p>
-              <p className="mt-1 text-sm text-[var(--dm-muted)]">{s.u}</p>
+              <p className="mt-1 text-sm text-(--dm-muted)">{s.u}</p>
             </ScrollReveal>
           ))}
         </div>
@@ -209,12 +209,11 @@ function Demenagement() {
           <ScrollReveal>
             <SectionLabel>Qui sommes-nous</SectionLabel>
             <h2 className="text-[clamp(1.85rem,3vw,2.5rem)] font-bold leading-tight text-charbon">
-              Le sérieux d'une entreprise de chantier, le confort d'un concierge.
+              Nous sommes une équipe de déménageurs professionnels à Kinshasa. 
             </h2>
-            <p className="mt-5 text-[17px] leading-[1.75] text-[var(--dm-muted)]">
-              On ne promet pas la lune : on arrive avec du matériel, du temps, et des gens qui
-              savent manier un frigo au 4<sup>e</sup> sans ascenseur. Que vous quittiez Gombe pour
-              Ngaliema ou Lemba pour Masina, on adapte l'équipe et le camion.
+            <p className="mt-5 text-[17px] leading-[1.75] text-(--dm-muted)">
+              Notre mission : rendre votre déménagement aussi simple et fluide que possible. 
+              Nous prenons soin de vos biens, respectons vos délais et vous offrons un service personnalisé du début à la fin. 
             </p>
             <ul className="mt-8 space-y-3">
               {engagements.map((item) => (
@@ -226,7 +225,7 @@ function Demenagement() {
             </ul>
           </ScrollReveal>
           <ScrollReveal delayMs={120}>
-            <div className="relative aspect-[4/5] overflow-hidden shadow-[0_24px_60px_-20px_rgba(0,0,0,0.35)]">
+            <div className="relative aspect-4/5 overflow-hidden shadow-[0_24px_60px_-20px_rgba(0,0,0,0.35)]">
               <img
                 src={serviceInterieur}
                 alt="Déménageurs YOLO à l'intérieur d'un logement"
@@ -251,7 +250,7 @@ function Demenagement() {
             <h2 className="text-[clamp(1.85rem,3vw,2.5rem)] font-bold text-charbon">
               Ce qu'on fait concrètement sur le terrain
             </h2>
-            <p className="mt-4 text-[17px] leading-relaxed text-[var(--dm-muted)]">
+            <p className="mt-4 text-[17px] leading-relaxed text-(--dm-muted)">
               Pas de stock photos génériques : voici le type de prestation que nos équipes réalisent
               chaque semaine à Kinshasa.
             </p>
@@ -260,13 +259,13 @@ function Demenagement() {
           <div className="grid gap-6 sm:grid-cols-2">
             {realisations.map((item, i) => (
               <ScrollReveal key={item.title} delayMs={i * 90}>
-                <article className="dm-service-card group overflow-hidden bg-[var(--dm-cream)]">
-                  <div className="aspect-[16/10] overflow-hidden">
+                <article className="dm-service-card group overflow-hidden bg-(--dm-cream)">
+                  <div className="aspect-16/10 overflow-hidden">
                     <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
                   </div>
                   <div className="border-t border-black/5 px-6 py-5">
                     <h3 className="font-display text-xl font-semibold text-charbon">{item.title}</h3>
-                    <p className="mt-2 text-[15px] leading-relaxed text-[var(--dm-muted)]">
+                    <p className="mt-2 text-[15px] leading-relaxed text-(--dm-muted)">
                       {item.description}
                     </p>
                   </div>
@@ -294,7 +293,7 @@ function Demenagement() {
                   <h3 className="font-display text-lg font-bold text-charbon">{block.title}</h3>
                   <ul className="mt-5 space-y-3 border-t border-black/6 pt-5">
                     {block.items.map((line) => (
-                      <li key={line} className="flex gap-2.5 text-[15px] text-[var(--dm-muted)]">
+                      <li key={line} className="flex gap-2.5 text-[15px] text-(--dm-muted)">
                         <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-or-vif" />
                         {line}
                       </li>
