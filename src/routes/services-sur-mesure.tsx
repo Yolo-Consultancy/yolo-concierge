@@ -110,8 +110,8 @@ function SurMesure() {
           className="yolo-hero-image absolute inset-0 h-full w-full object-cover"
         />
         <div className="absolute inset-0 bg-linear-to-r from-charbon/92 via-charbon/55 to-charbon/30" />
-        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col justify-end px-6 pb-16 pt-28 md:pb-24">
-          <ScrollReveal>
+        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-16 pt-28 md:pb-24">
+          <ScrollReveal className="yolo-hero-content">
             <SectionLabel>Conciergerie · Sur mesure</SectionLabel>
             <h1 className="max-w-2xl text-[clamp(2.4rem,5vw,3.75rem)] font-bold leading-[1.08]">
               Votre demande,
@@ -122,7 +122,7 @@ function SurMesure() {
               Événementiel, voyages, assistance pro — un concierge dédié s&apos;occupe de tout, du quotidien
               à l&apos;exceptionnel.
             </p>
-            <div className="mt-9">
+            <div className="yolo-hero-actions mt-9">
               <a href="#demande">
                 <PortalButton variant="primary">
                   Décrire mon besoin

@@ -3,7 +3,8 @@ import { useEffect, useState, useMemo } from "react";
 import { publicApi } from "@/lib/api/client";
 import type { ServiceType } from "@/config/portals";
 import { toast } from "sonner";
-import { allCountries } from "country-telephone-data";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 import { useClientContactPrefill } from "@/lib/client/form-prefill";
 
 const SELECT_OPTION_CLS = "bg-white text-charbon";
@@ -15,19 +16,6 @@ type ContactModalProps = {
   serviceType?: ServiceType | "general";
 };
 
-// Tri alphabétique de tous les pays du monde
-const sortedCountries = [...allCountries].sort((a, b) =>
-  a.name.localeCompare(b.name)
-);
-
-// Fonction utilitaire pour générer le drapeau émoji à partir de l'ISO 2 (ex: "fr" -> 🇫🇷)
-function getFlagEmoji(countryCode: string) {
-  const codePoints = countryCode
-    .toUpperCase()
-    .split("")
-    .map((char) => 127397 + char.charCodeAt(0));
-  return String.fromCodePoint(...codePoints);
-}
 export function ContactModal({
   onClose,
   prefilledVehicle = "",
@@ -219,38 +207,21 @@ export function ContactModal({
                 </div>
               </div>
 
-               <div>
-                <label className="yolo-form-label">Téléphone *</label>
-                <div className="flex gap-2">
-                  <select
-                    value={form.countryCode}
-                    onChange={(e) => setForm({ ...form , countryCode: e.target.value })}
-                    className={`${selectCls} w-36`}
-                  >
-                    {sortedCountries.map((country) => {
-                      const dialCodeWithPlus = `+${country.dialCode}`;
-                      return (
-                        <option
-                          key={`${country.iso2}-${country.dialCode}`}
-                          className={SELECT_OPTION_CLS}
-                          value={dialCodeWithPlus}
-                        >
-                          {getFlagEmoji(country.iso2)} {dialCodeWithPlus} ({country.name})
-                        </option>
-                      );
-                    })}
-                  </select>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    maxLength={15}
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/\D/g, "") })}
-                    placeholder="828863897"
-                    className={`${inputCls} flex-1`}
-                  />
-                </div>
-              </div>
+              <ContactPhoneField
+                id="modal-contact-phone"
+                required
+                countryCode={form.countryCode}
+                phone={form.phone}
+                onCountryCodeChange={(countryCode) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    countryCode,
+                    phone: phoneDigitsOnly(prev.phone).slice(0, phoneMaxLength(countryCode)),
+                  }))
+                }
+                onPhoneChange={(phone) => setForm({ ...form, phone })}
+                inputCls={inputCls}
+              />
 
               <div>
                 <label className="yolo-form-label">Message / description du besoin *</label>

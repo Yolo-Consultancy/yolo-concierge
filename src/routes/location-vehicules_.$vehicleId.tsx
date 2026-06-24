@@ -75,12 +75,12 @@ function VehicleDetail() {
             <ArrowLeft className="h-4 w-4" />
             Retour à la flotte
           </Link>
-          <ScrollReveal>
+          <ScrollReveal className="yolo-hero-content">
             <SectionLabel>{vehicle.category} · {vehicle.year}</SectionLabel>
             <h1 className="text-[clamp(2rem,4vw,3.25rem)] font-bold leading-tight">
               {vehicle.brand} {vehicle.name}
             </h1>
-            <p className="mt-2 text-sm text-white/65 flex items-center gap-1.5">
+            <p className="mt-2 text-sm text-white/65 flex items-center justify-center gap-1.5">
               <MapPin className="h-4 w-4 text-or-vif" />
               {vehicle.location}
             </p>

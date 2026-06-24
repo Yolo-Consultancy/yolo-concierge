@@ -348,6 +348,21 @@
   animation: yolo-hero-image 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
 
+[data-yolo-portal] .yolo-hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+[data-yolo-portal] .yolo-hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1rem;
+}
+
 [data-yolo-portal-light] {
   background: var(--yolo-cream);
   color: var(--yolo-ink);

@@ -16,7 +16,8 @@ import {
   whatsappLink,
 } from "@/config/contact";
 import { toast } from "sonner";
-import { allCountries } from "country-telephone-data";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 import { ScrollReveal } from "@/components/portal-ui/ScrollReveal";
 import { SectionLabel } from "@/components/portal-ui/SectionLabel";
 import { PortalButton } from "@/components/portal-ui/PortalButton";
@@ -36,45 +37,6 @@ export const Route = createFileRoute("/contact")({
   validateSearch: contactSearchSchema,
   component: ContactPage,
 });
-
-const PRIORITY_COUNTRY_ISOS = ["cd", "fr", "be", "us", "ci", "sn"] as const;
-
-const countryOptions = (() => {
-  const byIso = new Map(allCountries.map((c) => [c.iso2, c]));
-  const priority = PRIORITY_COUNTRY_ISOS.map((iso) => byIso.get(iso)).filter(Boolean);
-  const prioritySet = new Set(PRIORITY_COUNTRY_ISOS);
-  const rest = [...allCountries]
-    .filter((c) => !prioritySet.has(c.iso2 as (typeof PRIORITY_COUNTRY_ISOS)[number]))
-    .sort((a, b) => a.name.localeCompare(b.name, "fr"));
-  return [...priority, ...rest];
-})();
-
-function phoneMaxLength(countryCode: string) {
-  return countryCode === "+243" ? 10 : 15;
-}
-
-function phonePlaceholder(countryCode: string) {
-  return countryCode === "+243" ? "812 345 678" : "Numéro local";
-}
-
-function formatPhoneInput(value: string, countryCode: string) {
-  const digits = value.replace(/\D/g, "").slice(0, phoneMaxLength(countryCode));
-  if (countryCode !== "+243" || digits.length <= 3) return digits;
-  if (digits.length <= 6) return `${digits.slice(0, 3)} ${digits.slice(3)}`;
-  return `${digits.slice(0, 3)} ${digits.slice(3, 6)} ${digits.slice(6)}`;
-}
-
-function phoneDigitsOnly(display: string) {
-  return display.replace(/\D/g, "");
-}
-
-function getFlagEmoji(countryCode: string) {
-  const codePoints = countryCode
-    .toUpperCase()
-    .split("")
-    .map((char) => 127397 + char.charCodeAt(0));
-  return String.fromCodePoint(...codePoints);
-}
 
 function ContactPage() {
   const { portal: portalId } = Route.useSearch();
@@ -167,7 +129,7 @@ function ContactPage() {
       <section className="relative bg-charbon text-white pb-16 pt-28">
         {portalId ? <PortalHeader portalId={portalId} /> : <SiteHeader />}
         <div className="mx-auto max-w-6xl px-6">
-          <ScrollReveal className="max-w-2xl">
+          <ScrollReveal className="yolo-hero-content max-w-2xl mx-auto">
             <SectionLabel>{portal ? portal.name : "YOLO Le Concierge"}</SectionLabel>
             <h1 className="text-[clamp(2.2rem,4vw,3.5rem)] font-bold leading-tight mb-4">
               Contactez-nous
@@ -438,66 +400,5 @@ function ContactPage() {
         )}
       </footer>
     </main>
-  );
-}
-
-function ContactPhoneField({
-  countryCode,
-  phone,
-  onCountryCodeChange,
-  onPhoneChange,
-}: {
-  countryCode: string;
-  phone: string;
-  onCountryCodeChange: (code: string) => void;
-  onPhoneChange: (phone: string) => void;
-  inputCls: string;
-}) {
-  const displayPhone = formatPhoneInput(phone, countryCode);
-  const maxLen = phoneMaxLength(countryCode);
-
-  return (
-    <div>
-      <label className="yolo-form-label" htmlFor="contact-phone">
-        Numéro de téléphone
-      </label>
-      <div className="yolo-phone-field flex overflow-hidden rounded-lg border border-black/12 bg-white shadow-sm transition focus-within:border-or-vif focus-within:ring-2 focus-within:ring-or-vif/20">
-        <select
-          value={countryCode}
-          onChange={(e) => onCountryCodeChange(e.target.value)}
-          className="yolo-form-select shrink-0 border-0 border-r border-black/10 bg-[var(--yolo-cream)] py-3.5 pl-3 pr-2 text-sm font-semibold text-charbon w-[6.5rem] rounded-none focus:outline-none focus:ring-0"
-          aria-label="Indicatif pays"
-        >
-          {countryOptions.map((country) => {
-            const dial = `+${country.dialCode}`;
-            const isPriority = PRIORITY_COUNTRY_ISOS.includes(
-              country.iso2 as (typeof PRIORITY_COUNTRY_ISOS)[number],
-            );
-            return (
-              <option key={`${country.iso2}-${country.dialCode}`} value={dial}>
-                {getFlagEmoji(country.iso2)} {dial}
-                {isPriority ? ` · ${country.name}` : ""}
-              </option>
-            );
-          })}
-        </select>
-        <input
-          id="contact-phone"
-          type="tel"
-          inputMode="numeric"
-          autoComplete="tel-national"
-          maxLength={countryCode === "+243" ? 12 : maxLen}
-          value={displayPhone}
-          onChange={(e) => onPhoneChange(phoneDigitsOnly(e.target.value).slice(0, maxLen))}
-          placeholder={phonePlaceholder(countryCode)}
-          className={`${inputCls} min-w-0 flex-1 rounded-none border-0 shadow-none focus:ring-0`}
-        />
-      </div>
-      <p className="mt-1.5 text-xs yolo-form-muted">
-        {countryCode === "+243"
-          ? "RDC : 9 chiffres sans le 0 initial (ex. 812 345 678)"
-          : "Saisissez votre numéro sans l'indicatif pays"}
-      </p>
-    </div>
   );
 }

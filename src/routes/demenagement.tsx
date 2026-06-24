@@ -158,8 +158,8 @@ function Demenagement() {
           <div className="absolute inset-0 bg-linear-to-r from-charbon/92 via-charbon/55 to-charbon/20" />
         </div>
 
-        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col justify-end px-6 pb-16 pt-32 md:pb-24">
-          <ScrollReveal>
+        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-16 pt-32 md:pb-24">
+          <ScrollReveal className="yolo-hero-content">
             <SectionLabel>Kinshasa · Service sur mesure</SectionLabel>
             <h1 className="max-w-2xl text-[clamp(2.4rem,5vw,3.65rem)] font-bold leading-[1.08] text-white">
               Votre déménagement,
@@ -170,7 +170,7 @@ function Demenagement() {
               Emballage, transport et installation — avec une équipe qui connaît les rues, les étages
               sans ascenseur et les 24 communes de la ville.
             </p>
-            <div className="mt-9 flex flex-wrap gap-4">
+            <div className="yolo-hero-actions mt-9">
               <DmBtn onClick={openDevis}>
                 Demander un devis
                 <ArrowRight className="h-4 w-4" />

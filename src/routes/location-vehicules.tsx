@@ -162,8 +162,8 @@ function LocationVehicules() {
           height={1080}
         />
         <div className="absolute inset-0 bg-linear-to-r from-charbon/92 via-charbon/50 to-charbon/25" />
-        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col justify-end px-6 pb-16 pt-28 md:pb-24">
-          <ScrollReveal>
+        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-16 pt-28 md:pb-24">
+          <ScrollReveal className="yolo-hero-content">
             <SectionLabel>Kinshasa · Location premium</SectionLabel>
             <h1 className="max-w-2xl text-[clamp(2.4rem,5vw,3.75rem)] font-bold leading-[1.08]">
               La voiture qu&apos;il vous faut,
@@ -174,7 +174,7 @@ function LocationVehicules() {
               Ferrari, Porsche, Mercedes, Range Rover — avec ou sans chauffeur, livrée à Gombe,
               Ngaliema, à l&apos;aéroport ou à votre hôtel.
             </p>
-            <div className="mt-9 flex flex-wrap gap-4">
+            <div className="yolo-hero-actions mt-9">
               <a href="#flotte">
                 <PortalButton variant="primary">
                   Voir la flotte
