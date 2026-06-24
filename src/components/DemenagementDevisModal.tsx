@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { X, ChevronLeft, ChevronRight, Check, MapPin, User, Calendar as CalendarIcon, Home } from "lucide-react";
@@ -36,6 +36,24 @@ const inputCls =
   "w-full rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-sm text-white placeholder:text-white/30 focus:border-or-vif focus:outline-none [color-scheme:dark]";
 const selectCls = `${inputCls} bg-charbon text-white cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 disabled:text-white/40`;
 const labelCls = "block text-xs font-medium text-white/60 mb-1.5 uppercase tracking-wider";
+
+const CALENDAR_CLASS_NAMES = {
+  caption_label: "text-white font-medium",
+  button_previous: "text-white hover:bg-white/10",
+  button_next: "text-white hover:bg-white/10",
+  day: "text-white",
+  weekday: "text-white/50",
+  outside: "text-white/25",
+  disabled: "text-white/25 opacity-40",
+  today: "bg-white/10 text-white rounded-md",
+} as const;
+
+const CALENDAR_MODIFIERS_CLASS_NAMES = {
+  selected:
+    "[&_button]:!bg-or-vif [&_button]:!text-charbon [&_button]:!font-semibold [&_button]:!rounded-md",
+  enCours:
+    "[&_button]:!bg-blue-500/35 [&_button]:!text-blue-100 [&_button]:!font-semibold [&_button]:!rounded-md [&_button]:!opacity-100 [&_button]:disabled:!opacity-100 [&_button]:line-through [&_button]:hover:!bg-blue-500/35 [&_button]:hover:!text-blue-100",
+} as const;
 
 type Props = {
   open: boolean;
@@ -190,6 +208,29 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
 
   const busyDates = useMemo(() => parseBusyDateStrings(busyDateStrings), [busyDateStrings]);
   const busyDateSet = useMemo(() => new Set(busyDateStrings), [busyDateStrings]);
+  const selectedMoveDate = useMemo(
+    () => (quote.moveDate ? parseLocalDate(quote.moveDate) : undefined),
+    [quote.moveDate],
+  );
+  const todayStart = useMemo(() => startOfToday(), [open]);
+  const calendarDisabled = useMemo(
+    () => [{ before: todayStart }, ...busyDates],
+    [todayStart, busyDates],
+  );
+  const calendarModifiers = useMemo(() => ({ enCours: busyDates }), [busyDates]);
+
+  const handleMoveDateSelect = useCallback(
+    (date: Date | undefined) => {
+      if (!date) return;
+      const iso = format(date, "yyyy-MM-dd");
+      if (busyDateSet.has(iso)) {
+        toast.error("Déménagement en cours ce jour — date indisponible.");
+        return;
+      }
+      setQuote((prev) => (prev.moveDate === iso ? prev : { ...prev, moveDate: iso }));
+    },
+    [busyDateSet],
+  );
 
   useEffect(() => {
     if (!open) return;
@@ -205,11 +246,12 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
     setStep(0);
     setDone(false);
     setQuote(emptyQuoteData());
-    if (account) {
-      setContact(clientContactFieldsFromAccount(account));
-    } else {
-      setContact(emptyClientContactFields());
-    }
+    setContact(emptyClientContactFields());
+  }, [open]);
+
+  useEffect(() => {
+    if (!open || !account?.id) return;
+    setContact(clientContactFieldsFromAccount(account));
   }, [open, account?.id]);
 
   if (!open) return null;
@@ -374,36 +416,14 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                 <div className="rounded-xl border border-white/10 bg-white/2 overflow-hidden [&_[data-slot=calendar]_button]:text-white [&_[data-slot=calendar]_button]:hover:bg-white/10">
                   <Calendar
                     mode="single"
-                    selected={quote.moveDate ? parseLocalDate(quote.moveDate) : undefined}
-                    onSelect={(date) => {
-                      if (!date) return;
-                      const iso = format(date, "yyyy-MM-dd");
-                      if (busyDateSet.has(iso)) {
-                        toast.error("Déménagement en cours ce jour — date indisponible.");
-                        return;
-                      }
-                      setQuote({ ...quote, moveDate: iso });
-                    }}
+                    selected={selectedMoveDate}
+                    onSelect={handleMoveDateSelect}
                     locale={fr}
-                    disabled={[{ before: startOfToday() }, ...busyDates]}
-                    modifiers={{ enCours: busyDates }}
-                    modifiersClassNames={{
-                      selected:
-                        "[&_button]:!bg-or-vif [&_button]:!text-charbon [&_button]:!font-semibold [&_button]:!rounded-md",
-                      enCours:
-                        "[&_button]:!bg-blue-500/35 [&_button]:!text-blue-100 [&_button]:!font-semibold [&_button]:!rounded-md [&_button]:!opacity-100 [&_button]:disabled:!opacity-100 [&_button]:line-through [&_button]:hover:!bg-blue-500/35 [&_button]:hover:!text-blue-100",
-                    }}
+                    disabled={calendarDisabled}
+                    modifiers={calendarModifiers}
+                    modifiersClassNames={CALENDAR_MODIFIERS_CLASS_NAMES}
                     className="w-full bg-charbon p-3 text-white [--cell-size:2.25rem]"
-                    classNames={{
-                      caption_label: "text-white font-medium",
-                      button_previous: "text-white hover:bg-white/10",
-                      button_next: "text-white hover:bg-white/10",
-                      day: "text-white",
-                      weekday: "text-white/50",
-                      outside: "text-white/25",
-                      disabled: "text-white/25 opacity-40",
-                      today: "bg-white/10 text-white rounded-md",
-                    }}
+                    classNames={CALENDAR_CLASS_NAMES}
                   />
                   <p className="border-t border-white/10 px-4 py-2.5 text-xs text-white/50">
                     {loadingBusyDates

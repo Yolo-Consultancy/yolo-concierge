@@ -84,16 +84,28 @@ function ContactPage() {
   }, []);
 
   useEffect(() => {
-    if (!account) return;
-    setForm((prev) => ({
-      ...prev,
-      firstName: prev.firstName || fields.firstName,
-      lastName: prev.lastName || fields.lastName,
-      email: prev.email || fields.email,
-      phone: prev.phone || fields.phone,
-      countryCode: fields.countryCode,
-    }));
-  }, [account, fields]);
+    if (!account?.id) return;
+    setForm((prev) => {
+      const next = {
+        ...prev,
+        firstName: prev.firstName || fields.firstName,
+        lastName: prev.lastName || fields.lastName,
+        email: prev.email || fields.email,
+        phone: prev.phone || fields.phone,
+        countryCode: fields.countryCode,
+      };
+      if (
+        next.firstName === prev.firstName &&
+        next.lastName === prev.lastName &&
+        next.email === prev.email &&
+        next.phone === prev.phone &&
+        next.countryCode === prev.countryCode
+      ) {
+        return prev;
+      }
+      return next;
+    });
+  }, [account?.id, fields]);
 
   const phoneDisplay = formatPhoneDisplay(settings.whatsappNumber);
   const telHref = `tel:+${settings.whatsappNumber.replace(/\D/g, "")}`;

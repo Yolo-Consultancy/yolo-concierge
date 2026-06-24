@@ -1,9 +1,12 @@
 /* eslint-disable prettier/prettier */
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState, type ReactNode } from "react";
+import { ArrowRight, Check, Phone } from "lucide-react";
 import { PortalHeader } from "@/components/PortalHeader";
 import { PortalHomeLink } from "@/components/PortalHomeLink";
 import { DemenagementDevisModal } from "@/components/DemenagementDevisModal";
+import { ScrollReveal } from "@/components/demenagement/ScrollReveal";
+import { contactSearch } from "@/lib/auth/redirect";
 import demenagementHero from "@/assets/demenagement/service-van.png";
 import serviceVan from "@/assets/demenagement/service-van.png";
 import serviceInterieur from "@/assets/demenagement/service-interieur.png";
@@ -13,132 +16,359 @@ import serviceEquipe from "@/assets/demenagement/service-equipe.png";
 export const Route = createFileRoute("/demenagement")({
   head: () => ({
     meta: [
-      { title: "Déménagement Assisté — YOLO Le Concierge" },
-      { name: "description", content: "Solution complète de déménagement à Kinshasa : emballage, transport, installation. Demandez votre devis en ligne." },
-      { property: "og:title", content: "Déménagement Assisté — YOLO" },
-      { property: "og:description", content: "Un déménagement clé en main, en toute sérénité." },
+      { title: "Déménagement à Kinshasa — YOLO Le Concierge" },
+      {
+        name: "description",
+        content:
+          "Emballage, transport et installation dans les 24 communes de Kinshasa. Devis gratuit, équipe dédiée, réponse sous 24 h.",
+      },
+      { property: "og:title", content: "Déménagement à Kinshasa — YOLO" },
+      {
+        property: "og:description",
+        content: "Un déménagement clé en main avec une équipe qui connaît chaque quartier de Kinshasa.",
+      },
     ],
   }),
   component: Demenagement,
 });
 
-const serviceShowcase = [
+const realisations = [
   {
-    title: "Transport & camion",
-    description: "Équipe professionnelle, chargement sécurisé et livraison dans toute Kinshasa.",
+    title: "Chargement & livraison",
+    description: "Camion adapté au volume, équipe sur place à l'heure convenue.",
     image: serviceVan,
   },
   {
-    title: "Manutention intérieure",
-    description: "Démontage, portage et installation de vos meubles en toute sécurité.",
+    title: "Manutention soignée",
+    description: "Meubles démontés, portés et remontés sans précipitation.",
     image: serviceInterieur,
   },
   {
-    title: "Emballage & protection",
-    description: "Cartons, films bulles et couvertures pour protéger vos biens fragiles.",
+    title: "Protection des biens",
+    description: "Cartons, couvertures et film — surtout pour le fragile.",
     image: serviceEmballage,
   },
   {
-    title: "Équipe dédiée",
-    description: "Déménageurs formés, ponctuels et à l'écoute de vos contraintes.",
+    title: "Équipe de terrain",
+    description: "Les mêmes visages du devis jusqu'au dernier carton.",
     image: serviceEquipe,
   },
 ];
 
-const services = [
-  { title: "Préparation", items: ["Fourniture de cartons", "Emballage des biens", "Protection des objets fragiles"] },
-  { title: "Transport", items: ["Camions de différentes capacités", "Chargement & déchargement", "Assurance des biens"] },
-  { title: "Installation", items: ["Montage des meubles", "Installation des équipements", "Mise en place des objets"] },
-  { title: "Nettoyage", items: ["Nettoyage avant départ", "Nettoyage après déménagement", "Finition impeccable"] },
-  { title: "Organisation", items: ["Rangement", "Aménagement des espaces", "Décoration de base"] },
+const prestations = [
+  {
+    title: "Avant le jour J",
+    items: ["Cartons fournis ou apportés par vos soins", "Emballage sur demande", "Inventaire des pièces fragiles"],
+  },
+  {
+    title: "Le jour du déménagement",
+    items: ["Chargement méthodique", "Transport intra-Kinshasa", "Gestion des étages et ascenseurs"],
+  },
+  {
+    title: "À l'arrivée",
+    items: ["Déchargement et placement", "Remontage des meubles", "Reprise des déchets d'emballage"],
+  },
 ];
+
+const etapes = [
+  {
+    num: "01",
+    title: "Vous décrivez le déménagement",
+    text: "Commune, quartier, étages, nombre de pièces — le formulaire prend quelques minutes.",
+  },
+  {
+    num: "02",
+    title: "On vous rappelle sous 24 h",
+    text: "Un conseiller affine le devis et répond à vos questions pratiques.",
+  },
+  {
+    num: "03",
+    title: "Date confirmée, équipe assignée",
+    text: "Vous savez qui vient, à quelle heure, avec quel matériel.",
+  },
+  {
+    num: "04",
+    title: "Installation chez vous",
+    text: "Du camion jusqu'à la dernière armoire, on reste jusqu'au bout.",
+  },
+];
+
+const engagements = [
+  "Couverture des 24 communes de Kinshasa",
+  "Devis détaillé avant engagement",
+  "Matériel de protection inclus",
+  "Interlocuteur unique du devis à la livraison",
+];
+
+function DmBtn({
+  children,
+  onClick,
+  variant = "primary",
+  className = "",
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+  variant?: "primary" | "outline-light" | "dark";
+  className?: string;
+}) {
+  const styles = {
+    primary:
+      "bg-or-vif text-charbon hover:bg-charbon hover:text-white border border-or-vif hover:border-charbon",
+    "outline-light":
+      "border-2 border-white/90 text-white hover:bg-white hover:text-charbon",
+    dark: "bg-charbon text-white hover:bg-or-vif hover:text-charbon border border-charbon hover:border-or-vif",
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={`inline-flex items-center justify-center gap-2 px-7 py-3.5 text-[15px] font-semibold tracking-wide transition-all duration-300 ${styles[variant]} ${className}`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function SectionLabel({ children }: { children: ReactNode }) {
+  return (
+    <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-or-bronze mb-3">
+      {children}
+    </p>
+  );
+}
 
 function Demenagement() {
   const [devisOpen, setDevisOpen] = useState(false);
+  const openDevis = () => setDevisOpen(true);
 
   return (
-    <main className="min-h-screen bg-background font-sans">
+    <main className="min-h-screen font-sans antialiased" data-demenagement-site>
       <DemenagementDevisModal open={devisOpen} onClose={() => setDevisOpen(false)} />
 
       {/* Hero */}
-      <section className="relative h-[65vh] min-h-120 overflow-hidden">
-        <PortalHeader portalId="demenagement" />
-        <img src={demenagementHero} alt="Déménagement YOLO Kinshasa" className="absolute inset-0 h-full w-full object-cover" />
-        <div className="absolute inset-0 bg-linear-to-b from-black/60 via-black/40 to-black/80" />
-        <div className="relative z-10 mx-auto max-w-7xl px-6 h-full flex flex-col justify-end pb-16 text-white">
-          <p className="text-xs uppercase tracking-[0.4em] text-or-vif mb-4">Portail 02 · Kinshasa</p>
-          <h1 className="font-display text-5xl md:text-6xl font-semibold max-w-3xl">Déménagement Assisté</h1>
-          <p className="mt-4 max-w-xl text-white/80">
-            De la première caisse au dernier meuble installé — dans les 24 communes de Kinshasa.
-          </p>
-          <button
-            type="button"
-            onClick={() => setDevisOpen(true)}
-            className="mt-8 inline-flex w-fit items-center gap-2 bg-or-vif text-charbon px-8 py-4 rounded-full text-sm font-semibold hover:bg-white transition"
-          >
-            Demande de devis
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-          </button>
+      <section className="relative min-h-[88vh] flex flex-col overflow-hidden bg-charbon">
+        <PortalHeader portalId="demenagement" onAction={(a) => a === "devis" && openDevis()} />
+        <div className="absolute inset-0">
+          <img
+            src={demenagementHero}
+            alt="Équipe YOLO en intervention déménagement à Kinshasa"
+            className="dm-hero-image h-full w-full object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-linear-to-r from-charbon/92 via-charbon/55 to-charbon/20" />
         </div>
-      </section>
 
-      {/* Galerie services */}
-      <section className="mx-auto max-w-7xl px-6 py-16">
-        <p className="text-xs uppercase tracking-[0.4em] text-or-vif mb-3 text-center">Notre équipe</p>
-        <h2 className="font-display text-3xl md:text-4xl text-center mb-10">Un service complet, partout à Kinshasa</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {serviceShowcase.map((s) => (
-            <article key={s.title} className="group rounded-2xl overflow-hidden border border-border bg-card">
-              <div className="aspect-4/3 overflow-hidden">
-                <img
-                  src={s.image}
-                  alt={s.title}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-              </div>
-              <div className="p-5">
-                <h3 className="font-display text-lg font-semibold mb-2">{s.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{s.description}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section id="services" className="mx-auto max-w-7xl px-6 pb-20">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {services.map((s) => (
-            <div key={s.title} className="rounded-xl border border-border bg-card p-7">
-              <h3 className="font-display text-2xl mb-4">{s.title}</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                {s.items.map((i) => (
-                  <li key={i} className="flex gap-3">
-                    <span className="text-or-vif">—</span> {i}
-                  </li>
-                ))}
-              </ul>
+        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col justify-end px-6 pb-16 pt-32 md:pb-24">
+          <ScrollReveal>
+            <SectionLabel>Kinshasa · Service sur mesure</SectionLabel>
+            <h1 className="max-w-2xl text-[clamp(2.4rem,5vw,3.65rem)] font-bold leading-[1.08] text-white">
+              Votre déménagement,
+              <br />
+              <span className="text-or-vif">sans mauvaise surprise.</span>
+            </h1>
+            <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-white/78">
+              Emballage, transport et installation — avec une équipe qui connaît les rues, les étages
+              sans ascenseur et les 24 communes de la ville.
+            </p>
+            <div className="mt-9 flex flex-wrap gap-4">
+              <DmBtn onClick={openDevis}>
+                Demander un devis
+                <ArrowRight className="h-4 w-4" />
+              </DmBtn>
+              <a
+                href="#realisations"
+                className="inline-flex items-center gap-2 px-2 py-3.5 text-[15px] font-medium text-white/85 underline-offset-4 hover:text-white hover:underline"
+              >
+                Voir nos interventions
+              </a>
             </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* Bandeau confiance */}
+      <section className="border-b border-black/5 bg-white">
+        <div className="mx-auto grid max-w-6xl grid-cols-2 gap-6 px-6 py-10 md:grid-cols-4 md:gap-8 md:py-12">
+          {[
+            { n: "24", u: "communes" },
+            { n: "24 h", u: "premier retour" },
+            { n: "4", u: "étapes claires" },
+            { n: "1", u: "interlocuteur dédié" },
+          ].map((s, i) => (
+            <ScrollReveal key={s.u} delayMs={i * 80} className="text-center md:text-left">
+              <p className="font-display text-3xl font-bold text-charbon md:text-4xl">{s.n}</p>
+              <p className="mt-1 text-sm text-[var(--dm-muted)]">{s.u}</p>
+            </ScrollReveal>
           ))}
         </div>
-
-        <div id="processus" className="mt-16 rounded-2xl bg-charbon text-white p-10 md:p-14 text-center border border-white/10">
-          <h2 className="font-display text-3xl md:text-4xl mb-4">Obtenez votre devis personnalisé</h2>
-          <p className="text-white/60 max-w-xl mx-auto mb-8">
-            Commune, quartier, étage, ascenseur, nombre de pièces — décrivez votre déménagement en quelques minutes.
-            Réponse sous 24h par notre équipe logistique.
-          </p>
-          <button
-            type="button"
-            onClick={() => setDevisOpen(true)}
-            className="inline-flex items-center gap-2 bg-or-vif text-charbon px-8 py-4 rounded-full text-sm font-semibold hover:bg-white transition"
-          >
-            Demande de devis gratuit
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-          </button>
-        </div>
-
-        <PortalHomeLink variant="footer" className="mt-12 inline-flex text-muted-foreground hover:text-foreground" />
       </section>
+
+      {/* Intro */}
+      <section className="py-20 md:py-28">
+        <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 md:grid-cols-2 md:gap-16">
+          <ScrollReveal>
+            <SectionLabel>Qui sommes-nous</SectionLabel>
+            <h2 className="text-[clamp(1.85rem,3vw,2.5rem)] font-bold leading-tight text-charbon">
+              Le sérieux d'une entreprise de chantier, le confort d'un concierge.
+            </h2>
+            <p className="mt-5 text-[17px] leading-[1.75] text-[var(--dm-muted)]">
+              On ne promet pas la lune : on arrive avec du matériel, du temps, et des gens qui
+              savent manier un frigo au 4<sup>e</sup> sans ascenseur. Que vous quittiez Gombe pour
+              Ngaliema ou Lemba pour Masina, on adapte l'équipe et le camion.
+            </p>
+            <ul className="mt-8 space-y-3">
+              {engagements.map((item) => (
+                <li key={item} className="flex gap-3 text-[15px] text-charbon/90">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-or-vif" strokeWidth={2.5} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </ScrollReveal>
+          <ScrollReveal delayMs={120}>
+            <div className="relative aspect-[4/5] overflow-hidden shadow-[0_24px_60px_-20px_rgba(0,0,0,0.35)]">
+              <img
+                src={serviceInterieur}
+                alt="Déménageurs YOLO à l'intérieur d'un logement"
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-charbon/80 to-transparent p-6 pt-16">
+                <p className="text-sm font-medium text-white/90">
+                  « Chaque déménagement a ses contraintes. On les note, on s'y prépare. »
+                </p>
+                <p className="mt-2 text-xs text-white/55">— Équipe logistique YOLO</p>
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* Réalisations / galerie */}
+      <section id="realisations" className="bg-white py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-6">
+          <ScrollReveal className="mb-12 max-w-xl md:mb-16">
+            <SectionLabel>Nos interventions</SectionLabel>
+            <h2 className="text-[clamp(1.85rem,3vw,2.5rem)] font-bold text-charbon">
+              Ce qu'on fait concrètement sur le terrain
+            </h2>
+            <p className="mt-4 text-[17px] leading-relaxed text-[var(--dm-muted)]">
+              Pas de stock photos génériques : voici le type de prestation que nos équipes réalisent
+              chaque semaine à Kinshasa.
+            </p>
+          </ScrollReveal>
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            {realisations.map((item, i) => (
+              <ScrollReveal key={item.title} delayMs={i * 90}>
+                <article className="dm-service-card group overflow-hidden bg-[var(--dm-cream)]">
+                  <div className="aspect-[16/10] overflow-hidden">
+                    <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
+                  </div>
+                  <div className="border-t border-black/5 px-6 py-5">
+                    <h3 className="font-display text-xl font-semibold text-charbon">{item.title}</h3>
+                    <p className="mt-2 text-[15px] leading-relaxed text-[var(--dm-muted)]">
+                      {item.description}
+                    </p>
+                  </div>
+                </article>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Prestations */}
+      <section id="services" className="py-20 md:py-28">
+        <div className="mx-auto max-w-6xl px-6">
+          <ScrollReveal className="mb-12 text-center md:mb-16">
+            <SectionLabel>Prestations</SectionLabel>
+            <h2 className="text-[clamp(1.85rem,3vw,2.5rem)] font-bold text-charbon">
+              Du cartons vides au canapé en place
+            </h2>
+          </ScrollReveal>
+
+          <div className="grid gap-8 md:grid-cols-3">
+            {prestations.map((block, i) => (
+              <ScrollReveal key={block.title} delayMs={i * 100}>
+                <div className="h-full border border-black/8 bg-white p-8 shadow-sm">
+                  <h3 className="font-display text-lg font-bold text-charbon">{block.title}</h3>
+                  <ul className="mt-5 space-y-3 border-t border-black/6 pt-5">
+                    {block.items.map((line) => (
+                      <li key={line} className="flex gap-2.5 text-[15px] text-[var(--dm-muted)]">
+                        <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-or-vif" />
+                        {line}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Processus */}
+      <section id="processus" className="bg-charbon py-20 text-white md:py-28">
+        <div className="mx-auto max-w-6xl px-6">
+          <ScrollReveal className="mb-14 md:mb-16">
+            <SectionLabel>Comment ça se passe</SectionLabel>
+            <h2 className="max-w-lg text-[clamp(1.85rem,3vw,2.5rem)] font-bold leading-tight">
+              Quatre étapes. Pas de jargon.
+            </h2>
+          </ScrollReveal>
+
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+            {etapes.map((step, i) => (
+              <ScrollReveal key={step.num} delayMs={i * 90}>
+                <div className="border-t-2 border-or-vif pt-5">
+                  <p className="font-display text-4xl font-bold text-or-vif/35">{step.num}</p>
+                  <h3 className="mt-3 font-display text-lg font-semibold">{step.title}</h3>
+                  <p className="mt-2 text-[15px] leading-relaxed text-white/62">{step.text}</p>
+                </div>
+              </ScrollReveal>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="py-20 md:py-24">
+        <ScrollReveal>
+          <div className="mx-auto max-w-6xl px-6">
+            <div className="relative overflow-hidden bg-white px-8 py-14 text-center shadow-[0_8px_40px_-12px_rgba(0,0,0,0.12)] md:px-16 md:py-16">
+              <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full bg-or-vif/10" />
+              <h2 className="font-display text-[clamp(1.75rem,3vw,2.35rem)] font-bold text-charbon">
+                Prêt à planifier votre déménagement ?
+              </h2>
+              <p className="mx-auto mt-4 max-w-md text-[16px] leading-relaxed text-[var(--dm-muted)]">
+                Le formulaire reprend vos adresses de départ et d'arrivée, les étages, le nombre de
+                pièces. On revient vers vous rapidement.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                <DmBtn onClick={openDevis} variant="dark">
+                  Demande de devis gratuit
+                  <ArrowRight className="h-4 w-4" />
+                </DmBtn>
+                <Link
+                  to="/contact"
+                  search={contactSearch("demenagement")}
+                  className="inline-flex items-center gap-2 text-[15px] font-medium text-charbon/75 hover:text-charbon"
+                >
+                  <Phone className="h-4 w-4" />
+                  Nous appeler
+                </Link>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+      </section>
+
+      <footer className="border-t border-black/8 py-10 text-center">
+        <PortalHomeLink
+          variant="footer"
+          className="inline-flex text-sm text-[var(--dm-muted)] hover:text-charbon"
+        />
+      </footer>
     </main>
   );
 }

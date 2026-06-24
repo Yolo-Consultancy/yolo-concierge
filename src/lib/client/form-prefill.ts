@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { getCurrentClient, hydrateCurrentClient, type ClientAccount } from "./auth";
 
 export type ClientContactFormFields = {
@@ -50,10 +50,12 @@ export async function resolveClientAccount(): Promise<ClientAccount | null> {
 
 /** Hook : coordonnées du compte connecté pour préremplir les formulaires. */
 export function useClientContactPrefill() {
-  const [account, setAccount] = useState<ClientAccount | null>(() => getCurrentClient());
+  const [account, setAccount] = useState<ClientAccount | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    const cached = getCurrentClient();
+    if (cached && !cancelled) setAccount(cached);
     void resolveClientAccount().then((acc) => {
       if (!cancelled && acc) setAccount(acc);
     });
@@ -62,12 +64,25 @@ export function useClientContactPrefill() {
     };
   }, []);
 
-  const fields = account ? clientContactFieldsFromAccount(account) : emptyClientContactFields();
+  const fields = useMemo(
+    () => (account ? clientContactFieldsFromAccount(account) : emptyClientContactFields()),
+    [account],
+  );
+
+  const fullName = useMemo(
+    () => (account ? fullNameFromAccount(account) : ""),
+    [account],
+  );
+
+  const phoneWithCountry = useMemo(
+    () => (account ? phoneWithCountryFromAccount(account) : ""),
+    [account],
+  );
 
   return {
     account,
     fields,
-    fullName: account ? fullNameFromAccount(account) : "",
-    phoneWithCountry: account ? phoneWithCountryFromAccount(account) : "",
+    fullName,
+    phoneWithCountry,
   };
 }

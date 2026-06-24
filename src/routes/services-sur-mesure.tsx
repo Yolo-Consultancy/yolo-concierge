@@ -39,14 +39,20 @@ function SurMesure() {
   });
 
   useEffect(() => {
-    if (!account) return;
-    setForm((prev) => ({
-      ...prev,
-      name: prev.name || fullName,
-      email: prev.email || fields.email,
-      phone: prev.phone || phoneWithCountry,
-    }));
-  }, [account, fields, fullName, phoneWithCountry]);
+    if (!account?.id) return;
+    setForm((prev) => {
+      const next = {
+        ...prev,
+        name: prev.name || fullName,
+        email: prev.email || fields.email,
+        phone: prev.phone || phoneWithCountry,
+      };
+      if (next.name === prev.name && next.email === prev.email && next.phone === prev.phone) {
+        return prev;
+      }
+      return next;
+    });
+  }, [account?.id, fields, fullName, phoneWithCountry]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

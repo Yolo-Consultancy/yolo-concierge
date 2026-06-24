@@ -46,15 +46,26 @@ export function ContactModal({
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
-    if (!account) return;
-    setForm((prev) => ({
-      ...prev,
-      name: prev.name || fullName,
-      email: prev.email || fields.email,
-      phone: prev.phone || fields.phone,
-      countryCode: fields.countryCode,
-    }));
-  }, [account, fields, fullName]);
+    if (!account?.id) return;
+    setForm((prev) => {
+      const next = {
+        ...prev,
+        name: prev.name || fullName,
+        email: prev.email || fields.email,
+        phone: prev.phone || fields.phone,
+        countryCode: fields.countryCode,
+      };
+      if (
+        next.name === prev.name &&
+        next.email === prev.email &&
+        next.phone === prev.phone &&
+        next.countryCode === prev.countryCode
+      ) {
+        return prev;
+      }
+      return next;
+    });
+  }, [account?.id, fields, fullName]);
 
   const inputCls =
     "w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-or-vif transition";
