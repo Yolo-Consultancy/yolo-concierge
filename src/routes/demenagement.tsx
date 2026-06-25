@@ -339,7 +339,7 @@ function Demenagement() {
               <h2 className="font-display text-[clamp(1.75rem,3vw,2.35rem)] font-bold text-charbon">
                 Prêt à planifier votre déménagement ?
               </h2>
-              <p className="mx-auto mt-4 max-w-md text-[16px] leading-relaxed text-[var(--dm-muted)]">
+              <p className="mx-auto mt-4 max-w-md text-[16px] leading-relaxed text-(--dm-muted)">
                 Le formulaire reprend vos adresses de départ et d'arrivée, les étages, le nombre de
                 pièces. On revient vers vous rapidement.
               </p>
@@ -365,7 +365,7 @@ function Demenagement() {
       <footer className="border-t border-black/8 py-10 text-center">
         <PortalHomeLink
           variant="footer"
-          className="inline-flex text-sm text-[var(--dm-muted)] hover:text-charbon"
+          className="inline-flex text-sm text-(--dm-muted) hover:text-charbon"
         />
       </footer>
     </main>

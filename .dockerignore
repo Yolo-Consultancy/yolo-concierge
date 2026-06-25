@@ -1,0 +1,9 @@
+node_modules
+dist
+.output
+.tanstack
+.git
+*.md
+.env
+.env.*
+!.env.example
