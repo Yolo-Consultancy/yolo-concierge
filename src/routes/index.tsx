@@ -52,7 +52,7 @@ function Index() {
       <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:py-5">
           <YoloLogo
-            variant="black"
+            variant="yellow"
             size="md"
             to="/"
             subtitle="Le Concierge"

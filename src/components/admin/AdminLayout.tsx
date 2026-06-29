@@ -88,7 +88,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
       {/* Topbar mobile */}
       <header className="lg:hidden sticky top-0 z-30 bg-charbon border-b border-white/10 flex items-center justify-between px-4 h-14">
         <Link to="/admin">
-          <YoloLogo variant="white" size="sm" />
+          <YoloLogo variant="yellow" size="sm" />
         </Link>
         <button onClick={() => setOpen(true)} className="p-2 rounded text-white/70 hover:bg-white/10 hover:text-white">
           <Menu className="h-5 w-5" />

@@ -123,7 +123,7 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6 md:py-4">
         <div className="flex items-center gap-3 min-w-0">
           <YoloLogo
-            variant="white"
+            variant="yellow"
             size="md"
             to={portal.publicPath as "/location-vehicules"}
             subtitle={portal.name}
@@ -195,7 +195,7 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
           </SheetTrigger>
           <SheetContent side="right" className="border-white/10 bg-charbon text-white">
             <SheetTitle className="sr-only">YOLO Le Concierge — {portal.name}</SheetTitle>
-            <YoloLogo variant="white" size="md" subtitle={portal.name} />
+            <YoloLogo variant="yellow" size="md" subtitle={portal.name} />
             <nav className="mt-8 flex flex-col gap-2">
               <SheetClose asChild>
                 <Link

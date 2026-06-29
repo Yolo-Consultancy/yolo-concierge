@@ -75,7 +75,7 @@ function DriverShell() {
     <DriverContext.Provider value={{ account }}>
       <div className="min-h-screen bg-charbon text-white flex flex-col lg:flex-row font-sans" data-yolo-space>
         <header className="lg:hidden fixed top-0 inset-x-0 z-40 bg-charbon/95 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 h-16">
-          <YoloLogo variant="white" size="sm" to="/driver" subtitle="Chauffeur" />
+          <YoloLogo variant="yellow" size="sm" to="/driver" subtitle="Chauffeur" />
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 -mr-2 rounded-lg text-white/70 hover:text-white hover:bg-white/5"
