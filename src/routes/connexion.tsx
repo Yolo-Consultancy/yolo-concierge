@@ -116,7 +116,7 @@ function ConnexionPage() {
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <YoloLogo variant="yellow" size="lg" to="/" centered className="mx-auto mb-3" />
+          <YoloLogo variant="white" size="lg" to="/" centered className="mx-auto mb-3" />
           <p className="text-sm text-white/60">
             {portal
               ? `Connexion — ${portal.name}`

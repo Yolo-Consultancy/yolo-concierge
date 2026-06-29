@@ -71,7 +71,7 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
       <div className="relative w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
-          <YoloLogo variant="yellow" size="xl" centered className="mx-auto" />
+          <YoloLogo variant="white" size="xl" centered className="mx-auto" />
           <p className="mt-3 text-xs uppercase tracking-[0.4em] text-white/40">
             Espace Administrateur
           </p>

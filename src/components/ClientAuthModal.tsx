@@ -3,6 +3,7 @@ import { useState } from "react";
 import { registerClient, loginClient, type ClientAccount } from "@/lib/client/auth";
 import type { PortalId } from "@/config/portals";
 import { ContactPhoneField } from "@/components/ContactPhoneField";
+import { YoloLogo } from "@/components/YoloLogo";
 import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 
 type Mode = "choice" | "login" | "register";
@@ -117,6 +118,12 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
         </div>
 
         <div className="border-t border-white/10" />
+
+        {(mode === "login" || mode === "register") && (
+          <div className="flex justify-center px-6 pt-5 pb-1">
+            <YoloLogo variant="white" size="md" centered />
+          </div>
+        )}
 
         <div className="p-6">
           {/* ── Mode Choix ── */}
