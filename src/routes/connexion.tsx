@@ -84,6 +84,21 @@ function ConnexionPage() {
     e.preventDefault();
     setError("");
 
+    if (!reg.firstName.trim() || !reg.lastName.trim() || !reg.email.trim()) {
+      setError("Le prénom, le nom et l'e-mail sont obligatoires.");
+      return;
+    }
+
+    if (!reg.password.trim() || !reg.confirmPassword.trim()) {
+      setError("Le mot de passe et sa confirmation sont obligatoires.");
+      return;
+    }
+
+    if (reg.password.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+
     if (reg.password !== reg.confirmPassword) {
       setError("Les mots de passe ne correspondent pas.");
       return;
@@ -194,32 +209,47 @@ function ConnexionPage() {
           ) : (
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <input
-                  required
-                  value={reg.firstName}
-                  onChange={(e) => setReg({ ...reg, firstName: e.target.value })}
-                  placeholder="Prénom"
-                  className={inputCls}
-                />
-                <input
-                  required
-                  value={reg.lastName}
-                  onChange={(e) => setReg({ ...reg, lastName: e.target.value })}
-                  placeholder="Nom"
-                  className={inputCls}
-                />
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-white/50 font-medium mb-1.5" data-required>
+                    Prénom
+                  </label>
+                  <input
+                    required
+                    value={reg.firstName}
+                    onChange={(e) => setReg({ ...reg, firstName: e.target.value })}
+                    placeholder="Prénom"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-white/50 font-medium mb-1.5" data-required>
+                    Nom
+                  </label>
+                  <input
+                    required
+                    value={reg.lastName}
+                    onChange={(e) => setReg({ ...reg, lastName: e.target.value })}
+                    placeholder="Nom"
+                    className={inputCls}
+                  />
+                </div>
               </div>
 
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
-                <input
-                  type="email"
-                  required
-                  value={reg.email}
-                  onChange={(e) => setReg({ ...reg, email: e.target.value })}
-                  placeholder="E-mail"
-                  className={`${inputCls} pl-11`}
-                />
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-white/50 font-medium mb-1.5" data-required>
+                  E-mail
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                  <input
+                    type="email"
+                    required
+                    value={reg.email}
+                    onChange={(e) => setReg({ ...reg, email: e.target.value })}
+                    placeholder="E-mail"
+                    className={`${inputCls} pl-11`}
+                  />
+                </div>
               </div>
 
               <ContactPhoneField
@@ -239,23 +269,34 @@ function ConnexionPage() {
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <input
-                  type="password"
-                  required
-                  minLength={6}
-                  value={reg.password}
-                  onChange={(e) => setReg({ ...reg, password: e.target.value })}
-                  placeholder="Mot de passe"
-                  className={inputCls}
-                />
-                <input
-                  type="password"
-                  required
-                  value={reg.confirmPassword}
-                  onChange={(e) => setReg({ ...reg, confirmPassword: e.target.value })}
-                  placeholder="Confirmation"
-                  className={inputCls}
-                />
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-white/50 font-medium mb-1.5" data-required>
+                    Mot de passe
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={reg.password}
+                    onChange={(e) => setReg({ ...reg, password: e.target.value })}
+                    placeholder="6 caractères minimum"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-white/50 font-medium mb-1.5" data-required>
+                    Confirmation
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={reg.confirmPassword}
+                    onChange={(e) => setReg({ ...reg, confirmPassword: e.target.value })}
+                    placeholder="Confirmer le mot de passe"
+                    className={inputCls}
+                  />
+                </div>
               </div>
 
               {error && (

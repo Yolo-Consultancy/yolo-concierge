@@ -277,8 +277,20 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
 
   const validateStep = (): boolean => {
     if (step === 0) {
-      if (!contact.firstName.trim() || !contact.lastName.trim() || !contact.email.trim() || !contact.phone.trim()) {
-        toast.error("Renseignez vos coordonnées complètes.");
+      if (!contact.firstName.trim()) {
+        toast.error("Le prénom est obligatoire.");
+        return false;
+      }
+      if (!contact.lastName.trim()) {
+        toast.error("Le nom est obligatoire.");
+        return false;
+      }
+      if (!contact.email.trim()) {
+        toast.error("L'adresse e-mail est obligatoire.");
+        return false;
+      }
+      if (!contact.phone.trim()) {
+        toast.error("Le numéro de téléphone est obligatoire.");
         return false;
       }
       return true;
@@ -398,6 +410,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                 <div>
                   <label className="yolo-form-label" data-required>Prénom</label>
                   <input
+                    required
                     className={inputCls}
                     value={contact.firstName}
                     onChange={(e) => setContact({ ...contact, firstName: e.target.value })}
@@ -406,6 +419,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                 <div>
                   <label className="yolo-form-label" data-required>Nom</label>
                   <input
+                    required
                     className={inputCls}
                     value={contact.lastName}
                     onChange={(e) => setContact({ ...contact, lastName: e.target.value })}
@@ -416,6 +430,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                 <label className="yolo-form-label" data-required>E-mail</label>
                 <input
                   type="email"
+                  required
                   className={inputCls}
                   value={contact.email}
                   onChange={(e) => setContact({ ...contact, email: e.target.value })}

@@ -56,10 +56,27 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setRegError("");
+
+    if (!reg.firstName.trim() || !reg.lastName.trim() || !reg.email.trim()) {
+      setRegError("Le prénom, le nom et l'e-mail sont obligatoires.");
+      return;
+    }
+
+    if (!reg.password.trim() || !reg.confirmPassword.trim()) {
+      setRegError("Le mot de passe et sa confirmation sont obligatoires.");
+      return;
+    }
+
+    if (reg.password.length < 6) {
+      setRegError("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+
     if (reg.password !== reg.confirmPassword) {
       setRegError("Les mots de passe ne correspondent pas.");
       return;
     }
+
     setLoading(true);
     const result = await registerClient({ ...reg, ...(portal ? { portal } : {}) });
     setLoading(false);
@@ -311,6 +328,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
                 <input
                   type="password"
                   required
+                  minLength={6}
                   value={reg.confirmPassword}
                   onChange={(e) => setReg({ ...reg, confirmPassword: e.target.value })}
                   placeholder="Répétez votre mot de passe"
