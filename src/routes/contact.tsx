@@ -12,7 +12,7 @@ import { getSettings } from "@/lib/admin/store";
 import {
   contactConfig,
   formatPhoneDisplay,
-  mapsDirectionsUrl,
+  mapsEmbedUrl,
   whatsappLink,
 } from "@/config/contact";
 import { toast } from "sonner";
@@ -94,7 +94,7 @@ function ContactPage() {
 
   const phoneDisplay = formatPhoneDisplay(settings.whatsappNumber);
   const telHref = `tel:+${settings.whatsappNumber.replace(/\D/g, "")}`;
-  const mapsUrl = mapsDirectionsUrl(settings.address || contactConfig.mapsQuery);
+  const mapsUrl = contactConfig.mapsShareUrl;
   const serviceType =
     portalId === "demenagement" ? "demenagement" : portalId === "sur-mesure" ? "sur_mesure" : portalId === "vehicules" ? "vehicules" : "general";
 
@@ -323,6 +323,16 @@ function ContactPage() {
                     {"\n"}
                     <span className="text-or-bronze">{contactConfig.city}</span> — {contactConfig.country}
                   </p>
+                  <div className="mt-4 overflow-hidden border border-black/8">
+                    <iframe
+                      title={`YOLO Le Concierge — ${contactConfig.city}`}
+                      src={mapsEmbedUrl()}
+                      className="h-52 w-full border-0"
+                      loading="lazy"
+                      referrerPolicy="no-referrer-when-downgrade"
+                      allowFullScreen
+                    />
+                  </div>
                   <a
                     href={mapsUrl}
                     target="_blank"

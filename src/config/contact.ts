@@ -4,6 +4,11 @@ export const contactConfig = {
   country: "République Démocratique du Congo",
   defaultAddress: "Gombe, Kinshasa, RDC",
   mapsQuery: "Gombe, Kinshasa, RDC",
+  mapsShareUrl: "https://maps.app.goo.gl/zgqkUcuJHZdGmurH7",
+  mapsCoordinates: {
+    lat: -4.309066,
+    lng: 15.29769,
+  },
   openingHours: [
     { days: "Lundi - Vendredi", hours: "8h00 - 20h00" },
     { days: "Samedi", hours: "8h00 - 18h00" },
@@ -40,6 +45,12 @@ export function whatsappLink(number: string, text?: string) {
   return text ? `${base}?text=${encodeURIComponent(text)}` : base;
 }
 
-export function mapsDirectionsUrl(query: string) {
+export function mapsDirectionsUrl(query?: string) {
+  if (!query) return contactConfig.mapsShareUrl;
   return `https://maps.google.com/?q=${encodeURIComponent(query)}`;
+}
+
+export function mapsEmbedUrl() {
+  const { lat, lng } = contactConfig.mapsCoordinates;
+  return `https://www.google.com/maps?q=${lat},${lng}&hl=fr&z=16&output=embed`;
 }
