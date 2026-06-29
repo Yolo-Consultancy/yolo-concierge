@@ -5,6 +5,7 @@ import { Star, CheckCircle } from "lucide-react";
 import { publicApi } from "@/lib/api/client";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/SiteFooter";
+import { YoloLogo } from "@/components/YoloLogo";
 
 export const Route = createFileRoute("/evaluer/$token")({
   head: () => ({
@@ -203,9 +204,7 @@ function EvaluerPage() {
 
       <div className="w-full max-w-lg relative z-10">
         <div className="text-center mb-8">
-          <span className="font-display text-3xl font-bold text-white">
-            YOLO<span className="text-or-vif">.</span>
-          </span>
+          <YoloLogo variant="yellow" size="lg" centered className="mx-auto" />
           <p className="text-sm text-white/50 mt-2">Comment s'est passée votre course ?</p>
         </div>
 

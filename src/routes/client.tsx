@@ -15,6 +15,7 @@ import { connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/SiteFooter";
+import { YoloLogo } from "@/components/YoloLogo";
 
 export const Route = createFileRoute("/client")({
   head: () => ({
@@ -86,12 +87,7 @@ function ClientShell() {
       <div className="min-h-screen bg-charbon text-white flex flex-col lg:flex-row font-sans" data-yolo-space>
         {/* Mobile Topbar */}
         <header className="lg:hidden fixed top-0 inset-x-0 z-40 bg-charbon/95 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 h-16">
-          <Link to="/client" className="flex items-center gap-2">
-            <span className="font-display text-xl font-bold tracking-tight text-white">
-              YOLO<span className="text-or-vif">.</span>
-            </span>
-            <span className="text-[9px] uppercase tracking-widest text-or-vif">Espace client</span>
-          </Link>
+          <YoloLogo variant="white" size="sm" to="/client" subtitle="Espace client" />
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 -mr-2 rounded-lg text-white/70 hover:text-white hover:bg-white/5"
@@ -110,12 +106,7 @@ function ClientShell() {
           {/* Brand */}
           <div className="h-20 px-8 flex items-center justify-between border-b border-white/5">
             <div>
-              <Link to="/location-vehicules" className="flex items-center gap-2">
-                <span className="font-display text-2xl font-bold tracking-tight text-white">
-                  YOLO<span className="text-or-vif">.</span>
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-or-vif">Espace client</span>
-              </Link>
+              <YoloLogo variant="white" size="md" to="/location-vehicules" subtitle="Espace client" />
             </div>
             <button
               onClick={() => setSidebarOpen(false)}

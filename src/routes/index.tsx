@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFooter } from "@/components/SiteFooter";
+import { YoloLogo } from "@/components/YoloLogo";
 import vehiculesImg from "@/assets/portal-vehicules.jpg";
 import demenagementImg from "@/assets/portal-demenagement.jpg";
 import servicesImg from "@/assets/portal-surmesure.jpg";
@@ -50,14 +51,13 @@ function Index() {
       {/* Top brand strip */}
       <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:py-5">
-          <Link to="/" className="flex items-center gap-3">
-            <span className="font-display text-2xl font-bold tracking-tight">
-              YOLO<span className="text-gold">.</span>
-            </span>
-            <span className="hidden sm:inline text-[10px] uppercase tracking-[0.35em] text-muted-foreground">
-              Le Concierge
-            </span>
-          </Link>
+          <YoloLogo
+            variant="black"
+            size="md"
+            to="/"
+            subtitle="Le Concierge"
+            subtitleClassName="hidden sm:inline text-[10px] uppercase tracking-[0.35em] text-muted-foreground"
+          />
           <div className="hidden md:flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
             Conciergerie disponible 24/7

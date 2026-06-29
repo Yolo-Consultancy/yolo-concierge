@@ -2,6 +2,7 @@
 import { Link } from "@tanstack/react-router";
 import { Menu, LogOut, User, Shield, LayoutGrid } from "lucide-react";
 import { PortalHomeLink } from "@/components/PortalHomeLink";
+import { YoloLogo } from "@/components/YoloLogo";
 import { useEffect, useState } from "react";
 import {
   getClientSession,
@@ -43,14 +44,7 @@ export function SiteHeader() {
     <header className="fixed top-0 inset-x-0 z-50 border-b border-white/10 bg-charbon/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6 md:py-4">
         <div className="flex items-center gap-3">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="font-display text-2xl font-bold text-white drop-shadow-lg">
-              YOLO<span className="text-gold">.</span>
-            </span>
-            <span className="text-xs uppercase tracking-[0.3em] text-white/80 hidden sm:inline">
-              Le Concierge
-            </span>
-          </Link>
+          <YoloLogo variant="white" size="md" to="/" subtitle="Le Concierge" />
           <PortalHomeLink variant="pill" accentClass="text-gold" />
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm text-white/90">
@@ -111,9 +105,8 @@ export function SiteHeader() {
             </button>
           </SheetTrigger>
           <SheetContent side="right" className="border-white/10 bg-charbon text-white">
-            <SheetTitle className="font-display text-2xl text-white">
-              YOLO<span className="text-gold">.</span>
-            </SheetTitle>
+            <SheetTitle className="sr-only">YOLO Le Concierge</SheetTitle>
+            <YoloLogo variant="white" size="md" />
             <nav className="mt-10 flex flex-col gap-3">
               <SheetClose asChild>
                 <Link to="/" className="inline-flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/10 px-3 py-3 text-base font-medium text-white">

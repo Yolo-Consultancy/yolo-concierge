@@ -8,6 +8,7 @@ import { notifyAuthChange } from "@/lib/auth/session";
 import { getPortal, type PortalId } from "@/config/portals";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/SiteFooter";
+import { YoloLogo } from "@/components/YoloLogo";
 
 const PortalClientContext = createContext<{ account: ClientAccount | null; portalId: PortalId }>({
   account: null,
@@ -69,12 +70,7 @@ export function PortalServiceClientShell({ portalId }: { portalId: PortalId }) {
           }`}
         >
           <div className="h-16 px-5 flex items-center justify-between border-b border-white/10">
-            <div>
-              <p className="font-display text-lg font-semibold">
-                YOLO<span className={portal.accentClass}>.</span>
-              </p>
-              <p className="text-[10px] uppercase tracking-widest text-white/40">{portal.name}</p>
-            </div>
+            <YoloLogo variant="white" size="sm" subtitle={portal.name} />
             <button onClick={() => setOpen(false)} className="lg:hidden p-1 text-white/50">
               <X className="h-4 w-4" />
             </button>

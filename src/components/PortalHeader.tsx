@@ -21,6 +21,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { PortalHomeLink } from "@/components/PortalHomeLink";
+import { YoloLogo } from "@/components/YoloLogo";
 
 type PortalHeaderProps = {
   portalId: PortalId;
@@ -121,14 +122,12 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
     <header className="fixed top-0 inset-x-0 z-50 border-b border-white/10 bg-charbon/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6 md:py-4">
         <div className="flex items-center gap-3 min-w-0">
-          <Link to={portal.publicPath as "/location-vehicules"} className="flex flex-col gap-0.5 shrink-0">
-            <span className="font-display text-2xl font-bold text-white drop-shadow-lg">
-              YOLO<span className={accentDot}>.</span>
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.3em] text-white/70 hidden sm:inline">
-              {portal.name}
-            </span>
-          </Link>
+          <YoloLogo
+            variant="white"
+            size="md"
+            to={portal.publicPath as "/location-vehicules"}
+            subtitle={portal.name}
+          />
           <PortalHomeLink variant="pill" accentClass={portal.accentClass} />
         </div>
 
@@ -195,10 +194,8 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
             </button>
           </SheetTrigger>
           <SheetContent side="right" className="border-white/10 bg-charbon text-white">
-            <SheetTitle className="font-display text-2xl text-white">
-              YOLO<span className={accentDot}>.</span>
-            </SheetTitle>
-            <p className="text-xs text-white/50 mt-1 uppercase tracking-widest">{portal.name}</p>
+            <SheetTitle className="sr-only">YOLO Le Concierge — {portal.name}</SheetTitle>
+            <YoloLogo variant="white" size="md" subtitle={portal.name} />
             <nav className="mt-8 flex flex-col gap-2">
               <SheetClose asChild>
                 <Link

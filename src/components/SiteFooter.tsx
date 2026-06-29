@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { LayoutGrid } from "lucide-react";
 import { PORTALS, type PortalId } from "@/config/portals";
 import { contactSearch } from "@/lib/auth/redirect";
+import { YoloLogo } from "@/components/YoloLogo";
 
 type SiteFooterProps = {
   portalId?: PortalId;
@@ -45,9 +46,12 @@ export function SiteFooter({ portalId, variant = "light", className = "" }: Site
       <div className="mx-auto max-w-6xl px-6 py-10 md:py-12">
         <div className="grid gap-8 md:grid-cols-3 md:gap-10">
           <div className="text-center md:text-left">
-            <p className="font-display text-2xl font-bold">
-              YOLO<span className="text-or-vif">.</span>
-            </p>
+            <YoloLogo
+              variant={isDark ? "white" : "black"}
+              size="lg"
+              className={isDark ? "" : "mx-auto md:mx-0"}
+              imgClassName={isDark ? "" : "mx-auto md:mx-0"}
+            />
             <p className={`mt-2 text-sm leading-relaxed ${isDark ? "text-white/65" : "text-[var(--yolo-muted)]"}`}>
               Conciergerie premium à Kinshasa — location, déménagement et services sur mesure.
             </p>

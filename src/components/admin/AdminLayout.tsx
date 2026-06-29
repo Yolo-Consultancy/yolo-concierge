@@ -11,6 +11,7 @@ import { notifyAuthChange } from "@/lib/auth/session";
 import { useAdminNavBadges } from "@/hooks/useAdminNavBadges";
 import { requestAdminBadgesRefresh } from "@/lib/admin/badges";
 import { SiteFooter } from "@/components/SiteFooter";
+import { YoloLogo } from "@/components/YoloLogo";
 
 type NavBadgeKey = "pendingBookings" | "unreadReports";
 
@@ -86,8 +87,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-muted/30 text-foreground font-sans" data-yolo-space>
       {/* Topbar mobile */}
       <header className="lg:hidden sticky top-0 z-30 bg-charbon border-b border-white/10 flex items-center justify-between px-4 h-14">
-        <Link to="/admin" className="font-display text-lg font-semibold text-white">
-          {adminConfig.brand.title}<span className="text-or-vif">.</span>
+        <Link to="/admin">
+          <YoloLogo variant="white" size="sm" />
         </Link>
         <button onClick={() => setOpen(true)} className="p-2 rounded text-white/70 hover:bg-white/10 hover:text-white">
           <Menu className="h-5 w-5" />
@@ -111,10 +112,8 @@ export function AdminLayout({ children }: { children: ReactNode }) {
 
           <div className="relative h-16 px-5 flex items-center justify-between border-b border-white/10">
             <div>
-              <p className="font-display text-lg font-semibold leading-tight text-white">
-                {adminConfig.brand.title}<span className="text-or-vif">.</span>
-              </p>
-              <p className="text-[10px] uppercase tracking-widest text-white/40">
+              <YoloLogo variant="white" size="sm" to="/admin" />
+              <p className="text-[10px] uppercase tracking-widest text-white/40 mt-1">
                 {adminConfig.brand.subtitle} · Location
               </p>
             </div>

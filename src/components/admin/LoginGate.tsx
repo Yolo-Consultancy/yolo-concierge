@@ -2,6 +2,7 @@
 import { useState, type FormEvent } from "react";
 import { Lock, Mail, Eye, EyeOff, AlertCircle, User, UserPlus } from "lucide-react";
 import { login, register } from "@/lib/admin/auth";
+import { YoloLogo } from "@/components/YoloLogo";
 
 type Tab = "login" | "register";
 
@@ -70,10 +71,8 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
       <div className="relative w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-10">
-          <p className="font-display text-4xl font-bold text-white">
-            YOLO<span className="text-or-vif">.</span>
-          </p>
-          <p className="mt-1 text-xs uppercase tracking-[0.4em] text-white/40">
+          <YoloLogo variant="yellow" size="xl" centered className="mx-auto" />
+          <p className="mt-3 text-xs uppercase tracking-[0.4em] text-white/40">
             Espace Administrateur
           </p>
         </div>

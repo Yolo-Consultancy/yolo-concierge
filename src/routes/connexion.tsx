@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { getPortal, type PortalId } from "@/config/portals";
 import { SiteFooter } from "@/components/SiteFooter";
+import { YoloLogo } from "@/components/YoloLogo";
 import { ContactPhoneField } from "@/components/ContactPhoneField";
 import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 
@@ -115,12 +116,7 @@ function ConnexionPage() {
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <Link to="/" className="inline-flex items-center gap-2 mb-3">
-            <span className="font-display text-3xl font-bold text-white tracking-tight">
-              YOLO<span className="text-or-vif">.</span>
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.35em] text-white/50">Le Concierge</span>
-          </Link>
+          <YoloLogo variant="yellow" size="lg" to="/" centered className="mx-auto mb-3" />
           <p className="text-sm text-white/60">
             {portal
               ? `Connexion — ${portal.name}`

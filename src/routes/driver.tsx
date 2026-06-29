@@ -13,6 +13,7 @@ import { connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/SiteFooter";
+import { YoloLogo } from "@/components/YoloLogo";
 
 export const Route = createFileRoute("/driver")({
   head: () => ({
@@ -74,12 +75,7 @@ function DriverShell() {
     <DriverContext.Provider value={{ account }}>
       <div className="min-h-screen bg-charbon text-white flex flex-col lg:flex-row font-sans" data-yolo-space>
         <header className="lg:hidden fixed top-0 inset-x-0 z-40 bg-charbon/95 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-6 h-16">
-          <Link to="/driver" className="flex items-center gap-2">
-            <span className="font-display text-xl font-bold tracking-tight text-white">
-              YOLO<span className="text-amber-400">.</span>
-            </span>
-            <span className="text-[9px] uppercase tracking-widest text-amber-400">Chauffeur</span>
-          </Link>
+          <YoloLogo variant="white" size="sm" to="/driver" subtitle="Chauffeur" />
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="p-2 -mr-2 rounded-lg text-white/70 hover:text-white hover:bg-white/5"
@@ -96,12 +92,7 @@ function DriverShell() {
         >
           <div className="h-20 px-8 flex items-center justify-between border-b border-white/5">
             <div>
-              <Link to="/" className="flex items-center gap-2">
-                <span className="font-display text-2xl font-bold tracking-tight text-white">
-                  YOLO<span className="text-amber-400">.</span>
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-amber-400">Chauffeur</span>
-              </Link>
+              <YoloLogo variant="white" size="md" to="/" subtitle="Chauffeur" />
             </div>
             <button
               onClick={() => setSidebarOpen(false)}

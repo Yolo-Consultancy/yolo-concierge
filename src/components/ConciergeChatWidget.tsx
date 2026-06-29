@@ -10,6 +10,7 @@ import {
   type ChatMessage,
 } from "@/lib/client/support";
 import { getCurrentClient, hydrateCurrentClient, type ClientAccount } from "@/lib/client/auth";
+import { YoloLogo } from "@/components/YoloLogo";
 import {
   appendGuestAgentReply,
   appendGuestUserMessage,
@@ -175,11 +176,13 @@ function ConciergeChatPanel({
       aria-label="Chat concierge YOLO"
     >
       <div className="flex shrink-0 items-center justify-between border-b border-white/10 bg-[#1f1f1f] px-4 py-3">
-        <div className="min-w-0">
-          <p className="font-display text-sm font-semibold text-white">Concierge YOLO</p>
-          <p className="text-[10px] text-white/45 truncate">
-            {account ? `Connecté · ${displayName}` : "Posez vos questions — réponse instantanée"}
-          </p>
+        <div className="flex min-w-0 items-center gap-2.5">
+          <YoloLogo variant="white" size="xs" imgClassName="max-w-[72px]" />
+          <div className="min-w-0">
+            <p className="text-[10px] text-white/45 truncate">
+              {account ? `Connecté · ${displayName}` : "Posez vos questions — réponse instantanée"}
+            </p>
+          </div>
         </div>
         <div className="flex items-center gap-1">
           <button

@@ -8,6 +8,7 @@ import { adminPathForScope, connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { getPortal, type PortalId } from "@/config/portals";
 import { SiteFooter } from "@/components/SiteFooter";
+import { YoloLogo } from "@/components/YoloLogo";
 
 export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
   const portal = getPortal(portalId);
@@ -62,12 +63,11 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
         }`}
       >
         <div className="h-16 px-5 flex items-center justify-between border-b border-white/10">
-          <div>
-            <p className="font-display text-lg font-semibold text-white">
-              YOLO<span className={portal.accentClass}>.</span>
-            </p>
-            <p className="text-[10px] uppercase tracking-widest text-white/40">Admin · {portal.name}</p>
-          </div>
+            <YoloLogo
+              variant="white"
+              size="sm"
+              subtitle={`Admin · ${portal.name}`}
+            />
           <button onClick={() => setOpen(false)} className="lg:hidden text-white/50">
             <X className="h-4 w-4" />
           </button>

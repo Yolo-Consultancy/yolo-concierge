@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFooter } from "@/components/SiteFooter";
+import { YoloLogo } from "@/components/YoloLogo";
 
 export const Route = createFileRoute("/paiement/annule")({
   head: () => ({
@@ -18,6 +19,7 @@ function CancelPage() {
     <main className="min-h-screen bg-charbon text-white flex flex-col">
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         <div className="max-w-lg w-full bg-[#111] border border-white/10 rounded-2xl p-10 text-center">
+          <YoloLogo variant="yellow" size="md" centered className="mx-auto mb-6" />
           <div className="mx-auto mb-6 w-16 h-16 rounded-full bg-red-500/15 border border-red-400/30 flex items-center justify-center text-3xl">
             ✕
           </div>
