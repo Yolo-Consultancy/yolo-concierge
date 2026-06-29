@@ -10,9 +10,8 @@ export const contactConfig = {
     lng: 15.29769,
   },
   openingHours: [
-    { days: "Lundi - Vendredi", hours: "8h00 - 20h00" },
-    { days: "Samedi", hours: "8h00 - 18h00" },
-    { days: "Dimanche", hours: "10h00 - 16h00" },
+    { days: "Lundi - Vendredi", hours: "8h00 - 16h00" },
+    { days: "Samedi", hours: "8h00 - 12h00" },
   ],
   whyChoose: [
     "Service professionnel et irréprochable",

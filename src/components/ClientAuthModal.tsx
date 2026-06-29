@@ -185,7 +185,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
           {mode === "login" && (
             <form onSubmit={handleLogin} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Adresse e-mail <span className="text-red-400">*</span></label>
+                <label className="block text-sm font-medium text-white mb-2" data-required>Adresse e-mail</label>
                 <input
                   type="email"
                   required
@@ -196,7 +196,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Mot de passe <span className="text-red-400">*</span></label>
+                <label className="block text-sm font-medium text-white mb-2" data-required>Mot de passe</label>
                 <input
                   type="password"
                   required
@@ -236,7 +236,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Prénom <span className="text-red-400">*</span></label>
+                  <label className="block text-sm font-medium text-white mb-2" data-required>Prénom</label>
                   <input
                     required
                     value={reg.firstName}
@@ -246,7 +246,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">Nom <span className="text-red-400">*</span></label>
+                  <label className="block text-sm font-medium text-white mb-2" data-required>Nom</label>
                   <input
                     required
                     value={reg.lastName}
@@ -258,7 +258,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Adresse e-mail <span className="text-red-400">*</span></label>
+                <label className="block text-sm font-medium text-white mb-2" data-required>Adresse e-mail</label>
                 <input
                   type="email"
                   required
@@ -287,7 +287,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
 
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Mot de passe <span className="text-red-400">*</span></label>
+                <label className="block text-sm font-medium text-white mb-2" data-required>Mot de passe</label>
                 <input
                   type="password"
                   required
@@ -300,7 +300,7 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Confirmer le mot de passe <span className="text-red-400">*</span></label>
+                <label className="block text-sm font-medium text-white mb-2" data-required>Confirmer le mot de passe</label>
                 <input
                   type="password"
                   required

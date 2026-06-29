@@ -85,7 +85,7 @@ function LocationFields({
         {title}
       </p>
       <div>
-        <label className="yolo-form-label">Commune *</label>
+        <label className="yolo-form-label" data-required>Commune</label>
         <select
           className={selectCls}
           value={value.communeId}
@@ -107,7 +107,7 @@ function LocationFields({
         </select>
       </div>
       <div>
-        <label className="yolo-form-label">Quartier *</label>
+        <label className="yolo-form-label" data-required>Quartier</label>
         <select
           className={selectCls}
           value={value.quartier}
@@ -174,7 +174,7 @@ function FloorFields({
       {value.isElevated && (
         <>
           <div>
-            <label className="yolo-form-label">Niveau / étage *</label>
+            <label className="yolo-form-label" data-required>Niveau / étage</label>
             <input
               type="number"
               min={1}
@@ -396,7 +396,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
               </SectionTitle>
               <div className="grid sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="yolo-form-label">Prénom *</label>
+                  <label className="yolo-form-label" data-required>Prénom</label>
                   <input
                     className={inputCls}
                     value={contact.firstName}
@@ -404,7 +404,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                   />
                 </div>
                 <div>
-                  <label className="yolo-form-label">Nom *</label>
+                  <label className="yolo-form-label" data-required>Nom</label>
                   <input
                     className={inputCls}
                     value={contact.lastName}
@@ -413,7 +413,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                 </div>
               </div>
               <div>
-                <label className="yolo-form-label">E-mail *</label>
+                <label className="yolo-form-label" data-required>E-mail</label>
                 <input
                   type="email"
                   className={inputCls}
@@ -453,7 +453,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
             <div className="space-y-5">
               <SectionTitle icon={Home}>À propos du déménagement</SectionTitle>
               <div>
-                <label className="yolo-form-label">Date souhaitée *</label>
+                <label className="yolo-form-label" data-required>Date souhaitée</label>
                 {quote.moveDate && (
                   <p className="mb-3 text-sm text-charbon font-medium font-display capitalize">
                     {format(parseLocalDate(quote.moveDate), "EEEE d MMMM yyyy", { locale: fr })}
@@ -480,7 +480,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="yolo-form-label">Nombre de chambres *</label>
+                  <label className="yolo-form-label" data-required>Nombre de chambres</label>
                   <input
                     type="number"
                     min={1}

@@ -45,8 +45,9 @@ export function ContactPhoneField({
       <label
         className={isDark ? "block text-sm font-medium text-white mb-2" : "yolo-form-label"}
         htmlFor={id}
+        data-required={required || undefined}
       >
-        {label ?? `Numéro de téléphone${required ? " *" : ""}`}
+        {label ?? "Numéro de téléphone"}
       </label>
       <div
         className={

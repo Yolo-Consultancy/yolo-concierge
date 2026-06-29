@@ -232,7 +232,7 @@ function ContactPage() {
                   )}
                   <div className="grid gap-5 sm:grid-cols-2">
                     <div>
-                      <label className="yolo-form-label">Prénom *</label>
+                      <label className="yolo-form-label" data-required>Prénom</label>
                       <input
                         required
                         value={form.firstName}
@@ -242,7 +242,7 @@ function ContactPage() {
                       />
                     </div>
                     <div>
-                      <label className="yolo-form-label">Nom *</label>
+                      <label className="yolo-form-label" data-required>Nom</label>
                       <input
                         required
                         value={form.lastName}
@@ -254,7 +254,7 @@ function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="yolo-form-label">E-mail *</label>
+                    <label className="yolo-form-label" data-required>E-mail</label>
                     <input
                       required
                       type="email"
@@ -293,7 +293,7 @@ function ContactPage() {
                   </div>
 
                   <div>
-                    <label className="yolo-form-label">Message *</label>
+                    <label className="yolo-form-label" data-required>Message</label>
                     <textarea
                       required
                       rows={5}

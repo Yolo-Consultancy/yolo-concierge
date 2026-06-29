@@ -168,7 +168,7 @@ export function ContactModal({
               )}
 
               <div>
-                <label className="yolo-form-label">Nom complet *</label>
+                <label className="yolo-form-label" data-required>Nom complet</label>
                 <input
                   required
                   type="text"
@@ -181,7 +181,7 @@ export function ContactModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="yolo-form-label">Adresse e-mail *</label>
+                  <label className="yolo-form-label" data-required>Adresse e-mail</label>
                   <input
                     required
                     type="email"
@@ -224,7 +224,7 @@ export function ContactModal({
               />
 
               <div>
-                <label className="yolo-form-label">Message / description du besoin *</label>
+                <label className="yolo-form-label" data-required>Message / description du besoin</label>
                 <textarea
                   required
                   rows={4}

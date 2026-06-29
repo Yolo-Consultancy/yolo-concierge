@@ -460,7 +460,7 @@ export function BookingModal({
           {step === 0 && (
             <div className="space-y-5">
               <div>
-                <label className="yolo-form-label">Sélectionnez vos dates de location *</label>
+                <label className="yolo-form-label" data-required>Sélectionnez vos dates de location</label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <button type="button" className={`${inputCls} pl-11 text-left relative`}>
@@ -580,7 +580,7 @@ export function BookingModal({
               )}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="yolo-form-label">Prénom *</label>
+                  <label className="yolo-form-label" data-required>Prénom</label>
                   <input
                     value={form.firstName}
                     onChange={(e) => setForm({ ...form, firstName: e.target.value })}
@@ -589,7 +589,7 @@ export function BookingModal({
                   />
                 </div>
                 <div>
-                  <label className="yolo-form-label">Nom *</label>
+                  <label className="yolo-form-label" data-required>Nom</label>
                   <input
                     value={form.lastName}
                     onChange={(e) => setForm({ ...form, lastName: e.target.value })}
@@ -600,7 +600,7 @@ export function BookingModal({
               </div>
 
               <div>
-                <label className="yolo-form-label">Adresse e-mail *</label>
+                <label className="yolo-form-label" data-required>Adresse e-mail</label>
                 <input
                   type="email"
                   value={form.email}

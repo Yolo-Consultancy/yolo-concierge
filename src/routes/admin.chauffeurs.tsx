@@ -160,7 +160,7 @@ function ChauffeursPage() {
             </div>
             <div className="p-6 grid sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium mb-1.5">Prénom *</label>
+                <label className="block text-xs font-medium mb-1.5" data-required>Prénom</label>
                 <input
                   className={inputCls}
                   value={editing.firstName}
@@ -168,7 +168,7 @@ function ChauffeursPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5">Nom *</label>
+                <label className="block text-xs font-medium mb-1.5" data-required>Nom</label>
                 <input
                   className={inputCls}
                   value={editing.lastName}
@@ -198,7 +198,7 @@ function ChauffeursPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5">Date de recrutement *</label>
+                <label className="block text-xs font-medium mb-1.5" data-required>Date de recrutement</label>
                 <input
                   type="date"
                   className={inputCls}
@@ -207,7 +207,7 @@ function ChauffeursPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5">Salaire mensuel ({C}) *</label>
+                <label className="block text-xs font-medium mb-1.5" data-required>Salaire mensuel ({C})</label>
                 <input
                   type="number"
                   min={0}

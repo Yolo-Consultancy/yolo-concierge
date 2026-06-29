@@ -452,6 +452,13 @@
   margin-bottom: 0.5rem;
 }
 
+.yolo-form-label[data-required]::after,
+label[data-required]::after {
+  content: " *";
+  color: #ef4444;
+  font-weight: 600;
+}
+
 [data-yolo-form] .yolo-form-input {
   width: 100%;
   background: #fff;
