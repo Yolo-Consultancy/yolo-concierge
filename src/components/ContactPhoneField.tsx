@@ -1,11 +1,12 @@
 import {
   countryOptions,
+  formatCountryOptionLabel,
   formatPhoneInput,
-  getFlagEmoji,
+  getCountryByDialCode,
+  getCountryNameByDialCode,
   phoneDigitsOnly,
   phoneMaxLength,
   phonePlaceholder,
-  PRIORITY_COUNTRY_ISOS,
 } from "@/lib/phone-field";
 
 type ContactPhoneFieldProps = {
@@ -16,7 +17,11 @@ type ContactPhoneFieldProps = {
   inputCls?: string;
   required?: boolean;
   id?: string;
+  variant?: "light" | "dark";
+  label?: string;
 };
+
+const DARK_SELECT_OPTION_CLS = "bg-charbon text-white";
 
 export function ContactPhoneField({
   countryCode,
@@ -26,31 +31,49 @@ export function ContactPhoneField({
   inputCls = "yolo-form-input",
   required = false,
   id = "contact-phone",
+  variant = "light",
+  label,
 }: ContactPhoneFieldProps) {
+  const isDark = variant === "dark";
   const displayPhone = formatPhoneInput(phone, countryCode);
   const maxLen = phoneMaxLength(countryCode);
+  const countryName = getCountryNameByDialCode(countryCode);
+  const selectedCountry = getCountryByDialCode(countryCode);
 
   return (
     <div>
-      <label className="yolo-form-label" htmlFor={id}>
-        Numéro de téléphone{required ? " *" : ""}
+      <label
+        className={isDark ? "block text-sm font-medium text-white mb-2" : "yolo-form-label"}
+        htmlFor={id}
+      >
+        {label ?? `Numéro de téléphone${required ? " *" : ""}`}
       </label>
-      <div className="yolo-phone-field flex overflow-hidden rounded-lg border border-black/12 bg-white shadow-sm transition focus-within:border-or-vif focus-within:ring-2 focus-within:ring-or-vif/20">
+      <div
+        className={
+          isDark
+            ? "flex overflow-hidden rounded-lg border border-white/15 bg-white/5 transition focus-within:border-or-vif focus-within:ring-1 focus-within:ring-or-vif/50"
+            : "yolo-phone-field flex overflow-hidden rounded-lg border border-black/12 bg-white shadow-sm transition focus-within:border-or-vif focus-within:ring-2 focus-within:ring-or-vif/20"
+        }
+      >
         <select
           value={countryCode}
           onChange={(e) => onCountryCodeChange(e.target.value)}
-          className="yolo-form-select shrink-0 border-0 border-r border-black/10 bg-[var(--yolo-cream)] py-3.5 pl-3 pr-2 text-sm font-semibold text-charbon w-[6.5rem] rounded-none focus:outline-none focus:ring-0"
+          className={
+            isDark
+              ? "shrink-0 min-w-[11rem] max-w-[13rem] border-0 border-r border-white/15 bg-charbon py-3.5 pl-3 pr-2 text-sm font-semibold text-white rounded-none focus:outline-none focus:ring-0 scheme-dark"
+              : "yolo-form-select shrink-0 min-w-[11rem] max-w-[13rem] border-0 border-r border-black/10 bg-[var(--yolo-cream)] py-3.5 pl-3 pr-2 text-sm font-semibold text-charbon rounded-none focus:outline-none focus:ring-0"
+          }
           aria-label="Indicatif pays"
         >
           {countryOptions.map((country) => {
             const dial = `+${country.dialCode}`;
-            const isPriority = PRIORITY_COUNTRY_ISOS.includes(
-              country.iso2 as (typeof PRIORITY_COUNTRY_ISOS)[number],
-            );
             return (
-              <option key={`${country.iso2}-${country.dialCode}`} value={dial}>
-                {getFlagEmoji(country.iso2)} {dial}
-                {isPriority ? ` · ${country.name}` : ""}
+              <option
+                key={`${country.iso2}-${country.dialCode}`}
+                value={dial}
+                className={isDark ? DARK_SELECT_OPTION_CLS : undefined}
+              >
+                {formatCountryOptionLabel(country)}
               </option>
             );
           })}
@@ -68,10 +91,20 @@ export function ContactPhoneField({
           className={`${inputCls} min-w-0 flex-1 rounded-none border-0 shadow-none focus:ring-0`}
         />
       </div>
-      <p className="mt-1.5 text-xs yolo-form-muted">
-        {countryCode === "+243"
-          ? "RDC : 9 chiffres sans le 0 initial (ex. 812 345 678)"
-          : "Saisissez votre numéro sans l'indicatif pays"}
+      <p className={isDark ? "mt-1.5 text-xs text-white/45" : "mt-1.5 text-xs yolo-form-muted"}>
+        {countryName ? (
+          <>
+            Pays : <span className="font-medium">{countryName}</span> ({countryCode})
+            {countryCode === "+243" ? " — 9 chiffres sans le 0 initial" : ""}
+          </>
+        ) : (
+          "Sélectionnez un indicatif pays"
+        )}
+        {selectedCountry && phone ? (
+          <span className="sr-only">
+            {countryName} {countryCode} {displayPhone}
+          </span>
+        ) : null}
       </p>
     </div>
   );

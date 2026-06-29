@@ -11,6 +11,8 @@ import servicesImg from "@/assets/portal-services.jpg";
 import { submitServiceRequest } from "@/lib/portals/service-requests";
 import { toast } from "sonner";
 import { useClientContactPrefill } from "@/lib/client/form-prefill";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 
 export const Route = createFileRoute("/services-sur-mesure")({
   head: () => ({
@@ -44,12 +46,13 @@ const categories = [
 ];
 
 function SurMesure() {
-  const { account, fields, fullName, phoneWithCountry } = useClientContactPrefill();
+  const { account, fields, fullName } = useClientContactPrefill();
   const [sent, setSent] = useState(false);
   const [saving, setSaving] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
+    countryCode: "+243",
     phone: "",
     category: "",
     message: "",
@@ -62,14 +65,20 @@ function SurMesure() {
         ...prev,
         name: prev.name || fullName,
         email: prev.email || fields.email,
-        phone: prev.phone || phoneWithCountry,
+        countryCode: prev.countryCode === "+243" && fields.countryCode ? fields.countryCode : prev.countryCode,
+        phone: prev.phone || fields.phone,
       };
-      if (next.name === prev.name && next.email === prev.email && next.phone === prev.phone) {
+      if (
+        next.name === prev.name &&
+        next.email === prev.email &&
+        next.countryCode === prev.countryCode &&
+        next.phone === prev.phone
+      ) {
         return prev;
       }
       return next;
     });
-  }, [account?.id, fields, fullName, phoneWithCountry]);
+  }, [account?.id, fields, fullName]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +87,7 @@ function SurMesure() {
       await submitServiceRequest({
         name: form.name.trim(),
         email: form.email.trim(),
-        phone: form.phone.trim(),
+        phone: form.phone.trim() ? `${form.countryCode} ${form.phone}`.trim() : "",
         subject: form.category || "Demande sur mesure",
         message: form.message.trim(),
         serviceType: "sur_mesure",
@@ -92,8 +101,8 @@ function SurMesure() {
     }
   };
 
-  const inputCls =
-    "w-full bg-white border border-black/12 px-4 py-3 text-sm text-charbon placeholder:text-charbon/40 focus:outline-none focus:border-or-vif";
+  const darkInputCls =
+    "w-full bg-white/10 border border-white/20 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:outline-none focus:border-or-vif rounded-none";
 
   return (
     <main className="min-h-screen font-sans antialiased" data-yolo-portal data-yolo-portal-light>
@@ -197,7 +206,7 @@ function SurMesure() {
                     placeholder="Votre nom"
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className={`${inputCls} bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-or-vif`}
+                    className={darkInputCls}
                   />
                   <input
                     required
@@ -205,20 +214,28 @@ function SurMesure() {
                     placeholder="Email"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className={`${inputCls} bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-or-vif`}
+                    className={darkInputCls}
                   />
-                  <input
+                  <ContactPhoneField
                     required
-                    placeholder="Téléphone"
-                    value={form.phone}
-                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className={`${inputCls} bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-or-vif`}
+                    variant="dark"
+                    countryCode={form.countryCode}
+                    phone={form.phone}
+                    onCountryCodeChange={(countryCode) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        countryCode,
+                        phone: phoneDigitsOnly(prev.phone).slice(0, phoneMaxLength(countryCode)),
+                      }))
+                    }
+                    onPhoneChange={(phone) => setForm({ ...form, phone })}
+                    inputCls={darkInputCls}
                   />
                   <select
                     required
                     value={form.category}
                     onChange={(e) => setForm({ ...form, category: e.target.value })}
-                    className={`${inputCls} bg-white/10 border-white/20 text-white focus:border-or-vif`}
+                    className={darkInputCls}
                   >
                     <option value="" className="bg-charbon text-white">
                       Type de service
@@ -235,7 +252,7 @@ function SurMesure() {
                     placeholder="Décrivez votre besoin..."
                     value={form.message}
                     onChange={(e) => setForm({ ...form, message: e.target.value })}
-                    className={`${inputCls} bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-or-vif resize-none`}
+                    className={`${darkInputCls} resize-none`}
                   />
                   <PortalButton variant="primary" type="submit" disabled={saving} className="w-full">
                     {saving ? "Envoi..." : "Envoyer la demande"}

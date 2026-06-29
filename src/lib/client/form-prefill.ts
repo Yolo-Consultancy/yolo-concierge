@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { useEffect, useMemo, useState } from "react";
+import { parsePhoneWithCountry } from "@/lib/phone-field";
 import { getCurrentClient, hydrateCurrentClient, type ClientAccount } from "./auth";
 
 export type ClientContactFormFields = {
@@ -21,12 +22,18 @@ export function emptyClientContactFields(): ClientContactFormFields {
 }
 
 export function clientContactFieldsFromAccount(account: ClientAccount): ClientContactFormFields {
+  const storedCode = account.countryCode?.trim() || "+243";
+  const rawPhone = account.phone?.trim() ?? "";
+  const parsed = rawPhone.includes("+")
+    ? parsePhoneWithCountry(rawPhone, storedCode)
+    : parsePhoneWithCountry(`${storedCode} ${rawPhone}`, storedCode);
+
   return {
     firstName: account.firstName?.trim() ?? "",
     lastName: account.lastName?.trim() ?? "",
     email: account.email?.trim() ?? "",
-    phone: account.phone?.replace(/\D/g, "") ?? "",
-    countryCode: account.countryCode?.trim() || "+243",
+    phone: parsed.phone,
+    countryCode: parsed.countryCode || storedCode,
   };
 }
 
@@ -35,10 +42,9 @@ export function fullNameFromAccount(account: ClientAccount): string {
 }
 
 export function phoneWithCountryFromAccount(account: ClientAccount): string {
-  const phone = account.phone?.replace(/\D/g, "") ?? "";
-  if (!phone) return "";
-  const code = account.countryCode?.trim() || "+243";
-  return `${code} ${phone}`;
+  const fields = clientContactFieldsFromAccount(account);
+  if (!fields.phone) return "";
+  return `${fields.countryCode} ${fields.phone}`;
 }
 
 /** Session client en cache puis hydratation API. */

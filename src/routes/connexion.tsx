@@ -9,6 +9,8 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { getPortal, type PortalId } from "@/config/portals";
 import { SiteFooter } from "@/components/SiteFooter";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 
 type Mode = "login" | "register";
 
@@ -223,6 +225,22 @@ function ConnexionPage() {
                   className={`${inputCls} pl-11`}
                 />
               </div>
+
+              <ContactPhoneField
+                required
+                variant="dark"
+                countryCode={reg.countryCode}
+                phone={reg.phone}
+                onCountryCodeChange={(countryCode) =>
+                  setReg((prev) => ({
+                    ...prev,
+                    countryCode,
+                    phone: phoneDigitsOnly(prev.phone).slice(0, phoneMaxLength(countryCode)),
+                  }))
+                }
+                onPhoneChange={(phone) => setReg({ ...reg, phone })}
+                inputCls={inputCls}
+              />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <input

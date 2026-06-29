@@ -2,7 +2,8 @@
 import { useState } from "react";
 import { registerClient, loginClient, type ClientAccount } from "@/lib/client/auth";
 import type { PortalId } from "@/config/portals";
-import { allCountries } from "country-telephone-data";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 
 type Mode = "choice" | "login" | "register";
 
@@ -16,20 +17,6 @@ interface Props {
 const inputCls =
   "w-full bg-white/5 border border-white/15 rounded-lg px-4 py-3.5 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-or-vif";
 const SELECT_OPTION_CLS = "bg-charbon text-white";
-
-// Tri alphabétique de tous les pays du monde
-const sortedCountries = [...allCountries].sort((a, b) =>
-  a.name.localeCompare(b.name)
-);
-
-// Fonction utilitaire pour générer le drapeau émoji à partir de l'ISO 2 (ex: "fr" -> 🇫🇷)
-function getFlagEmoji(countryCode: string) {
-  const codePoints = countryCode
-    .toUpperCase()
-    .split("")
-    .map((char) => 127397 + char.charCodeAt(0));
-  return String.fromCodePoint(...codePoints);
-}
 
 export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal }: Props) {
   const [mode, setMode] = useState<Mode>("choice");
@@ -282,38 +269,21 @@ export function ClientAuthModal({ onSuccess, onClose, onContinueAsGuest, portal 
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-white mb-2">Téléphone <span className="text-red-400">*</span></label>
-                <div className="flex gap-2">
-                  <select
-                    value={reg.countryCode}
-                    onChange={(e) => setReg({ ...reg, countryCode: e.target.value })}
-                    className="bg-charbon border border-white/15 rounded-lg px-3 py-3.5 text-sm text-white focus:outline-none focus:border-or-vif w-36 scheme-dark"
-                  >
-                    {sortedCountries.map((country) => {
-                      const dialCodeWithPlus = `+${country.dialCode}`;
-                      return (
-                        <option
-                          key={`${country.iso2}-${country.dialCode}`}
-                          className={SELECT_OPTION_CLS}
-                          value={dialCodeWithPlus}
-                        >
-                          {getFlagEmoji(country.iso2)} {dialCodeWithPlus} ({country.name})
-                        </option>
-                      );
-                    })}
-                  </select>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    maxLength={15}
-                    value={reg.phone}
-                    onChange={(e) => setReg({ ...reg, phone: e.target.value.replace(/\D/g, "") })}
-                    placeholder="828863897"
-                    className={`${inputCls} flex-1`}
-                  />
-                </div>
-              </div>
+              <ContactPhoneField
+                required
+                variant="dark"
+                countryCode={reg.countryCode}
+                phone={reg.phone}
+                onCountryCodeChange={(countryCode) =>
+                  setReg((prev) => ({
+                    ...prev,
+                    countryCode,
+                    phone: phoneDigitsOnly(prev.phone).slice(0, phoneMaxLength(countryCode)),
+                  }))
+                }
+                onPhoneChange={(phone) => setReg({ ...reg, phone })}
+                inputCls={inputCls}
+              />
 
 
               <div>

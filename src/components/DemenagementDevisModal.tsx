@@ -21,6 +21,8 @@ import {
   type FloorInfo,
 } from "@/lib/demenagement/quote";
 import { submitServiceRequest } from "@/lib/portals/service-requests";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import { formatPhoneSummary, phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 import {
   useClientContactPrefill,
   emptyClientContactFields,
@@ -419,26 +421,20 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                   onChange={(e) => setContact({ ...contact, email: e.target.value })}
                 />
               </div>
-              <div className="flex gap-2">
-                <div className="w-24">
-                  <label className="yolo-form-label">Indicatif</label>
-                  <input
-                    className={inputCls}
-                    value={contact.countryCode}
-                    onChange={(e) => setContact({ ...contact, countryCode: e.target.value })}
-                  />
-                </div>
-                <div className="flex-1">
-                  <label className="yolo-form-label">Téléphone *</label>
-                  <input
-                    className={inputCls}
-                    value={contact.phone}
-                    onChange={(e) =>
-                      setContact({ ...contact, phone: e.target.value.replace(/\D/g, "") })
-                    }
-                  />
-                </div>
-              </div>
+              <ContactPhoneField
+                required
+                countryCode={contact.countryCode}
+                phone={contact.phone}
+                onCountryCodeChange={(countryCode) =>
+                  setContact((prev) => ({
+                    ...prev,
+                    countryCode,
+                    phone: phoneDigitsOnly(prev.phone).slice(0, phoneMaxLength(countryCode)),
+                  }))
+                }
+                onPhoneChange={(phone) => setContact({ ...contact, phone })}
+                inputCls={inputCls}
+              />
             </div>
           ) : step === 1 ? (
             <div className="space-y-4">
@@ -534,7 +530,10 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
               <SectionTitle icon={CalendarIcon}>Récapitulatif</SectionTitle>
               <div className="rounded-xl border border-black/8 bg-white p-4 space-y-2.5 text-sm shadow-sm">
                 <RecapRow label="Client" value={`${contact.firstName} ${contact.lastName}`} />
-                <RecapRow label="Contact" value={`${contact.email} · ${contact.countryCode} ${contact.phone}`} />
+                <RecapRow
+                  label="Contact"
+                  value={`${contact.email} · ${formatPhoneSummary(contact.countryCode, contact.phone)}`}
+                />
                 <RecapRow
                   label="Date"
                   value={

@@ -17,6 +17,8 @@ import {
   emptyClientContactFields,
   resolveClientAccount,
 } from "@/lib/client/form-prefill";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import { formatPhoneSummary, phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 
 const SELECT_OPTION_CLS = "bg-white text-charbon";
 const KINSHASA_LOCATION_SUGGESTIONS = [
@@ -608,36 +610,20 @@ export function BookingModal({
                 />
               </div>
 
-              <div>
-                <label className="yolo-form-label">Téléphone (optionnel)</label>
-                <div className="flex gap-2">
-                  <select
-                    value={form.countryCode}
-                    onChange={(e) => setForm({ ...form, countryCode: e.target.value })}
-                    className={`${selectCls} w-32`}
-                  >
-                    <option className={SELECT_OPTION_CLS} value="+243">🇨🇩 +243</option>
-                    <option className={SELECT_OPTION_CLS} value="+221">🇸🇳 +221</option>
-                    <option className={SELECT_OPTION_CLS} value="+225">🇨🇮 +225</option>
-                    <option className={SELECT_OPTION_CLS} value="+33">🇫🇷 +33</option>
-                    <option className={SELECT_OPTION_CLS} value="+32">🇧🇪 +32</option>
-                    <option className={SELECT_OPTION_CLS} value="+1">🇺🇸 +1</option>
-                  </select>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    pattern="[0-9]{9,10}"
-                    maxLength={10}
-                    value={form.phone}
-                    onChange={(e) => {
-                      const onlyDigits = e.target.value.replace(/\D/g, "").slice(0, 10);
-                      setForm({ ...form, phone: onlyDigits });
-                    }}
-                    placeholder="9 à 10 chiffres"
-                    className={inputCls}
-                  />
-                </div>
-              </div>
+              <ContactPhoneField
+                countryCode={form.countryCode}
+                phone={form.phone}
+                onCountryCodeChange={(countryCode) =>
+                  setForm((prev) => ({
+                    ...prev,
+                    countryCode,
+                    phone: phoneDigitsOnly(prev.phone).slice(0, phoneMaxLength(countryCode)),
+                  }))
+                }
+                onPhoneChange={(phone) => setForm({ ...form, phone })}
+                inputCls={inputCls}
+                label="Téléphone (optionnel)"
+              />
             </div>
           )}
 
@@ -693,7 +679,11 @@ export function BookingModal({
                   {form.firstName} {form.lastName}
                 </p>
                 <p className="text-sm yolo-form-muted">{form.email}</p>
-                {form.phone && <p className="text-sm yolo-form-muted">{form.countryCode} {form.phone}</p>}
+                {form.phone && (
+                  <p className="text-sm yolo-form-muted">
+                    {formatPhoneSummary(form.countryCode, form.phone)}
+                  </p>
+                )}
               </SummaryCard>
 
               {selectedVehicle && (
