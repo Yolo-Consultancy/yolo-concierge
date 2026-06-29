@@ -1,5 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { SiteFooter } from "@/components/SiteFooter";
 import vehiculesImg from "@/assets/portal-vehicules.jpg";
 import demenagementImg from "@/assets/portal-demenagement.jpg";
 import servicesImg from "@/assets/portal-surmesure.jpg";
@@ -107,12 +108,7 @@ function Index() {
         </div>
       </section>
 
-      <footer className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-6 py-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-muted-foreground">
-          <p>© {new Date().getFullYear()} YOLO Le Concierge — Tous droits réservés.</p>
-          <p className="uppercase tracking-widest">Premium · Sécurisé · Personnalisé</p>
-        </div>
-      </footer>
+      <SiteFooter />
     </main>
   );
 }

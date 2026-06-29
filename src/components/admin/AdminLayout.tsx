@@ -10,6 +10,7 @@ import { logout } from "@/lib/admin/auth";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { useAdminNavBadges } from "@/hooks/useAdminNavBadges";
 import { requestAdminBadgesRefresh } from "@/lib/admin/badges";
+import { SiteFooter } from "@/components/SiteFooter";
 
 type NavBadgeKey = "pendingBookings" | "unreadReports";
 
@@ -167,7 +168,10 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         )}
 
         {/* Contenu */}
-        <main className="flex-1 min-w-0 p-4 lg:p-8 yolo-space-main">{children}</main>
+        <main className="flex-1 min-w-0 p-4 lg:p-8 yolo-space-main flex flex-col">
+          <div className="flex-1">{children}</div>
+          <SiteFooter variant="compact" />
+        </main>
       </div>
     </div>
   );

@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { Star, CheckCircle } from "lucide-react";
 import { publicApi } from "@/lib/api/client";
 import { toast } from "sonner";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const Route = createFileRoute("/evaluer/$token")({
   head: () => ({
@@ -33,6 +34,15 @@ const IMPROVEMENT_TYPES = [
 ] as const;
 
 type ImprovementTypeId = (typeof IMPROVEMENT_TYPES)[number]["id"];
+
+function EvaluerShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="min-h-screen bg-charbon flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">{children}</div>
+      <SiteFooter variant="dark" />
+    </div>
+  );
+}
 
 const choiceBtnCls = (active: boolean) =>
   `py-2.5 px-3 rounded-xl border text-sm font-medium transition ${
@@ -157,25 +167,25 @@ function EvaluerPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-charbon flex items-center justify-center text-white/50">
-        Chargement...
-      </div>
+      <EvaluerShell>
+        <p className="text-white/50">Chargement...</p>
+      </EvaluerShell>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-charbon flex items-center justify-center p-4">
+      <EvaluerShell>
         <div className="max-w-md w-full text-center rounded-2xl border border-white/10 bg-charbon p-8">
           <p className="text-red-400 text-sm">{error}</p>
         </div>
-      </div>
+      </EvaluerShell>
     );
   }
 
   if (done) {
     return (
-      <div className="min-h-screen bg-charbon flex items-center justify-center p-4">
+      <EvaluerShell>
         <div className="max-w-md w-full text-center rounded-2xl border border-white/10 bg-charbon p-10">
           <CheckCircle className="h-12 w-12 text-emerald-400 mx-auto mb-4" />
           <h1 className="font-display text-2xl font-bold text-white mb-2">Merci !</h1>
@@ -183,12 +193,12 @@ function EvaluerPage() {
             Votre avis a bien été enregistré. L'équipe YOLO Le Concierge vous remercie pour votre confiance.
           </p>
         </div>
-      </div>
+      </EvaluerShell>
     );
   }
 
   return (
-    <div className="min-h-screen bg-charbon flex items-center justify-center p-4 relative overflow-hidden">
+    <EvaluerShell>
       <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-or-vif/5 blur-[120px] pointer-events-none" />
 
       <div className="w-full max-w-lg relative z-10">
@@ -291,6 +301,6 @@ function EvaluerPage() {
           </form>
         </div>
       </div>
-    </div>
+    </EvaluerShell>
   );
 }

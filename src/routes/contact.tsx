@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Mail, MapPin, MessageCircle, Phone, Clock, Check, AlertCircle } from "lucide-react";
 import { z } from "zod";
 import { SiteHeader } from "@/components/SiteHeader";
-import { PortalHomeLink } from "@/components/PortalHomeLink";
+import { SiteFooter } from "@/components/SiteFooter";
 import { PortalHeader } from "@/components/PortalHeader";
 import { getPortal } from "@/config/portals";
 import { publicApi } from "@/lib/api/client";
@@ -397,18 +397,7 @@ function ContactPage() {
         </div>
       </section>
 
-      <footer className="border-t border-black/10 py-8 px-6 text-center text-xs text-[var(--yolo-muted)] uppercase tracking-widest bg-[var(--yolo-cream)]">
-        © {new Date().getFullYear()} YOLO Le Concierge ·{" "}
-        <PortalHomeLink variant="footer" className="inline-flex hover:text-charbon" />
-        {portal && (
-          <>
-            {" · "}
-            <Link to={portal.publicPath as "/location-vehicules"} className="hover:text-charbon normal-case tracking-normal">
-              {portal.name}
-            </Link>
-          </>
-        )}
-      </footer>
+      <SiteFooter portalId={portalId} />
     </main>
   );
 }

@@ -7,6 +7,7 @@ import { adminCanAccessPortal } from "@/lib/auth/admin-portal";
 import { adminPathForScope, connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { getPortal, type PortalId } from "@/config/portals";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
   const portal = getPortal(portalId);
@@ -104,11 +105,14 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
         </div>
       </aside>
       {open && <div className="lg:hidden fixed inset-0 z-30 bg-black/40" onClick={() => setOpen(false)} />}
-      <main className="flex-1 min-w-0 p-4 lg:p-8 yolo-space-main">
+      <main className="flex-1 min-w-0 p-4 lg:p-8 yolo-space-main flex flex-col">
         <button onClick={() => setOpen(true)} className="lg:hidden mb-4 p-2 rounded border">
           <Menu className="h-5 w-5" />
         </button>
-        <Outlet />
+        <div className="flex-1">
+          <Outlet />
+        </div>
+        <SiteFooter variant="compact" />
       </main>
     </div>
   );

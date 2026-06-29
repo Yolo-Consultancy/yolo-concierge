@@ -10,7 +10,7 @@ import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehic
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
 import { PortalHeader } from "@/components/PortalHeader";
-import { PortalHomeLink } from "@/components/PortalHomeLink";
+import { SiteFooter } from "@/components/SiteFooter";
 import { ClientReviewsSection } from "@/components/ClientReviewsSection";
 import { ScrollReveal } from "@/components/portal-ui/ScrollReveal";
 import { SectionLabel } from "@/components/portal-ui/SectionLabel";
@@ -352,10 +352,7 @@ function LocationVehicules() {
 
       <ClientReviewsSection />
 
-      <footer className="border-t border-black/10 py-8 px-6 text-center text-xs text-[var(--yolo-muted)] uppercase tracking-widest bg-[var(--yolo-cream)]">
-        © {new Date().getFullYear()} YOLO Le Concierge ·{" "}
-        <PortalHomeLink variant="footer" className="inline-flex hover:text-charbon" />
-      </footer>
+      <SiteFooter portalId="vehicules" />
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={prefilledVehicle} />}
     </main>

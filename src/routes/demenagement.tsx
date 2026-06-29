@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type ReactNode } from "react";
 import { ArrowRight, Check, Phone } from "lucide-react";
 import { PortalHeader } from "@/components/PortalHeader";
-import { PortalHomeLink } from "@/components/PortalHomeLink";
+import { SiteFooter } from "@/components/SiteFooter";
 import { DemenagementDevisModal } from "@/components/DemenagementDevisModal";
 import { ScrollReveal } from "@/components/portal-ui/ScrollReveal";
 import { contactSearch } from "@/lib/auth/redirect";
@@ -362,12 +362,7 @@ function Demenagement() {
         </ScrollReveal>
       </section>
 
-      <footer className="border-t border-black/8 py-10 text-center">
-        <PortalHomeLink
-          variant="footer"
-          className="inline-flex text-sm text-(--dm-muted) hover:text-charbon"
-        />
-      </footer>
+      <SiteFooter portalId="demenagement" />
     </main>
   );
 }

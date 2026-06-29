@@ -12,6 +12,7 @@ import { hydrateCurrentDriver, logoutDriver, type DriverAccount } from "@/lib/dr
 import { connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const Route = createFileRoute("/driver")({
   head: () => ({
@@ -176,6 +177,7 @@ function DriverShell() {
           <div className="relative z-10 flex-1 flex flex-col">
             <Outlet />
           </div>
+          <SiteFooter variant="compact" />
         </main>
       </div>
     </DriverContext.Provider>

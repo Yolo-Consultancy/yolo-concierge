@@ -14,6 +14,7 @@ import { hydrateCurrentClient, logoutClient, type ClientAccount } from "@/lib/cl
 import { connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
+import { SiteFooter } from "@/components/SiteFooter";
 
 export const Route = createFileRoute("/client")({
   head: () => ({
@@ -195,6 +196,7 @@ function ClientShell() {
           <div className="relative z-10 flex-1 flex flex-col">
             <Outlet />
           </div>
+          <SiteFooter variant="compact" />
         </main>
       </div>
     </ClientContext.Provider>

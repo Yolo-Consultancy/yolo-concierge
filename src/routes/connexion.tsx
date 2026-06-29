@@ -8,6 +8,7 @@ import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 import { z } from "zod";
 import { getPortal, type PortalId } from "@/config/portals";
+import { SiteFooter } from "@/components/SiteFooter";
 
 type Mode = "login" | "register";
 
@@ -105,7 +106,8 @@ function ConnexionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-charbon flex items-center justify-center p-4 relative overflow-hidden font-sans" data-yolo-space>
+    <div className="min-h-screen bg-charbon flex flex-col font-sans" data-yolo-space>
+      <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
       <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-or-vif/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-or-vif/5 blur-[120px] pointer-events-none" />
 
@@ -270,6 +272,8 @@ function ConnexionPage() {
           </Link>
         </div>
       </div>
+      </div>
+      <SiteFooter portalId={portalId} variant="dark" />
     </div>
   );
 }

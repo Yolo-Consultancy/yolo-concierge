@@ -7,6 +7,7 @@ import { connexionSearch } from "@/lib/auth/redirect";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { getPortal, type PortalId } from "@/config/portals";
 import { toast } from "sonner";
+import { SiteFooter } from "@/components/SiteFooter";
 
 const PortalClientContext = createContext<{ account: ClientAccount | null; portalId: PortalId }>({
   account: null,
@@ -115,11 +116,14 @@ export function PortalServiceClientShell({ portalId }: { portalId: PortalId }) {
           </div>
         </aside>
         {open && <div className="lg:hidden fixed inset-0 z-30 bg-black/70" onClick={() => setOpen(false)} />}
-        <main className="flex-1 min-w-0 p-6 lg:p-10">
+        <main className="flex-1 min-w-0 p-6 lg:p-10 flex flex-col">
           <button onClick={() => setOpen(true)} className="lg:hidden mb-4 p-2 rounded-lg border border-white/10">
             <Menu className="h-5 w-5" />
           </button>
-          <Outlet />
+          <div className="flex-1">
+            <Outlet />
+          </div>
+          <SiteFooter variant="compact" />
         </main>
       </div>
     </PortalClientContext.Provider>

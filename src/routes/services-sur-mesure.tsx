@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ArrowRight, Check } from "lucide-react";
 import { PortalHeader } from "@/components/PortalHeader";
-import { PortalHomeLink } from "@/components/PortalHomeLink";
+import { SiteFooter } from "@/components/SiteFooter";
 import { ScrollReveal } from "@/components/portal-ui/ScrollReveal";
 import { SectionLabel } from "@/components/portal-ui/SectionLabel";
 import { PortalButton } from "@/components/portal-ui/PortalButton";
@@ -247,9 +247,7 @@ function SurMesure() {
         </div>
       </section>
 
-      <footer className="border-t border-black/10 py-8 px-6 text-center text-xs text-[var(--yolo-muted)] uppercase tracking-widest">
-        <PortalHomeLink variant="footer" className="inline-flex hover:text-charbon" />
-      </footer>
+      <SiteFooter portalId="sur-mesure" />
     </main>
   );
 }
