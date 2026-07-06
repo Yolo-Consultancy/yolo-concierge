@@ -18,6 +18,24 @@ export type Mover = {
   createdAt: string;
 };
 
+export const MOVER_INPUT_CLS =
+  "w-full px-3 py-2 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring";
+
+export function emptyMover(): Mover {
+  return {
+    id: newId("m"),
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    hiredAt: new Date().toISOString().slice(0, 10),
+    salary: 0,
+    active: true,
+    notes: "",
+    createdAt: new Date().toISOString().slice(0, 10),
+  };
+}
+
 export type MovingMission = {
   id: string;
   contactMessageId: string;
@@ -52,6 +70,35 @@ export async function upsertMover(m: Mover): Promise<Mover> {
 
 export async function deleteMover(id: string): Promise<void> {
   await api.del(`/movers/${id}`);
+}
+
+export type MoverDuplicateConflict = {
+  field: "email" | "phone";
+  type: "mover" | "driver" | "client";
+  typeLabel: string;
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+};
+
+export async function checkMoverContactDuplicates(
+  email: string,
+  phone: string,
+  excludeMoverId?: string,
+): Promise<MoverDuplicateConflict[]> {
+  const params = new URLSearchParams();
+  if (email.trim()) params.set("email", email.trim());
+  if (phone.trim()) params.set("phone", phone.trim());
+  if (excludeMoverId && isMongoId(excludeMoverId)) {
+    params.set("excludeMoverId", excludeMoverId);
+  }
+  const q = params.toString();
+  if (!q) return [];
+  const result = await api.get<{ conflicts: MoverDuplicateConflict[] }>(
+    `/movers/check-duplicates?${q}`,
+  );
+  return result.conflicts ?? [];
 }
 
 export async function listMovingMissions(): Promise<MovingMission[]> {

@@ -2,12 +2,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Plus, Pencil, Trash2, X } from "lucide-react";
+import { toast } from "sonner";
 import {
   listMovers,
   upsertMover,
   deleteMover,
-  newId,
+  emptyMover,
+  checkMoverContactDuplicates,
+  MOVER_INPUT_CLS,
   type Mover,
+  type MoverDuplicateConflict,
 } from "@/lib/demenagement/store";
 import { formatPrice } from "@/lib/vehicles";
 import { bookingConfig } from "@/config/booking";
@@ -17,27 +21,12 @@ export const Route = createFileRoute("/admin-demenagement/demenageurs")({
   component: DemenageursPage,
 });
 
-const inputCls =
-  "w-full px-3 py-2 rounded-md border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring";
-
-const empty = (): Mover => ({
-  id: newId("m"),
-  firstName: "",
-  lastName: "",
-  email: "",
-  phone: "",
-  hiredAt: new Date().toISOString().slice(0, 10),
-  salary: 0,
-  active: true,
-  notes: "",
-  createdAt: new Date().toISOString().slice(0, 10),
-});
-
 function DemenageursPage() {
   const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Mover[]>([]);
-  const [editing, setEditing] = useState<Mover | null>(null);
+  const [formMover, setFormMover] = useState<Mover | null>(null);
   const [search, setSearch] = useState("");
+  const [saving, setSaving] = useState(false);
 
   const refresh = () => {
     listMovers().then(setItems);
@@ -45,12 +34,82 @@ function DemenageursPage() {
   useEffect(refresh, []);
 
   const C = bookingConfig.currencySymbol;
+  const isNew = formMover ? !items.some((x) => x.id === formMover.id) : false;
 
   const filtered = items.filter((d) => {
     const q = search.toLowerCase();
     if (!q) return true;
     return `${d.firstName} ${d.lastName} ${d.email} ${d.phone}`.toLowerCase().includes(q);
   });
+
+  const buildDuplicateDescription = (conflicts: MoverDuplicateConflict[]) => {
+    const lines = conflicts.map((c) => {
+      const fieldLabel = c.field === "email" ? "e-mail" : "téléphone";
+      const value = c.field === "email" ? c.email : c.phone;
+      return `• ${fieldLabel} déjà utilisé par ${c.name} (${c.typeLabel}) — ${value}`;
+    });
+    return `${lines.join(" ")} Voulez-vous quand même enregistrer ce déménageur ?`;
+  };
+
+  const performSave = async () => {
+    if (!formMover) return;
+
+    setSaving(true);
+    try {
+      await upsertMover(formMover);
+      if (isNew) {
+        toast.success(`${formMover.firstName} ${formMover.lastName} a été ajouté à l'équipe.`);
+        setSearch("");
+      } else {
+        toast.success("Déménageur mis à jour.");
+      }
+      setFormMover(null);
+      refresh();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Impossible d'enregistrer le déménageur.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formMover) return;
+
+    if (!formMover.firstName.trim() || !formMover.lastName.trim() || !formMover.hiredAt) {
+      toast.error("Prénom, nom et date de recrutement sont requis.");
+      return;
+    }
+
+    if (!formMover.email.trim() && !formMover.phone.trim()) {
+      await performSave();
+      return;
+    }
+
+    try {
+      const conflicts = await checkMoverContactDuplicates(
+        formMover.email,
+        formMover.phone,
+        isNew ? undefined : formMover.id,
+      );
+
+      if (conflicts.length > 0) {
+        ask({
+          title: "Doublon détecté",
+          description: buildDuplicateDescription(conflicts),
+          confirmLabel: isNew ? "Ajouter quand même" : "Enregistrer quand même",
+          cancelLabel: "Modifier",
+          variant: "warning",
+          onConfirm: performSave,
+        });
+        return;
+      }
+
+      await performSave();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Impossible de vérifier les doublons.");
+    }
+  };
 
   return (
     <>
@@ -62,7 +121,8 @@ function DemenageursPage() {
           </p>
         </div>
         <button
-          onClick={() => setEditing(empty())}
+          type="button"
+          onClick={() => setFormMover(emptyMover())}
           className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" /> Nouveau déménageur
@@ -71,7 +131,8 @@ function DemenageursPage() {
 
       <div className="mb-4">
         <input
-          className={inputCls}
+          type="search"
+          className={MOVER_INPUT_CLS}
           placeholder="Rechercher par nom, e-mail ou téléphone…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -118,12 +179,14 @@ function DemenageursPage() {
                   <td className="p-3">
                     <div className="flex gap-1 justify-end">
                       <button
-                        onClick={() => setEditing(d)}
+                        type="button"
+                        onClick={() => setFormMover(d)}
                         className="p-1.5 rounded hover:bg-muted"
                       >
                         <Pencil className="h-4 w-4" />
                       </button>
                       <button
+                        type="button"
                         onClick={() =>
                           ask({
                             title: "Supprimer ce déménageur ?",
@@ -154,122 +217,130 @@ function DemenageursPage() {
         </div>
       </div>
 
-      {editing && (
+      {formMover && (
         <div
-          className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
-          onClick={() => setEditing(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setFormMover(null)}
         >
-          <div
-            className="w-full max-w-lg bg-card rounded-2xl border border-border"
+          <form
+            className="w-full max-w-lg max-h-[90vh] overflow-y-auto bg-card rounded-2xl border border-border shadow-xl"
             onClick={(e) => e.stopPropagation()}
+            onSubmit={handleSave}
           >
-            <div className="border-b border-border px-6 py-4 flex items-center justify-between">
+            <div className="sticky top-0 z-10 border-b border-border bg-card px-6 py-4 flex items-center justify-between">
               <h2 className="font-display text-lg font-semibold">
-                {items.some((x) => x.id === editing.id)
-                  ? "Modifier le déménageur"
-                  : "Nouveau déménageur"}
+                {isNew ? "Nouveau déménageur" : "Modifier le déménageur"}
               </h2>
-              <button onClick={() => setEditing(null)} className="p-2 rounded hover:bg-muted">
+              <button
+                type="button"
+                onClick={() => setFormMover(null)}
+                className="p-2 rounded hover:bg-muted"
+                aria-label="Fermer"
+              >
                 <X className="h-4 w-4" />
               </button>
             </div>
             <div className="p-6 grid sm:grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium mb-1.5" data-required>Prénom</label>
+                <label className="block text-xs font-medium mb-1.5" data-required>
+                  Prénom
+                </label>
                 <input
-                  className={inputCls}
-                  value={editing.firstName}
-                  onChange={(e) => setEditing({ ...editing, firstName: e.target.value })}
+                  className={MOVER_INPUT_CLS}
+                  value={formMover.firstName}
+                  onChange={(e) => setFormMover({ ...formMover, firstName: e.target.value })}
+                  autoFocus
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" data-required>Nom</label>
+                <label className="block text-xs font-medium mb-1.5" data-required>
+                  Nom
+                </label>
                 <input
-                  className={inputCls}
-                  value={editing.lastName}
-                  onChange={(e) => setEditing({ ...editing, lastName: e.target.value })}
+                  className={MOVER_INPUT_CLS}
+                  value={formMover.lastName}
+                  onChange={(e) => setFormMover({ ...formMover, lastName: e.target.value })}
                 />
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs font-medium mb-1.5">E-mail</label>
                 <input
                   type="email"
-                  className={inputCls}
+                  className={MOVER_INPUT_CLS}
                   placeholder="demenageur@yolo.cd"
-                  value={editing.email}
-                  onChange={(e) => setEditing({ ...editing, email: e.target.value })}
+                  value={formMover.email}
+                  onChange={(e) => setFormMover({ ...formMover, email: e.target.value })}
                 />
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs font-medium mb-1.5">Téléphone</label>
                 <input
-                  className={inputCls}
+                  className={MOVER_INPUT_CLS}
                   placeholder="+243 ..."
-                  value={editing.phone}
-                  onChange={(e) => setEditing({ ...editing, phone: e.target.value })}
+                  value={formMover.phone}
+                  onChange={(e) => setFormMover({ ...formMover, phone: e.target.value })}
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" data-required>Date de recrutement</label>
+                <label className="block text-xs font-medium mb-1.5" data-required>
+                  Date de recrutement
+                </label>
                 <input
                   type="date"
-                  className={inputCls}
-                  value={editing.hiredAt}
-                  onChange={(e) => setEditing({ ...editing, hiredAt: e.target.value })}
+                  className={MOVER_INPUT_CLS}
+                  value={formMover.hiredAt}
+                  onChange={(e) => setFormMover({ ...formMover, hiredAt: e.target.value })}
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium mb-1.5" data-required>Salaire mensuel ({C})</label>
+                <label className="block text-xs font-medium mb-1.5" data-required>
+                  Salaire mensuel ({C})
+                </label>
                 <input
                   type="number"
                   min={0}
-                  className={inputCls}
-                  value={editing.salary}
-                  onChange={(e) => setEditing({ ...editing, salary: Number(e.target.value) || 0 })}
+                  className={MOVER_INPUT_CLS}
+                  value={formMover.salary}
+                  onChange={(e) =>
+                    setFormMover({ ...formMover, salary: Number(e.target.value) || 0 })
+                  }
                 />
               </div>
               <div className="sm:col-span-2">
                 <label className="block text-xs font-medium mb-1.5">Notes internes</label>
                 <textarea
-                  className={inputCls}
+                  className={MOVER_INPUT_CLS}
                   rows={3}
-                  value={editing.notes}
-                  onChange={(e) => setEditing({ ...editing, notes: e.target.value })}
+                  value={formMover.notes}
+                  onChange={(e) => setFormMover({ ...formMover, notes: e.target.value })}
                 />
               </div>
               <label className="sm:col-span-2 flex items-center gap-2 text-sm">
                 <input
                   type="checkbox"
-                  checked={editing.active}
-                  onChange={(e) => setEditing({ ...editing, active: e.target.checked })}
+                  checked={formMover.active}
+                  onChange={(e) => setFormMover({ ...formMover, active: e.target.checked })}
                 />
                 Déménageur actif
               </label>
             </div>
-            <div className="border-t border-border px-6 py-4 flex justify-end gap-2">
+            <div className="sticky bottom-0 border-t border-border bg-card px-6 py-4 flex justify-end gap-2">
               <button
-                onClick={() => setEditing(null)}
+                type="button"
+                onClick={() => setFormMover(null)}
                 className="rounded-md border border-input px-4 py-2 text-sm hover:bg-muted"
               >
                 Annuler
               </button>
               <button
-                onClick={() => {
-                  if (!editing.firstName || !editing.lastName || !editing.hiredAt) {
-                    alert("Prénom, nom et date de recrutement sont requis.");
-                    return;
-                  }
-                  void upsertMover(editing).then(() => {
-                    setEditing(null);
-                    refresh();
-                  });
-                }}
-                className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90"
+                type="submit"
+                disabled={saving}
+                className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90 disabled:opacity-50"
               >
-                Enregistrer
+                {saving ? "Enregistrement..." : isNew ? "Ajouter le déménageur" : "Enregistrer"}
               </button>
             </div>
-          </div>
+          </form>
         </div>
       )}
       {dialog}
