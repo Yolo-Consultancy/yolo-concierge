@@ -86,7 +86,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-muted/30 text-foreground font-sans" data-yolo-space>
       {/* Topbar mobile */}
-      <header className="lg:hidden sticky top-0 z-30 bg-charbon border-b border-white/10 flex items-center justify-between px-4 h-14">
+      <header className="lg:hidden fixed top-0 inset-x-0 z-40 bg-charbon border-b border-white/10 flex items-center justify-between px-4 h-14">
         <Link to="/admin">
           <YoloLogo variant="yellow" size="sm" />
         </Link>
@@ -95,10 +95,10 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         </button>
       </header>
 
-      <div className="flex">
+      <div className="flex pt-14 lg:pt-0">
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-charbon border-r border-white/10 flex flex-col transition-transform lg:translate-x-0 ${
+          className={`fixed top-14 bottom-0 left-0 z-40 w-64 bg-charbon border-r border-white/10 flex flex-col transition-transform lg:top-0 lg:bottom-auto lg:sticky lg:h-screen lg:translate-x-0 ${
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >

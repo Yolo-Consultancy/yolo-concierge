@@ -65,8 +65,8 @@ function VehicleDetail() {
 
   return (
     <main className="min-h-screen font-sans antialiased" data-yolo-portal data-yolo-portal-vehicules>
+      <PortalHeader portalId="vehicules" />
       <section className="relative bg-charbon text-white pb-8 pt-28">
-        <PortalHeader portalId="vehicules" />
         <div className="mx-auto max-w-6xl px-6">
           <Link
             to="/location-vehicules"

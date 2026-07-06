@@ -126,8 +126,8 @@ function ContactPage() {
 
   return (
     <main className="min-h-screen font-sans antialiased" data-yolo-portal data-yolo-portal-light>
+      {portalId ? <PortalHeader portalId={portalId} /> : <SiteHeader />}
       <section className="relative bg-charbon text-white pb-16 pt-28">
-        {portalId ? <PortalHeader portalId={portalId} /> : <SiteHeader />}
         <div className="mx-auto max-w-6xl px-6">
           <ScrollReveal className="yolo-hero-content max-w-2xl mx-auto">
             <SectionLabel>{portal ? portal.name : "YOLO Le Concierge"}</SectionLabel>

@@ -63,9 +63,21 @@ export function PortalServiceClientShell({ portalId }: { portalId: PortalId }) {
 
   return (
     <PortalClientContext.Provider value={{ account, portalId }}>
-      <div className="min-h-screen bg-charbon text-white flex font-sans" data-yolo-space>
+      <div className="min-h-screen bg-charbon text-white flex flex-col lg:flex-row font-sans" data-yolo-space>
+        <header className="lg:hidden fixed top-0 inset-x-0 z-40 bg-charbon/95 backdrop-blur-md border-b border-white/10 flex items-center justify-between px-6 h-16">
+          <YoloLogo variant="yellow" size="sm" subtitle={portal.name} />
+          <button
+            type="button"
+            onClick={() => setOpen(!open)}
+            className="p-2 -mr-2 rounded-lg text-white/70 hover:text-white hover:bg-white/5"
+            aria-label="Menu"
+          >
+            {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          </button>
+        </header>
+
         <aside
-          className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 border-r border-white/10 bg-charbon flex flex-col transition-transform lg:translate-x-0 ${
+          className={`fixed top-16 bottom-0 left-0 z-40 w-64 border-r border-white/10 bg-charbon flex flex-col transition-transform lg:top-0 lg:bottom-auto lg:sticky lg:h-screen lg:translate-x-0 ${
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >
@@ -112,10 +124,7 @@ export function PortalServiceClientShell({ portalId }: { portalId: PortalId }) {
           </div>
         </aside>
         {open && <div className="lg:hidden fixed inset-0 z-30 bg-black/70" onClick={() => setOpen(false)} />}
-        <main className="flex-1 min-w-0 p-6 lg:p-10 flex flex-col">
-          <button onClick={() => setOpen(true)} className="lg:hidden mb-4 p-2 rounded-lg border border-white/10">
-            <Menu className="h-5 w-5" />
-          </button>
+        <main className="flex-1 min-w-0 p-6 lg:p-10 pt-[5.5rem] lg:pt-10 flex flex-col">
           <div className="flex-1">
             <Outlet />
           </div>

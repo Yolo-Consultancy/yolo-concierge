@@ -56,9 +56,21 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
   const accentActive = "bg-or-vif text-charbon";
 
   return (
-    <div className="min-h-screen bg-muted/30 text-foreground flex font-sans" data-yolo-space>
+    <div className="min-h-screen bg-muted/30 text-foreground flex flex-col lg:flex-row font-sans" data-yolo-space>
+      <header className="lg:hidden fixed top-0 inset-x-0 z-40 bg-charbon border-b border-white/10 flex items-center justify-between px-4 h-14">
+        <YoloLogo variant="yellow" size="sm" subtitle={`Admin · ${portal.name}`} />
+        <button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="p-2 rounded text-white/70 hover:bg-white/10 hover:text-white"
+          aria-label="Ouvrir le menu"
+        >
+          <Menu className="h-5 w-5" />
+        </button>
+      </header>
+
       <aside
-        className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-charbon border-r border-white/10 flex flex-col transition-transform lg:translate-x-0 ${
+        className={`fixed top-14 bottom-0 left-0 z-40 w-64 bg-charbon border-r border-white/10 flex flex-col transition-transform lg:top-0 lg:bottom-auto lg:sticky lg:h-screen lg:translate-x-0 ${
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -105,10 +117,7 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
         </div>
       </aside>
       {open && <div className="lg:hidden fixed inset-0 z-30 bg-black/40" onClick={() => setOpen(false)} />}
-      <main className="flex-1 min-w-0 p-4 lg:p-8 yolo-space-main flex flex-col">
-        <button onClick={() => setOpen(true)} className="lg:hidden mb-4 p-2 rounded border">
-          <Menu className="h-5 w-5" />
-        </button>
+      <main className="flex-1 min-w-0 p-4 lg:p-8 pt-[3.75rem] lg:pt-8 yolo-space-main flex flex-col">
         <div className="flex-1">
           <Outlet />
         </div>

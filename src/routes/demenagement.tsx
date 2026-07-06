@@ -145,10 +145,10 @@ function Demenagement() {
   return (
     <main className="min-h-screen font-sans antialiased" data-yolo-portal data-demenagement-site>
       <DemenagementDevisModal open={devisOpen} onClose={() => setDevisOpen(false)} />
+      <PortalHeader portalId="demenagement" onAction={(a) => a === "devis" && openDevis()} />
 
       {/* Hero */}
       <section className="relative min-h-[88vh] flex flex-col overflow-hidden bg-charbon">
-        <PortalHeader portalId="demenagement" onAction={(a) => a === "devis" && openDevis()} />
         <div className="absolute inset-0">
           <img
             src={demenagementHero}

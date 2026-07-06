@@ -106,13 +106,13 @@ function SurMesure() {
 
   return (
     <main className="min-h-screen font-sans antialiased" data-yolo-portal data-yolo-portal-light>
+      <PortalHeader
+        portalId="sur-mesure"
+        onAction={() => {
+          document.getElementById("demande")?.scrollIntoView({ behavior: "smooth" });
+        }}
+      />
       <section className="relative min-h-[75vh] flex flex-col overflow-hidden bg-charbon text-white">
-        <PortalHeader
-          portalId="sur-mesure"
-          onAction={() => {
-            document.getElementById("demande")?.scrollIntoView({ behavior: "smooth" });
-          }}
-        />
         <img
           src={servicesImg}
           alt="Conciergerie sur mesure"

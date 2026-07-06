@@ -152,8 +152,8 @@ function LocationVehicules() {
 
   return (
     <main className="min-h-screen font-sans antialiased" data-yolo-portal data-yolo-portal-vehicules>
+      <PortalHeader portalId="vehicules" />
       <section className="relative min-h-[88vh] flex flex-col overflow-hidden bg-charbon text-white">
-        <PortalHeader portalId="vehicules" />
         <img
           src={carHero}
           alt="Supercar de luxe à Kinshasa"
