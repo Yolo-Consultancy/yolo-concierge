@@ -52,13 +52,18 @@ function MissionsPage() {
   const handleSave = async () => {
     if (!editing) return;
 
-    if (editing.assigneeId && busyDriverIds.includes(editing.assigneeId)) {
-      toast.error("Ce chauffeur a déjà une mission en cours. Choisissez un autre chauffeur.");
+    if (!editing.bookingId) {
+      toast.error("Associez une réservation à la mission.");
       return;
     }
 
-    if (!editing.bookingId && editing.assigneeId) {
-      toast.error("Associez une réservation avant d'affecter un chauffeur.");
+    if (!editing.assigneeId) {
+      toast.error("Affectez un chauffeur pour que la mission soit visible.");
+      return;
+    }
+
+    if (busyDriverIds.includes(editing.assigneeId)) {
+      toast.error("Ce chauffeur a déjà une mission en cours. Choisissez un autre chauffeur.");
       return;
     }
 
@@ -141,7 +146,11 @@ function MissionsPage() {
             </div>
           );
         })}
-        {items.length === 0 && <p className="text-muted-foreground text-sm">Aucune mission.</p>}
+        {items.length === 0 && (
+          <p className="text-muted-foreground text-sm">
+            Aucune mission affectée. Créez une mission depuis une réservation et assignez un chauffeur.
+          </p>
+        )}
       </div>
 
       {editing && (

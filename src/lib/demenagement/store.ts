@@ -21,7 +21,11 @@ export type Mover = {
 export type MovingMission = {
   id: string;
   contactMessageId: string;
+  assigneeIds: string[];
+  assigneeNames: string[];
+  /** Premier déménageur — compatibilité */
   assigneeId: string;
+  /** Noms concaténés — affichage */
   assigneeName: string;
   type: MovingMissionType;
   scheduledAt: string;
@@ -66,8 +70,14 @@ export async function upsertMovingMission(m: MovingMission): Promise<MovingMissi
     : api.post<MovingMission>("/moving-missions", payload);
 }
 
-export async function listBusyMoverIds(excludeMissionId?: string): Promise<string[]> {
-  const q = excludeMissionId ? `?excludeMissionId=${excludeMissionId}` : "";
+export async function listBusyMoverIds(
+  scheduledAt: string,
+  excludeMissionId?: string,
+): Promise<string[]> {
+  const params = new URLSearchParams();
+  if (scheduledAt) params.set("scheduledAt", scheduledAt);
+  if (excludeMissionId) params.set("excludeMissionId", excludeMissionId);
+  const q = params.toString() ? `?${params.toString()}` : "";
   return api.get<string[]>(`/moving-missions/busy-movers${q}`);
 }
 

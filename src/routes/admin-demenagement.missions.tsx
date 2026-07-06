@@ -30,6 +30,8 @@ const inputCls =
 const empty = (): MovingMission => ({
   id: "",
   contactMessageId: "",
+  assigneeIds: [],
+  assigneeNames: [],
   assigneeId: "",
   assigneeName: "",
   type: "complet",
@@ -37,6 +39,28 @@ const empty = (): MovingMission => ({
   status: "a_affecter",
   notes: "",
 });
+
+function normalizeMission(m: MovingMission): MovingMission {
+  const assigneeIds =
+    m.assigneeIds?.length > 0
+      ? m.assigneeIds
+      : m.assigneeId
+        ? [m.assigneeId]
+        : [];
+  const assigneeNames =
+    m.assigneeNames?.length > 0
+      ? m.assigneeNames
+      : m.assigneeName
+        ? m.assigneeName.split(",").map((n) => n.trim()).filter(Boolean)
+        : [];
+  return {
+    ...m,
+    assigneeIds,
+    assigneeNames,
+    assigneeId: assigneeIds[0] || "",
+    assigneeName: assigneeNames.join(", "),
+  };
+}
 
 function DemenagementMissionsPage() {
   const { ask, dialog } = useConfirmDialog();
@@ -56,34 +80,48 @@ function DemenagementMissionsPage() {
       (editing?.contactMessageId && d.id === editing.contactMessageId),
   );
 
+  const refreshBusyMovers = (mission: MovingMission | null) => {
+    if (!mission?.scheduledAt) {
+      setBusyMoverIds([]);
+      return;
+    }
+    listBusyMoverIds(mission.scheduledAt, mission.id || undefined).then(setBusyMoverIds);
+  };
+
   const refresh = () => {
     listMovingMissions().then(setItems);
     listAdminServiceRequests("demenagement").then(setDemandes);
     listMovers().then(setMovers);
-    listBusyMoverIds(editing?.id).then(setBusyMoverIds);
+    refreshBusyMovers(editing);
   };
   useEffect(refresh, []);
 
   useEffect(() => {
-    if (editing) listBusyMoverIds(editing.id).then(setBusyMoverIds);
-  }, [editing?.id]);
+    if (editing) refreshBusyMovers(editing);
+  }, [editing?.id, editing?.scheduledAt]);
 
   const handleSave = async () => {
     if (!editing) return;
 
-    if (editing.assigneeId && busyMoverIds.includes(editing.assigneeId)) {
-      toast.error("Ce déménageur a déjà une mission en cours. Choisissez un autre déménageur.");
+    if (!editing.contactMessageId) {
+      toast.error("Associez une demande client à la mission.");
       return;
     }
 
-    if (!editing.contactMessageId && editing.assigneeId) {
-      toast.error("Associez une demande client avant d'affecter un déménageur.");
+    if (!editing.assigneeIds.length) {
+      toast.error("Affectez au moins un déménageur pour que la mission soit visible.");
+      return;
+    }
+
+    const busySelected = editing.assigneeIds.filter((id) => busyMoverIds.includes(id));
+    if (busySelected.length > 0) {
+      toast.error("Un ou plusieurs déménageurs sont déjà occupés à cette date.");
       return;
     }
 
     setSaving(true);
     try {
-      await upsertMovingMission(editing);
+      await upsertMovingMission(normalizeMission(editing));
       toast.success("Mission enregistrée.");
     } catch (err) {
       setSaving(false);
@@ -134,8 +172,10 @@ function DemenagementMissionsPage() {
               </div>
               <div className="text-xs space-y-1 text-muted-foreground">
                 <p>
-                  <strong className="text-foreground">Assigné à :</strong>{" "}
-                  {m.assigneeName || "Non affecté"}
+                  <strong className="text-foreground">Équipe :</strong>{" "}
+                  {m.assigneeNames?.length
+                    ? m.assigneeNames.join(", ")
+                    : m.assigneeName || "Non affecté"}
                 </p>
                 <p>
                   <strong className="text-foreground">Planifié :</strong>{" "}
@@ -145,7 +185,7 @@ function DemenagementMissionsPage() {
               </div>
               <div className="mt-4 flex gap-2">
                 <button
-                  onClick={() => setEditing(m)}
+                  onClick={() => setEditing(normalizeMission(m))}
                   className="flex-1 text-xs rounded-md border border-input px-3 py-1.5 hover:bg-muted"
                 >
                   Modifier
@@ -168,7 +208,9 @@ function DemenagementMissionsPage() {
           );
         })}
         {items.length === 0 && (
-          <p className="text-muted-foreground text-sm">Aucune mission déménagement.</p>
+          <p className="text-muted-foreground text-sm">
+            Aucune mission affectée. Créez une mission depuis une demande et assignez un déménageur.
+          </p>
         )}
       </div>
 
@@ -209,49 +251,103 @@ function DemenagementMissionsPage() {
                   ),
                 )}
               </select>
-              <select
-                className={inputCls}
-                value={editing.assigneeId}
-                onChange={(e) => {
-                  const mover = movers.find((m) => m.id === e.target.value);
-                  const assigneeName = mover
-                    ? `${mover.firstName} ${mover.lastName}`.trim()
-                    : "";
-                  setEditing({ ...editing, assigneeId: e.target.value, assigneeName });
-                }}
-              >
-                <option value="">— Affecter à un déménageur —</option>
-                {editing.assigneeId &&
-                  !activeMovers.some((m) => m.id === editing.assigneeId) &&
-                  (() => {
-                    const current = movers.find((m) => m.id === editing.assigneeId);
-                    return current ? (
-                      <option key={current.id} value={current.id}>
-                        {current.firstName} {current.lastName} (inactif)
-                      </option>
-                    ) : editing.assigneeName ? (
-                      <option key={editing.assigneeId} value={editing.assigneeId}>
-                        {editing.assigneeName} (ancienne affectation)
-                      </option>
-                    ) : null;
-                  })()}
-                {activeMovers.map((m) => {
-                  const isBusy = busyMoverIds.includes(m.id);
-                  const isCurrent = m.id === editing.assigneeId;
-                  return (
-                    <option key={m.id} value={m.id} disabled={isBusy && !isCurrent}>
-                      {m.firstName} {m.lastName}
-                      {isBusy && !isCurrent ? " (mission en cours)" : ""}
-                      {m.phone ? ` · ${m.phone}` : ""}
-                    </option>
-                  );
-                })}
-              </select>
-              {busyMoverIds.length > 0 && (
-                <p className="text-xs text-muted-foreground">
-                  Les déménageurs avec une mission <strong>en cours</strong> sont désactivés.
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-2">
+                  Déménageurs affectés *
                 </p>
-              )}
+                <div className="max-h-48 overflow-y-auto rounded-md border border-input divide-y divide-border">
+                  {activeMovers.length === 0 ? (
+                    <p className="px-3 py-2 text-sm text-muted-foreground">Aucun déménageur actif.</p>
+                  ) : (
+                    activeMovers.map((m) => {
+                      const isSelected = editing.assigneeIds.includes(m.id);
+                      const isBusy = busyMoverIds.includes(m.id);
+                      const isCurrent = isSelected;
+                      const disabled = isBusy && !isCurrent;
+                      return (
+                        <label
+                          key={m.id}
+                          className={`flex items-center gap-3 px-3 py-2.5 text-sm ${
+                            disabled
+                              ? "cursor-not-allowed opacity-50 bg-muted/40"
+                              : "cursor-pointer hover:bg-muted/50"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            className="rounded border-input"
+                            checked={isSelected}
+                            disabled={disabled}
+                            onChange={(e) => {
+                              const nextIds = e.target.checked
+                                ? [...editing.assigneeIds, m.id]
+                                : editing.assigneeIds.filter((id) => id !== m.id);
+                              const nextNames = nextIds.map((id) => {
+                                const mover = movers.find((x) => x.id === id);
+                                return mover ? `${mover.firstName} ${mover.lastName}`.trim() : "";
+                              });
+                              setEditing({
+                                ...editing,
+                                assigneeIds: nextIds,
+                                assigneeNames: nextNames,
+                                assigneeId: nextIds[0] || "",
+                                assigneeName: nextNames.join(", "),
+                              });
+                            }}
+                          />
+                          <span className="flex-1">
+                            {m.firstName} {m.lastName}
+                            {m.phone ? ` · ${m.phone}` : ""}
+                            {disabled ? " (occupé à cette date)" : ""}
+                          </span>
+                        </label>
+                      );
+                    })
+                  )}
+                  {editing.assigneeIds
+                    .filter((id) => !activeMovers.some((m) => m.id === id))
+                    .map((id) => {
+                      const mover = movers.find((m) => m.id === id);
+                      if (!mover) return null;
+                      return (
+                        <label
+                          key={id}
+                          className="flex items-center gap-3 px-3 py-2.5 text-sm bg-amber-500/5"
+                        >
+                          <input
+                            type="checkbox"
+                            className="rounded border-input"
+                            checked
+                            onChange={() => {
+                              const nextIds = editing.assigneeIds.filter((x) => x !== id);
+                              const nextNames = nextIds.map((mid) => {
+                                const mv = movers.find((x) => x.id === mid);
+                                return mv ? `${mv.firstName} ${mv.lastName}`.trim() : "";
+                              });
+                              setEditing({
+                                ...editing,
+                                assigneeIds: nextIds,
+                                assigneeNames: nextNames,
+                                assigneeId: nextIds[0] || "",
+                                assigneeName: nextNames.join(", "),
+                              });
+                            }}
+                          />
+                          <span>
+                            {mover.firstName} {mover.lastName} (inactif)
+                          </span>
+                        </label>
+                      );
+                    })}
+                </div>
+                {busyMoverIds.length > 0 && (
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Les déménageurs déjà affectés le{" "}
+                    <strong>{new Date(editing.scheduledAt).toLocaleDateString("fr-FR")}</strong>{" "}
+                    ne peuvent pas être sélectionnés.
+                  </p>
+                )}
+              </div>
               <input
                 type="datetime-local"
                 className={inputCls}
