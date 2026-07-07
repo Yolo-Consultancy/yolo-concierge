@@ -16,6 +16,13 @@ import {
 import { formatPrice } from "@/lib/vehicles";
 import { bookingConfig } from "@/config/booking";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import {
+  joinStoredPhone,
+  phoneDigitsOnly,
+  phoneMaxLength,
+  splitStoredPhone,
+} from "@/lib/phone-field";
 
 export const Route = createFileRoute("/admin-demenagement/demenageurs")({
   component: DemenageursPage,
@@ -25,8 +32,15 @@ function DemenageursPage() {
   const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Mover[]>([]);
   const [formMover, setFormMover] = useState<Mover | null>(null);
+  const [phoneCountryCode, setPhoneCountryCode] = useState("+243");
   const [search, setSearch] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const openForm = (mover: Mover) => {
+    const parsed = splitStoredPhone(mover.phone);
+    setPhoneCountryCode(parsed.countryCode);
+    setFormMover({ ...mover, phone: parsed.phone });
+  };
 
   const refresh = () => {
     listMovers().then(setItems);
@@ -54,9 +68,14 @@ function DemenageursPage() {
   const performSave = async () => {
     if (!formMover) return;
 
+    const payload = {
+      ...formMover,
+      phone: joinStoredPhone(phoneCountryCode, formMover.phone),
+    };
+
     setSaving(true);
     try {
-      await upsertMover(formMover);
+      await upsertMover(payload);
       if (isNew) {
         toast.success(`${formMover.firstName} ${formMover.lastName} a été ajouté à l'équipe.`);
         setSearch("");
@@ -81,7 +100,9 @@ function DemenageursPage() {
       return;
     }
 
-    if (!formMover.email.trim() && !formMover.phone.trim()) {
+    const storedPhone = joinStoredPhone(phoneCountryCode, formMover.phone);
+
+    if (!formMover.email.trim() && !storedPhone) {
       await performSave();
       return;
     }
@@ -89,7 +110,7 @@ function DemenageursPage() {
     try {
       const conflicts = await checkMoverContactDuplicates(
         formMover.email,
-        formMover.phone,
+        storedPhone,
         isNew ? undefined : formMover.id,
       );
 
@@ -122,7 +143,7 @@ function DemenageursPage() {
         </div>
         <button
           type="button"
-          onClick={() => setFormMover(emptyMover())}
+          onClick={() => openForm(emptyMover())}
           className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
         >
           <Plus className="h-4 w-4" /> Nouveau déménageur
@@ -180,7 +201,7 @@ function DemenageursPage() {
                     <div className="flex gap-1 justify-end">
                       <button
                         type="button"
-                        onClick={() => setFormMover(d)}
+                        onClick={() => openForm(d)}
                         className="p-1.5 rounded hover:bg-muted"
                       >
                         <Pencil className="h-4 w-4" />
@@ -273,12 +294,23 @@ function DemenageursPage() {
                 />
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium mb-1.5">Téléphone</label>
-                <input
-                  className={MOVER_INPUT_CLS}
-                  placeholder="+243 ..."
-                  value={formMover.phone}
-                  onChange={(e) => setFormMover({ ...formMover, phone: e.target.value })}
+                <ContactPhoneField
+                  variant="light"
+                  countryCode={phoneCountryCode}
+                  phone={formMover.phone}
+                  onCountryCodeChange={(countryCode) => {
+                    setPhoneCountryCode(countryCode);
+                    setFormMover((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            phone: phoneDigitsOnly(prev.phone).slice(0, phoneMaxLength(countryCode)),
+                          }
+                        : prev,
+                    );
+                  }}
+                  onPhoneChange={(phone) => setFormMover({ ...formMover, phone })}
+                  inputCls={MOVER_INPUT_CLS}
                 />
               </div>
               <div>

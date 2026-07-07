@@ -7,6 +7,13 @@ import { listDrivers, upsertDriver, deleteDriver, newId, type Driver } from "@/l
 import { formatPrice } from "@/lib/vehicles";
 import { bookingConfig } from "@/config/booking";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import {
+  joinStoredPhone,
+  phoneDigitsOnly,
+  phoneMaxLength,
+  splitStoredPhone,
+} from "@/lib/phone-field";
 
 export const Route = createFileRoute("/admin/chauffeurs")({ component: ChauffeursPage });
 
@@ -30,7 +37,14 @@ function ChauffeursPage() {
   const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Driver[]>([]);
   const [editing, setEditing] = useState<Driver | null>(null);
+  const [phoneCountryCode, setPhoneCountryCode] = useState("+243");
   const [search, setSearch] = useState("");
+
+  const openForm = (driver: Driver) => {
+    const parsed = splitStoredPhone(driver.phone);
+    setPhoneCountryCode(parsed.countryCode);
+    setEditing({ ...driver, phone: parsed.phone });
+  };
 
   const refresh = () => { listDrivers().then(setItems); };
   useEffect(refresh, []);
@@ -50,7 +64,7 @@ function ChauffeursPage() {
         subtitle={`${items.length} chauffeur(s) — gestion RH`}
         action={
           <button
-            onClick={() => setEditing(empty())}
+            onClick={() => openForm(empty())}
             className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90"
           >
             <Plus className="h-4 w-4" /> Nouveau chauffeur
@@ -107,7 +121,7 @@ function ChauffeursPage() {
                   <td className="p-3">
                     <div className="flex gap-1 justify-end">
                       <button
-                        onClick={() => setEditing(d)}
+                        onClick={() => openForm(d)}
                         className="p-1.5 rounded hover:bg-muted"
                       >
                         <Pencil className="h-4 w-4" />
@@ -189,12 +203,23 @@ function ChauffeursPage() {
                 </p>
               </div>
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium mb-1.5">Téléphone</label>
-                <input
-                  className={inputCls}
-                  placeholder="+243 ..."
-                  value={editing.phone}
-                  onChange={(e) => setEditing({ ...editing, phone: e.target.value })}
+                <ContactPhoneField
+                  variant="light"
+                  countryCode={phoneCountryCode}
+                  phone={editing.phone}
+                  onCountryCodeChange={(countryCode) => {
+                    setPhoneCountryCode(countryCode);
+                    setEditing((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            phone: phoneDigitsOnly(prev.phone).slice(0, phoneMaxLength(countryCode)),
+                          }
+                        : prev,
+                    );
+                  }}
+                  onPhoneChange={(phone) => setEditing({ ...editing, phone })}
+                  inputCls={inputCls}
                 />
               </div>
               <div>
@@ -247,7 +272,10 @@ function ChauffeursPage() {
                     alert("Prénom, nom et date de recrutement sont requis.");
                     return;
                   }
-                  void upsertDriver(editing).then(() => { setEditing(null); refresh(); });
+                  void upsertDriver({
+                    ...editing,
+                    phone: joinStoredPhone(phoneCountryCode, editing.phone),
+                  }).then(() => { setEditing(null); refresh(); });
                 }}
                 className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90"
               >

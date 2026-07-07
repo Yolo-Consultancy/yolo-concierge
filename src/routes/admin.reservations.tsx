@@ -14,6 +14,12 @@ import { buildAdminEmailHtml } from "@/lib/admin/notify";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
 import { toast } from "sonner";
 import { requestAdminBadgesRefresh } from "@/lib/admin/badges";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import {
+  joinStoredPhone,
+  phoneDigitsOnly,
+  phoneMaxLength,
+} from "@/lib/phone-field";
 
 export const Route = createFileRoute("/admin/reservations")({ component: Reservations });
 
@@ -34,6 +40,7 @@ type ManualBookingForm = {
   vehicleId: string;
   clientName: string;
   clientPhone: string;
+  clientPhoneCountryCode: string;
   clientEmail: string;
   startDate: string;
   endDate: string;
@@ -56,6 +63,7 @@ const emptyManualBooking = (): ManualBookingForm => {
     vehicleId: "",
     clientName: "",
     clientPhone: "",
+    clientPhoneCountryCode: "+243",
     clientEmail: "",
     startDate: today,
     endDate: tomorrow,
@@ -206,7 +214,7 @@ function Reservations() {
         vehicleId: vehicle.id,
         vehicleName: `${vehicle.brand} ${vehicle.name}`.trim(),
         clientName: manualForm.clientName.trim(),
-        clientPhone: manualForm.clientPhone.trim(),
+        clientPhone: joinStoredPhone(manualForm.clientPhoneCountryCode, manualForm.clientPhone),
         clientEmail: manualForm.clientEmail.trim().toLowerCase() || undefined,
         startDate: manualForm.startDate,
         endDate: manualForm.endDate,
@@ -321,11 +329,20 @@ function Reservations() {
                 value={manualForm.clientName}
                 onChange={(e) => setManualForm({ ...manualForm, clientName: e.target.value })}
               />
-              <input
-                className={inputCls}
-                placeholder="Téléphone *"
-                value={manualForm.clientPhone}
-                onChange={(e) => setManualForm({ ...manualForm, clientPhone: e.target.value })}
+              <ContactPhoneField
+                required
+                variant="light"
+                countryCode={manualForm.clientPhoneCountryCode}
+                phone={manualForm.clientPhone}
+                onCountryCodeChange={(countryCode) =>
+                  setManualForm((prev) => ({
+                    ...prev,
+                    clientPhoneCountryCode: countryCode,
+                    clientPhone: phoneDigitsOnly(prev.clientPhone).slice(0, phoneMaxLength(countryCode)),
+                  }))
+                }
+                onPhoneChange={(clientPhone) => setManualForm({ ...manualForm, clientPhone })}
+                inputCls={inputCls}
               />
               <input
                 className={inputCls}

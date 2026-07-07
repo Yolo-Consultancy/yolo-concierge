@@ -6,6 +6,13 @@ import { PageHeader } from "@/components/admin/AdminLayout";
 import { listClients, upsertClient, deleteClient, newId, type Client } from "@/lib/admin/store";
 import { formatPrice } from "@/lib/vehicles";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
+import { ContactPhoneField } from "@/components/ContactPhoneField";
+import {
+  joinStoredPhone,
+  phoneDigitsOnly,
+  phoneMaxLength,
+  splitStoredPhone,
+} from "@/lib/phone-field";
 
 export const Route = createFileRoute("/admin/clients")({ component: ClientsPage });
 
@@ -20,6 +27,14 @@ function ClientsPage() {
   const { ask, dialog } = useConfirmDialog();
   const [items, setItems] = useState<Client[]>([]);
   const [editing, setEditing] = useState<Client | null>(null);
+  const [phoneCountryCode, setPhoneCountryCode] = useState("+243");
+
+  const openForm = (client: Client) => {
+    const parsed = splitStoredPhone(client.phone);
+    setPhoneCountryCode(parsed.countryCode);
+    setEditing({ ...client, phone: parsed.phone });
+  };
+
   const refresh = () => { listClients().then(setItems); };
   useEffect(refresh, []);
 
@@ -28,7 +43,7 @@ function ClientsPage() {
       <PageHeader
         title="Clients" subtitle={`${items.length} client(s) — CRM léger`}
         action={
-          <button onClick={() => setEditing(empty())}
+          <button onClick={() => openForm(empty())}
             className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
             <Plus className="h-4 w-4" /> Nouveau client
           </button>
@@ -61,7 +76,7 @@ function ClientsPage() {
                   <td className="p-3 text-xs text-muted-foreground max-w-xs truncate">{c.notes}</td>
                   <td className="p-3">
                     <div className="flex gap-1 justify-end">
-                      <button onClick={() => setEditing(c)} className="p-1.5 rounded hover:bg-muted"><Pencil className="h-4 w-4" /></button>
+                      <button onClick={() => openForm(c)} className="p-1.5 rounded hover:bg-muted"><Pencil className="h-4 w-4" /></button>
                       <button
                         onClick={() => ask({
                           title: "Supprimer ce client ?",
@@ -94,14 +109,38 @@ function ClientsPage() {
               <input className={inputCls} placeholder="Prénom" value={editing.firstName} onChange={(e) => setEditing({ ...editing, firstName: e.target.value })} />
               <input className={inputCls} placeholder="Nom" value={editing.lastName} onChange={(e) => setEditing({ ...editing, lastName: e.target.value })} />
               <input className={inputCls} placeholder="Email" value={editing.email} onChange={(e) => setEditing({ ...editing, email: e.target.value })} />
-              <input className={inputCls} placeholder="Téléphone" value={editing.phone} onChange={(e) => setEditing({ ...editing, phone: e.target.value })} />
+              <div className="sm:col-span-2">
+                <ContactPhoneField
+                  variant="light"
+                  countryCode={phoneCountryCode}
+                  phone={editing.phone}
+                  onCountryCodeChange={(countryCode) => {
+                    setPhoneCountryCode(countryCode);
+                    setEditing((prev) =>
+                      prev
+                        ? {
+                            ...prev,
+                            phone: phoneDigitsOnly(prev.phone).slice(0, phoneMaxLength(countryCode)),
+                          }
+                        : prev,
+                    );
+                  }}
+                  onPhoneChange={(phone) => setEditing({ ...editing, phone })}
+                  inputCls={inputCls}
+                />
+              </div>
               <input type="number" className={inputCls} placeholder="Nb réservations" value={editing.totalBookings} onChange={(e) => setEditing({ ...editing, totalBookings: +e.target.value })} />
               <input type="number" className={inputCls} placeholder="Total dépensé" value={editing.totalSpent} onChange={(e) => setEditing({ ...editing, totalSpent: +e.target.value })} />
               <textarea className={`${inputCls} sm:col-span-2`} placeholder="Notes internes" rows={3} value={editing.notes} onChange={(e) => setEditing({ ...editing, notes: e.target.value })} />
             </div>
             <div className="border-t border-border px-6 py-4 flex justify-end gap-2">
               <button onClick={() => setEditing(null)} className="rounded-md border border-input px-4 py-2 text-sm hover:bg-muted">Annuler</button>
-              <button onClick={() => { void upsertClient(editing).then(() => { setEditing(null); refresh(); }); }}
+              <button onClick={() => {
+                void upsertClient({
+                  ...editing,
+                  phone: joinStoredPhone(phoneCountryCode, editing.phone),
+                }).then(() => { setEditing(null); refresh(); });
+              }}
                 className="rounded-md bg-primary text-primary-foreground px-4 py-2 text-sm font-medium hover:bg-primary/90">Enregistrer</button>
             </div>
           </div>

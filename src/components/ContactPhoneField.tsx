@@ -61,8 +61,8 @@ export function ContactPhoneField({
           onChange={(e) => onCountryCodeChange(e.target.value)}
           className={
             isDark
-              ? "shrink-0 min-w-[11rem] max-w-[13rem] border-0 border-r border-white/15 bg-charbon py-3.5 pl-3 pr-2 text-sm font-semibold text-white rounded-none focus:outline-none focus:ring-0 scheme-dark"
-              : "yolo-form-select shrink-0 min-w-[11rem] max-w-[13rem] border-0 border-r border-black/10 bg-[var(--yolo-cream)] py-3.5 pl-3 pr-2 text-sm font-semibold text-charbon rounded-none focus:outline-none focus:ring-0"
+              ? "shrink-0 min-w-[10rem] max-w-[12rem] border-0 border-r border-white/15 bg-charbon py-3.5 pl-2.5 pr-2 text-xs font-semibold text-white rounded-none focus:outline-none focus:ring-0 scheme-dark"
+              : "yolo-form-select shrink-0 min-w-[10rem] max-w-[12rem] border-0 border-r border-black/10 bg-[var(--yolo-cream)] py-3.5 pl-2.5 pr-2 text-xs font-semibold text-charbon rounded-none focus:outline-none focus:ring-0"
           }
           aria-label="Indicatif pays"
         >

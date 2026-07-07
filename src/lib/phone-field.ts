@@ -12,6 +12,31 @@ export const countryOptions = (() => {
   return [...priority, ...rest];
 })();
 
+/** Nom affiché sans la variante native entre parenthèses. */
+export function getShortCountryName(fullName: string): string {
+  const trimmed = fullName.trim().replace(/[\u200E\u200F\u202A-\u202E\u202C\u202D]/g, "");
+
+  const double = trimmed.match(/^(.+?\([^)]+\))\s+\(.+\)$/);
+  if (double) return double[1].trim();
+
+  const single = trimmed.match(/^(.+?)\s+\(([^)]+)\)$/);
+  if (single) {
+    const [, base, inside] = single;
+    const inner = inside.trim();
+    if (
+      /^(DRC|Republic|FYROM|Burma|South Korea|North Korea|Keeling Islands|Congo-Brazzaville)$/i.test(
+        inner,
+      ) ||
+      /^[A-Z]{2,5}$/.test(inner)
+    ) {
+      return `${base.trim()} (${inner})`;
+    }
+    return base.trim();
+  }
+
+  return trimmed;
+}
+
 export function phoneMaxLength(countryCode: string) {
   return countryCode === "+243" ? 10 : 15;
 }
@@ -52,7 +77,7 @@ const dialCodeIndex = (() => {
     if (!byDial.has(dial)) {
       byDial.set(dial, {
         iso2: country.iso2,
-        name: country.name,
+        name: getShortCountryName(country.name),
         dialCode: country.dialCode,
       });
     }
@@ -73,7 +98,7 @@ export function getCountryNameByDialCode(dialCode: string): string {
 
 export function formatCountryOptionLabel(country: (typeof countryOptions)[number]) {
   const dial = `+${country.dialCode}`;
-  return `${getFlagEmoji(country.iso2)} ${dial} · ${country.name}`;
+  return `${getFlagEmoji(country.iso2)} ${dial} · ${getShortCountryName(country.name)}`;
 }
 
 export function parsePhoneWithCountry(raw: string, defaultCode = "+243") {
@@ -132,4 +157,14 @@ export function formatPhoneSummary(countryCode: string, phone: string) {
   if (!formatted) return country ? `${country.name} (${countryCode})` : countryCode;
   const name = country?.name ?? "Pays inconnu";
   return `${name} (${countryCode}) · ${formatted}`;
+}
+
+export function splitStoredPhone(stored: string, defaultCode = "+243") {
+  const parsed = parsePhoneWithCountry(stored.trim(), defaultCode);
+  return { countryCode: parsed.countryCode, phone: parsed.phone };
+}
+
+export function joinStoredPhone(countryCode: string, phone: string): string {
+  const digits = phoneDigitsOnly(phone);
+  return digits ? `${countryCode} ${digits}` : "";
 }
