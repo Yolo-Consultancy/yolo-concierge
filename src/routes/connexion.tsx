@@ -124,15 +124,15 @@ function ConnexionPage() {
   };
 
   return (
-    <div className="min-h-screen bg-charbon flex flex-col font-sans" data-yolo-space>
+    <div className="min-h-screen bg-white flex flex-col font-sans" data-yolo-space>
       <div className="flex-1 flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-or-vif/5 blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-or-vif/5 blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full bg-or-vif/10 blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 rounded-full bg-or-vif/10 blur-[120px] pointer-events-none" />
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <YoloLogo variant="white" size="lg" to="/" centered className="mx-auto mb-3" />
-          <p className="text-sm text-white/60">
+          <YoloLogo variant="yellow" size="lg" to="/" centered className="mx-auto mb-3" />
+          <p className="text-sm text-charbon/60">
             {portal
               ? `Connexion — ${portal.name}`
               : "Un compte client pour tous les services YOLO"}
@@ -317,18 +317,18 @@ function ConnexionPage() {
           {portal && (
             <Link
               to={portal.publicPath as "/demenagement"}
-              className="block text-xs text-white/50 hover:text-or-vif transition-colors"
+              className="block text-xs text-charbon/50 hover:text-or-vif transition-colors"
             >
               ← Retour au portail {portal.name}
             </Link>
           )}
-          <Link to="/" className="block text-xs text-white/50 hover:text-or-vif transition-colors">
+          <Link to="/" className="block text-xs text-charbon/50 hover:text-or-vif transition-colors">
             Accueil général
           </Link>
         </div>
       </div>
       </div>
-      <SiteFooter portalId={portalId} variant="dark" />
+      <SiteFooter portalId={portalId} />
     </div>
   );
 }
