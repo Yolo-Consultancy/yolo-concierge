@@ -2,8 +2,10 @@
 export const contactConfig = {
   city: "Kinshasa",
   country: "République Démocratique du Congo",
-  defaultAddress: "Gombe, Kinshasa, RDC",
-  mapsQuery: "Gombe, Kinshasa, RDC",
+  defaultAddress:
+    "N° 5284 Avenue Tabu ley, (Ex. Tombalbaye), Quartier Golfe, Gombe, Kinshasa RD Congo",
+  mapsQuery:
+    "N° 5284 Avenue Tabu ley, (Ex. Tombalbaye), Quartier Golfe, Gombe, Kinshasa RD Congo",
   mapsShareUrl: "https://maps.app.goo.gl/zgqkUcuJHZdGmurH7",
   mapsCoordinates: {
     lat: -4.309066,
@@ -49,7 +51,7 @@ export function mapsDirectionsUrl(query?: string) {
   return `https://maps.google.com/?q=${encodeURIComponent(query)}`;
 }
 
-export function mapsEmbedUrl() {
-  const { lat, lng } = contactConfig.mapsCoordinates;
-  return `https://www.google.com/maps?q=${lat},${lng}&hl=fr&z=16&output=embed`;
+export function mapsEmbedUrl(query?: string) {
+  const q = encodeURIComponent(query || contactConfig.mapsQuery);
+  return `https://www.google.com/maps?q=${q}&hl=fr&z=16&output=embed`;
 }

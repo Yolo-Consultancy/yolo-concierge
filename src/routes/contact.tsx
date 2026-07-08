@@ -13,6 +13,7 @@ import {
   contactConfig,
   formatPhoneDisplay,
   mapsEmbedUrl,
+  mapsDirectionsUrl,
   whatsappLink,
 } from "@/config/contact";
 import { toast } from "sonner";
@@ -94,7 +95,8 @@ function ContactPage() {
 
   const phoneDisplay = formatPhoneDisplay(settings.whatsappNumber);
   const telHref = `tel:+${settings.whatsappNumber.replace(/\D/g, "")}`;
-  const mapsUrl = contactConfig.mapsShareUrl;
+  const physicalAddress = contactConfig.defaultAddress;
+  const mapsUrl = mapsDirectionsUrl(contactConfig.mapsQuery);
   const serviceType =
     portalId === "demenagement" ? "demenagement" : portalId === "sur-mesure" ? "sur_mesure" : portalId === "vehicules" ? "vehicules" : "general";
 
@@ -137,6 +139,10 @@ function ContactPage() {
             <p className="text-[17px] leading-relaxed text-white/75">
               Prêt à vivre le luxe ? Notre équipe à{" "}
               <span className="text-or-vif">{contactConfig.city}</span> vous répond rapidement.
+            </p>
+            <p className="mt-5 mx-auto max-w-xl flex items-start justify-center gap-2 text-sm text-white/70 text-left sm:text-center">
+              <MapPin className="h-4 w-4 text-or-vif shrink-0 mt-0.5" />
+              <span>{physicalAddress}</span>
             </p>
           </ScrollReveal>
         </div>
@@ -318,10 +324,8 @@ function ContactPage() {
                     <MapPin className="h-5 w-5 text-or-bronze" />
                     <h3 className="font-display text-xl font-semibold text-charbon">Visitez-nous</h3>
                   </div>
-                  <p className="text-sm text-[var(--yolo-muted)] leading-relaxed whitespace-pre-line">
-                    {settings.address || contactConfig.defaultAddress}
-                    {"\n"}
-                    <span className="text-or-bronze">{contactConfig.city}</span> — {contactConfig.country}
+                  <p className="text-sm text-[var(--yolo-muted)] leading-relaxed">
+                    {physicalAddress}
                   </p>
                   <div className="mt-4 overflow-hidden border border-black/8">
                     <iframe
