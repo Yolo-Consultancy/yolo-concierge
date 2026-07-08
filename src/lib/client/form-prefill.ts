@@ -4,20 +4,26 @@ import { parsePhoneWithCountry } from "@/lib/phone-field";
 import { getCurrentClient, hydrateCurrentClient, type ClientAccount } from "./auth";
 
 export type ClientContactFormFields = {
+  civility: string;
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
   countryCode: string;
+  password: string;
+  confirmPassword: string;
 };
 
 export function emptyClientContactFields(): ClientContactFormFields {
   return {
+    civility: "M.",
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     countryCode: "+243",
+    password: "",
+    confirmPassword: "",
   };
 }
 
@@ -29,11 +35,14 @@ export function clientContactFieldsFromAccount(account: ClientAccount): ClientCo
     : parsePhoneWithCountry(`${storedCode} ${rawPhone}`, storedCode);
 
   return {
+    civility: account.civility?.trim() || "M.",
     firstName: account.firstName?.trim() ?? "",
     lastName: account.lastName?.trim() ?? "",
     email: account.email?.trim() ?? "",
     phone: parsed.phone,
     countryCode: parsed.countryCode || storedCode,
+    password: "",
+    confirmPassword: "",
   };
 }
 

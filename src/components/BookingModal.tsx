@@ -11,7 +11,8 @@ import { upsertBooking, getVehicleOccupiedDates, newId, type Booking } from "@/l
 import { expandOccupiedDates } from "@/lib/booking-dates";
 import { toast } from "sonner";
 import { ClientAuthModal } from "@/components/ClientAuthModal";
-import type { ClientAccount } from "@/lib/client/auth";
+import { registerClient, type ClientAccount } from "@/lib/client/auth";
+import { notifyAuthChange } from "@/lib/auth/session";
 import {
   clientContactFieldsFromAccount,
   emptyClientContactFields,
@@ -114,6 +115,14 @@ const STEPS = [
   "Lieu",
   "Coordonnées",
   "Vérifier",
+] as const;
+
+const CIVILITY_OPTIONS = [
+  { value: "M.", label: "M." },
+  { value: "Mme", label: "Mme" },
+  { value: "Mlle", label: "Mlle" },
+  { value: "Dr", label: "Dr" },
+  { value: "Pr", label: "Pr" },
 ] as const;
 
 const CALENDAR_CLASS_NAMES = {
@@ -259,6 +268,9 @@ export function BookingModal({
   }, [form.vehicleId]);
 
   const account = clientAccount && clientAccount !== "guest" ? clientAccount : null;
+  const isGuest = clientAccount === "guest";
+
+  const fullClientName = `${form.civility} ${form.firstName} ${form.lastName}`.replace(/\s+/g, " ").trim();
 
   // When auth resolves, pre-fill form if we got an account
   const handleAuthSuccess = (acc: ClientAccount) => {
@@ -289,7 +301,17 @@ export function BookingModal({
   const canNext = () => {
     if (step === 0) return !!selectedDateRange?.from && !!selectedDateRange?.to;
     if (step === 1) return !!form.pickupLocation && (form.sameDropoff || !!form.dropoffLocation);
-    if (step === 2) return !!form.firstName && !!form.lastName && !!form.email;
+    if (step === 2) {
+      if (!form.civility || !form.firstName.trim() || !form.lastName.trim() || !form.email.trim()) {
+        return false;
+      }
+      if (isGuest) {
+        if (!form.phone.trim()) return false;
+        if (!form.password || form.password.length < 6) return false;
+        if (form.password !== form.confirmPassword) return false;
+      }
+      return true;
+    }
     return true;
   };
 
@@ -305,7 +327,7 @@ export function BookingModal({
 
   const [submitting, setSubmitting] = useState(false);
 
-  const buildBooking = (): Booking | null => {
+  const buildBooking = (activeAccount?: ClientAccount | null): Booking | null => {
     if (!selectedVehicle || !selectedDateRange?.from || !selectedDateRange?.to) return null;
     const startDate = selectedDateRange.from.toISOString().slice(0, 10);
     const endDate = selectedDateRange.to.toISOString().slice(0, 10);
@@ -313,8 +335,8 @@ export function BookingModal({
       id: newId("b"),
       vehicleId: selectedVehicle.id,
       vehicleName: `${selectedVehicle.brand} ${selectedVehicle.name}`,
-      clientId: account?.id,
-      clientName: `${form.firstName} ${form.lastName}`.trim(),
+      clientId: activeAccount?.id ?? account?.id,
+      clientName: fullClientName,
       clientPhone: form.phone ? `${form.countryCode} ${form.phone}` : "",
       clientEmail: form.email?.trim().toLowerCase() || undefined,
       startDate,
@@ -332,19 +354,58 @@ export function BookingModal({
   };
 
   const handleConfirmBooking = async () => {
-    const booking = buildBooking();
-    if (!booking) {
-      toast.error("Veuillez compléter les étapes précédentes.");
-      return;
-    }
     setSubmitting(true);
     try {
+      let activeAccount = account;
+
+      if (isGuest) {
+        const result = await registerClient({
+          civility: form.civility,
+          firstName: form.firstName.trim(),
+          lastName: form.lastName.trim(),
+          email: form.email.trim(),
+          phone: form.phone,
+          countryCode: form.countryCode,
+          password: form.password,
+          portal: "vehicules",
+        });
+
+        if (!result.ok) {
+          toast.error(result.error);
+          return;
+        }
+
+        activeAccount = result.account;
+        setClientAccount(result.account);
+        notifyAuthChange();
+      }
+
+      const booking = buildBooking(activeAccount);
+      if (!booking) {
+        toast.error("Veuillez compléter les étapes précédentes.");
+        return;
+      }
+
       const saved = await upsertBooking(booking);
-      const notified = (saved as { adminEmailSent?: boolean }).adminEmailSent;
+      const notifiedEmail = (saved as { adminEmailSent?: boolean }).adminEmailSent;
+      const notifiedWhatsapp = (saved as { adminWhatsappSent?: boolean }).adminWhatsappSent;
+
       toast.success(
-        notified
-          ? "Réservation enregistrée. L'administrateur a reçu un e-mail."
-          : "Réservation enregistrée.",
+        notifiedEmail && notifiedWhatsapp
+          ? "Réservation enregistrée. Compte créé — l'administrateur a été notifié par e-mail et WhatsApp."
+          : isGuest && notifiedEmail
+            ? "Réservation enregistrée. Votre compte YOLO a été créé — l'administrateur a reçu un e-mail."
+            : isGuest && notifiedWhatsapp
+              ? "Réservation enregistrée. Votre compte YOLO a été créé — l'administrateur a été notifié par WhatsApp."
+              : isGuest
+                ? "Réservation enregistrée. Votre compte YOLO a été créé."
+                : notifiedEmail && notifiedWhatsapp
+                  ? "Réservation enregistrée. L'administrateur a été notifié par e-mail et WhatsApp."
+                  : notifiedEmail
+                    ? "Réservation enregistrée. L'administrateur a reçu un e-mail."
+                    : notifiedWhatsapp
+                      ? "Réservation enregistrée. L'administrateur a été notifié par WhatsApp."
+                      : "Réservation enregistrée.",
       );
       onClose();
     } catch (err) {
@@ -509,7 +570,10 @@ export function BookingModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="yolo-form-label">Heure de prise en charge</label>
+                  <label className="yolo-form-label">
+                    Heure de prise en charge{" "}
+                    <span className="font-semibold text-or-vif">premier jour</span>
+                  </label>
                   <select
                     value={form.pickupTime}
                     onChange={(e) => setForm({ ...form, pickupTime: e.target.value })}
@@ -519,7 +583,10 @@ export function BookingModal({
                   </select>
                 </div>
                 <div>
-                  <label className="yolo-form-label">Heure de retour</label>
+                  <label className="yolo-form-label">
+                    Heure de retour{" "}
+                    <span className="font-semibold text-or-vif">dernier jour</span>
+                  </label>
                   <select
                     value={form.returnTime}
                     onChange={(e) => setForm({ ...form, returnTime: e.target.value })}
@@ -578,6 +645,28 @@ export function BookingModal({
                   Coordonnées préremplies depuis votre compte YOLO. Vous pouvez les modifier si besoin.
                 </p>
               )}
+              {isGuest && (
+                <p className="text-xs text-charbon bg-white border border-or-vif/25 rounded-lg px-3 py-2">
+                  Créez votre compte YOLO en complétant cette étape — vos coordonnées seront enregistrées
+                  et vous pourrez suivre votre réservation dans votre espace client.
+                </p>
+              )}
+
+              <div>
+                <label className="yolo-form-label" data-required>Civilité</label>
+                <select
+                  value={form.civility}
+                  onChange={(e) => setForm({ ...form, civility: e.target.value })}
+                  className={selectCls}
+                >
+                  {CIVILITY_OPTIONS.map((opt) => (
+                    <option key={opt.value} className={SELECT_OPTION_CLS} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="yolo-form-label" data-required>Prénom</label>
@@ -622,8 +711,39 @@ export function BookingModal({
                 }
                 onPhoneChange={(phone) => setForm({ ...form, phone })}
                 inputCls={inputCls}
-                label="Téléphone (optionnel)"
+                required={isGuest}
+                label={isGuest ? "Téléphone" : "Téléphone (optionnel)"}
               />
+
+              {isGuest && (
+                <>
+                  <div>
+                    <label className="yolo-form-label" data-required>Mot de passe</label>
+                    <input
+                      type="password"
+                      value={form.password}
+                      onChange={(e) => setForm({ ...form, password: e.target.value })}
+                      placeholder="6 caractères minimum"
+                      minLength={6}
+                      className={inputCls}
+                    />
+                  </div>
+                  <div>
+                    <label className="yolo-form-label" data-required>Confirmer le mot de passe</label>
+                    <input
+                      type="password"
+                      value={form.confirmPassword}
+                      onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+                      placeholder="Répétez votre mot de passe"
+                      minLength={6}
+                      className={inputCls}
+                    />
+                    {form.confirmPassword && form.password !== form.confirmPassword && (
+                      <p className="mt-1.5 text-xs text-red-600">Les mots de passe ne correspondent pas.</p>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           )}
 
@@ -643,7 +763,12 @@ export function BookingModal({
                   {form.dateRange} {days > 0 && <span className="text-charbon font-medium">({days} jour{days > 1 ? "s" : ""})</span>}
                 </p>
                 <p className="text-sm yolo-form-muted">
-                  Prise en charge: <span className="text-charbon">{form.pickupTime}</span> · Retour:{" "}
+                  Prise en charge{" "}
+                  <span className="font-medium text-or-vif">premier jour</span> :{" "}
+                  <span className="text-charbon">{form.pickupTime}</span>
+                  {" · "}
+                  Retour{" "}
+                  <span className="font-medium text-or-vif">dernier jour</span> :{" "}
                   <span className="text-charbon">{form.returnTime}</span>
                 </p>
               </SummaryCard>
@@ -676,7 +801,7 @@ export function BookingModal({
                 onEdit={() => setStep(2)}
               >
                 <p className="text-sm text-charbon font-medium">
-                  {form.firstName} {form.lastName}
+                  {fullClientName}
                 </p>
                 <p className="text-sm yolo-form-muted">{form.email}</p>
                 {form.phone && (

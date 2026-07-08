@@ -3,6 +3,7 @@ import { clientApi, publicApi, setClientAccessToken, getClientAccessToken } from
 
 export type ClientAccount = {
   id: string;
+  civility?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -37,6 +38,7 @@ export async function hydrateCurrentClient(): Promise<ClientAccount | null> {
 }
 
 export async function registerClient(data: {
+  civility?: string;
   firstName: string;
   lastName: string;
   email: string;
