@@ -10,7 +10,6 @@ import { useState } from "react";
 import { getVehicleById } from "@/lib/admin/store";
 import { formatPrice, type Vehicle } from "@/lib/vehicles";
 import { BookingModal } from "@/components/BookingModal";
-import { ContactModal } from "@/components/ContactModal";
 
 export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
   loader: async ({ params }): Promise<{ vehicle: Vehicle }> => {
@@ -60,7 +59,6 @@ function VehicleDetail() {
   const { vehicle } = Route.useLoaderData();
   const [activeImg, setActiveImg] = useState(0);
   const [bookingOpen, setBookingOpen] = useState(false);
-  const [contactOpen, setContactOpen] = useState(false);
 
   return (
     <main className="min-h-screen font-sans antialiased" data-yolo-portal data-yolo-portal-vehicules>
@@ -157,9 +155,6 @@ function VehicleDetail() {
                 <PortalButton variant="primary" onClick={() => setBookingOpen(true)} className="mt-6 w-full">
                   Réserver maintenant
                 </PortalButton>
-                <PortalButton variant="outline-dark" onClick={() => setContactOpen(true)} className="mt-3 w-full">
-                  Envoyer une demande
-                </PortalButton>
               </aside>
             </ScrollReveal>
           </div>
@@ -184,12 +179,6 @@ function VehicleDetail() {
       <SiteFooter portalId="vehicules" />
 
       {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={vehicle.id} />}
-      {contactOpen && (
-        <ContactModal
-          onClose={() => setContactOpen(false)}
-          prefilledVehicle={`${vehicle.brand} ${vehicle.name}`}
-        />
-      )}
     </main>
   );
 }
