@@ -2,7 +2,7 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard, Car, CalendarCheck, Users, UserCog,
-  ClipboardList, Settings, LogOut, Menu, X, IdCard, FileText,
+  ClipboardList, Settings, LogOut, Menu, IdCard, FileText,
 } from "lucide-react";
 import { useState, type ReactNode, useEffect } from "react";
 import { adminConfig } from "@/config/admin";
@@ -110,16 +110,13 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             }}
           />
 
-          <div className="relative h-16 px-5 flex items-center justify-between border-b border-white/10">
+          <div className="hidden lg:flex relative h-16 px-5 items-center border-b border-white/10">
             <div>
               <YoloLogo variant="white" size="sm" to="/admin" />
               <p className="text-[10px] uppercase tracking-widest text-white/40 mt-1">
                 {adminConfig.brand.subtitle} · Location
               </p>
             </div>
-            <button onClick={() => setOpen(false)} className="lg:hidden p-1 rounded text-white/60 hover:bg-white/10 hover:text-white">
-              <X className="h-4 w-4" />
-            </button>
           </div>
 
           <nav className="relative flex-1 overflow-y-auto p-3 space-y-1">

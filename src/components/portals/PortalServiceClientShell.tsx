@@ -81,11 +81,8 @@ export function PortalServiceClientShell({ portalId }: { portalId: PortalId }) {
             open ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="h-16 px-5 flex items-center justify-between border-b border-white/10">
+          <div className="hidden lg:flex h-16 px-5 items-center border-b border-white/10">
             <YoloLogo variant="white" size="sm" subtitle={portal.name} />
-            <button onClick={() => setOpen(false)} className="lg:hidden p-1 text-white/50">
-              <X className="h-4 w-4" />
-            </button>
           </div>
           <nav className="flex-1 p-4 space-y-1.5">
             {portal.clientNav.map((item) => {

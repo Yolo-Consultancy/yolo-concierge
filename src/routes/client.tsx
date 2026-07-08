@@ -103,17 +103,9 @@ function ClientShell() {
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          {/* Brand */}
-          <div className="h-20 px-8 flex items-center justify-between border-b border-white/5">
-            <div>
-              <YoloLogo variant="white" size="md" to="/location-vehicules" subtitle="Espace client" />
-            </div>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1.5 rounded-lg hover:bg-white/5 text-white/50 hover:text-white"
-            >
-              <X className="h-5 w-5" />
-            </button>
+          {/* Brand — desktop only (mobile header already shows logo) */}
+          <div className="hidden lg:flex h-20 px-8 items-center border-b border-white/5">
+            <YoloLogo variant="white" size="md" to="/location-vehicules" subtitle="Espace client" />
           </div>
 
           {/* Client User Profile Info Card */}

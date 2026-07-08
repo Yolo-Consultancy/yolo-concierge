@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Link, Outlet, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { LogOut, Menu, X } from "lucide-react";
+import { LogOut, Menu } from "lucide-react";
 import { getAdminSession, logout } from "@/lib/admin/auth";
 import { adminCanAccessPortal } from "@/lib/auth/admin-portal";
 import { adminPathForScope, connexionSearch } from "@/lib/auth/redirect";
@@ -74,15 +74,12 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
           open ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="h-16 px-5 flex items-center justify-between border-b border-white/10">
+        <div className="hidden lg:flex h-16 px-5 items-center border-b border-white/10">
             <YoloLogo
               variant="white"
               size="sm"
               subtitle={`Admin · ${portal.name}`}
             />
-          <button onClick={() => setOpen(false)} className="lg:hidden text-white/50">
-            <X className="h-4 w-4" />
-          </button>
         </div>
         <nav className="flex-1 p-3 space-y-1">
           {portal.adminNav.map((item) => {

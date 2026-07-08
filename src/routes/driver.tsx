@@ -90,16 +90,8 @@ function DriverShell() {
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
           }`}
         >
-          <div className="h-20 px-8 flex items-center justify-between border-b border-white/5">
-            <div>
-              <YoloLogo variant="white" size="md" to="/" subtitle="Chauffeur" />
-            </div>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="lg:hidden p-1.5 rounded-lg hover:bg-white/5 text-white/50 hover:text-white"
-            >
-              <X className="h-5 w-5" />
-            </button>
+          <div className="hidden lg:flex h-20 px-8 items-center border-b border-white/5">
+            <YoloLogo variant="white" size="md" to="/" subtitle="Chauffeur" />
           </div>
 
           <div className="p-6 border-b border-white/5 bg-white/[0.01]">
