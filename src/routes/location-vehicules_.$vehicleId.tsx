@@ -24,9 +24,9 @@ export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
       meta: v
         ? [
             { title: `${v.brand} ${v.name} — YOLO Le Concierge` },
-            { name: "description", content: v.description },
+            { name: "description", content: v.description || `Location ${v.brand} ${v.name} — YOLO Le Concierge` },
             { property: "og:title", content: `${v.brand} ${v.name}` },
-            { property: "og:description", content: v.description },
+            { property: "og:description", content: v.description || `Location ${v.brand} ${v.name} — YOLO Le Concierge` },
             { property: "og:image", content: v.image },
             { property: "twitter:image", content: v.image },
           ]
@@ -34,7 +34,7 @@ export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
     };
   },
   notFoundComponent: () => (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--yolo-cream)] text-charbon">
+    <div className="min-h-screen flex items-center justify-center bg-(--yolo-cream) text-charbon">
       <div className="text-center">
         <p className="font-display text-3xl font-bold mb-4">Véhicule introuvable</p>
         <Link to="/location-vehicules" className="text-or-bronze hover:text-charbon">
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
     </div>
   ),
   errorComponent: ({ reset }) => (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--yolo-cream)] text-charbon">
+    <div className="min-h-screen flex items-center justify-center bg-(--yolo-cream) text-charbon">
       <div className="text-center">
         <p className="font-display text-3xl font-bold mb-4">Une erreur est survenue</p>
         <button type="button" onClick={() => reset()} className="text-or-bronze hover:text-charbon">
@@ -61,7 +61,6 @@ function VehicleDetail() {
   const [activeImg, setActiveImg] = useState(0);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [contactOpen, setContactOpen] = useState(false);
-  const [tab, setTab] = useState<"performance" | "drivetrain" | "equipment">("performance");
 
   return (
     <main className="min-h-screen font-sans antialiased" data-yolo-portal data-yolo-portal-vehicules>
@@ -138,21 +137,21 @@ function VehicleDetail() {
               <aside className="yolo-portal-card bg-white border border-black/8 p-6 h-fit sticky top-6">
                 <p className="font-display text-4xl font-bold text-charbon">
                   $ {formatPrice(vehicle.pricePerDay)}
-                  <span className="text-base text-[var(--yolo-muted)] font-sans font-normal"> / jour</span>
+                  <span className="text-base text-(--yolo-muted) font-sans font-normal"> / jour</span>
                 </p>
-                <p className="text-xs text-[var(--yolo-muted)] mt-1">À partir de</p>
+                <p className="text-xs text-(--yolo-muted) mt-1">À partir de</p>
 
                 <div className="mt-5 flex items-center justify-between text-sm border-b border-black/8 pb-5">
-                  <span className="text-[var(--yolo-muted)]">Catégorie</span>
-                  <span className="bg-[var(--yolo-cream)] px-3 py-1 text-xs font-medium text-charbon border border-black/6">
+                  <span className="text-(--yolo-muted)">Catégorie</span>
+                  <span className="bg-(--yolo-cream) px-3 py-1 text-xs font-medium text-charbon border border-black/6">
                     {vehicle.category}
                   </span>
                 </div>
 
                 <div className="mt-5 grid grid-cols-3 gap-3 py-2">
                   <SpecMini label="Passagers" value={String(vehicle.specs.seats)} />
-                  <SpecMini label="Carburant" value={vehicle.specs.fuel} />
-                  <SpecMini label="Boîte" value={vehicle.specs.transmission} />
+                  <SpecMini label="Carburant" value="Exclu" />
+                  <SpecMini label="Chauffeur" value="Inclus" />
                 </div>
 
                 <PortalButton variant="primary" onClick={() => setBookingOpen(true)} className="mt-6 w-full">
@@ -168,79 +167,17 @@ function VehicleDetail() {
           <div className="mt-16 grid lg:grid-cols-2 gap-12">
             <ScrollReveal>
               <h2 className="font-display text-2xl font-bold text-charbon mb-4">Description</h2>
-              <p className="text-[var(--yolo-muted)] leading-relaxed text-[17px]">{vehicle.description}</p>
+              <p className="text-(--yolo-muted) leading-relaxed text-[17px]">
+                {vehicle.description || "Aucune description disponible pour ce véhicule."}
+              </p>
             </ScrollReveal>
-            <ScrollReveal delayMs={80}>
-              <h2 className="font-display text-2xl font-bold text-charbon mb-4">Conditions de location</h2>
-              <dl className="grid grid-cols-2 gap-4">
+            {vehicle.conditions.deposit?.trim() && (
+              <ScrollReveal delayMs={80}>
+                <h2 className="font-display text-2xl font-bold text-charbon mb-4">Conditions de location</h2>
                 <ConditionRow label="Caution" value={vehicle.conditions.deposit} />
-                <ConditionRow label="Âge min. conducteur" value={vehicle.conditions.minAge} />
-                <ConditionRow label="Ancienneté du permis" value={vehicle.conditions.licenseYears} />
-                <ConditionRow label="Km quotidiens inclus" value={vehicle.conditions.dailyKm} />
-              </dl>
-            </ScrollReveal>
+              </ScrollReveal>
+            )}
           </div>
-
-          <ScrollReveal className="mt-20">
-            <SectionLabel>Fiche technique</SectionLabel>
-            <h2 className="text-[clamp(1.75rem,2.5vw,2.25rem)] font-bold text-charbon mb-10">Spécifications</h2>
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-              <KeyStat label="Puissance" value={vehicle.keyStats.power} />
-              <KeyStat label="0-100 km/h" value={vehicle.keyStats.zeroTo100} />
-              <KeyStat label="Vitesse max." value={vehicle.keyStats.topSpeed} />
-              <KeyStat label="Carburant" value={vehicle.keyStats.fuel} />
-            </div>
-
-            <div className="flex flex-wrap gap-2 mb-6">
-              {([
-                ["performance", "Performance"],
-                ["drivetrain", "Moteur & transmission"],
-                ["equipment", "Équipements"],
-              ] as const).map(([k, l]) => (
-                <button
-                  key={k}
-                  type="button"
-                  onClick={() => setTab(k)}
-                  className={`px-5 py-2.5 text-sm font-medium transition ${
-                    tab === k
-                      ? "bg-or-vif text-charbon"
-                      : "border border-black/12 text-charbon hover:bg-white"
-                  }`}
-                >
-                  {l}
-                </button>
-              ))}
-            </div>
-
-            <div className="yolo-portal-card bg-white border border-black/8 p-6 md:p-8">
-              {tab === "performance" && (
-                <dl className="grid sm:grid-cols-2 gap-6">
-                  <SpecRow label="Chevaux" value={vehicle.performance.hp} />
-                  <SpecRow label="Couple" value={vehicle.performance.torque} />
-                  <SpecRow label="0-100 km/h" value={vehicle.performance.zeroTo100} />
-                  <SpecRow label="Vitesse maximale" value={vehicle.performance.topSpeed} />
-                </dl>
-              )}
-              {tab === "drivetrain" && (
-                <dl className="grid sm:grid-cols-2 gap-6">
-                  <SpecRow label="Type de carburant" value={vehicle.drivetrain.fuel} />
-                  <SpecRow label="Transmission" value={vehicle.drivetrain.transmission} />
-                  <SpecRow label="Boîte de vitesses" value={vehicle.drivetrain.gearbox} />
-                </dl>
-              )}
-              {tab === "equipment" && (
-                <dl className="grid sm:grid-cols-2 gap-6">
-                  <SpecRow label="Nombre de places" value={vehicle.equipment.seats} />
-                  <SpecRow label="Roues" value={vehicle.equipment.wheels} />
-                  <SpecRow label="Freins" value={vehicle.equipment.brakes} />
-                  <SpecRow label="Suspension" value={vehicle.equipment.suspension} />
-                  <SpecRow label="Équipements extérieurs" value={vehicle.equipment.exterior} />
-                  <SpecRow label="Équipements intérieurs" value={vehicle.equipment.interior} />
-                </dl>
-              )}
-            </div>
-          </ScrollReveal>
         </div>
       </section>
 
@@ -260,34 +197,16 @@ function VehicleDetail() {
 function SpecMini({ label, value }: { label: string; value: string }) {
   return (
     <div className="text-center">
-      <p className="text-[10px] uppercase tracking-widest text-[var(--yolo-muted)]">{label}</p>
+      <p className="text-[10px] uppercase tracking-widest text-(--yolo-muted)">{label}</p>
       <p className="text-sm mt-1 font-medium text-charbon">{value}</p>
-    </div>
-  );
-}
-
-function KeyStat({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="yolo-portal-card bg-white border border-black/8 p-5 text-center">
-      <p className="font-display text-2xl font-bold text-or-bronze">{value}</p>
-      <p className="text-xs uppercase tracking-widest text-[var(--yolo-muted)] mt-2">{label}</p>
-    </div>
-  );
-}
-
-function SpecRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="border-b border-black/8 pb-4">
-      <dt className="text-xs uppercase tracking-widest text-[var(--yolo-muted)] mb-1">{label}</dt>
-      <dd className="text-sm text-charbon font-medium">{value}</dd>
     </div>
   );
 }
 
 function ConditionRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="yolo-portal-card bg-white border border-black/8 p-4">
-      <dt className="text-[10px] uppercase tracking-widest text-[var(--yolo-muted)] mb-1">{label}</dt>
+    <div className="yolo-portal-card bg-white border border-black/8 p-4 max-w-xs">
+      <dt className="text-[10px] uppercase tracking-widest text-(--yolo-muted) mb-1">{label}</dt>
       <dd className="font-display text-lg font-semibold text-charbon">{value}</dd>
     </div>
   );

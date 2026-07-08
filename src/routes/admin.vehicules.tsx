@@ -106,13 +106,13 @@ function VehiculesAdmin() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {items.map((v) => (
           <div key={v.id} className="bg-card rounded-xl border border-border overflow-hidden">
-            <div className="aspect-[4/3] bg-muted overflow-hidden">
+            <div className="aspect-4/3 bg-muted overflow-hidden">
               {v.image && <img src={v.image} alt={v.name} className="h-full w-full object-cover" />}
             </div>
             <div className="p-4">
               <p className="text-[10px] uppercase tracking-widest text-muted-foreground">{v.brand} · {v.category}</p>
               <p className="font-display text-lg font-semibold">{v.name}</p>
-              <p className="text-sm text-muted-foreground mt-1">{formatPrice(v.pricePerDay)} € / jour</p>
+              <p className="text-sm text-muted-foreground mt-1">{formatPrice(v.pricePerDay)} $ / jour</p>
               <div className="mt-3 flex gap-2">
                 <button onClick={() => setEditing(v)}
                   className="flex-1 inline-flex items-center justify-center gap-1 rounded-md border border-input bg-background px-2 py-1.5 text-xs hover:bg-muted">
@@ -347,12 +347,22 @@ function VehicleForm({
               </select>
             </Field>
             <Field label="Année"><input type="number" className={inputCls} value={v.year} onChange={(e) => set({ year: +e.target.value })} /></Field>
-            <Field label="Prix / jour (€)"><input type="number" className={inputCls} value={v.pricePerDay} onChange={(e) => set({ pricePerDay: +e.target.value })} /></Field>
+            <Field label="Prix / jour ($)"><input type="number" className={inputCls} value={v.pricePerDay} onChange={(e) => set({ pricePerDay: +e.target.value })} /></Field>
             <Field label="Localisation"><input className={inputCls} value={v.location} onChange={(e) => set({ location: e.target.value })} /></Field>
+            <Field label="Passagers"><input type="number" className={inputCls} value={v.specs.seats} onChange={(e) => set({ specs: { ...v.specs, seats: +e.target.value } })} /></Field>
           </div>
 
           <Field label="Description">
             <textarea rows={3} className={inputCls} value={v.description} onChange={(e) => set({ description: e.target.value })} />
+          </Field>
+
+          <Field label="Caution">
+            <input
+              className={inputCls}
+              placeholder="ex. $3 000"
+              value={v.conditions.deposit}
+              onChange={(e) => set({ conditions: { ...v.conditions, deposit: e.target.value } })}
+            />
           </Field>
 
           <div className="space-y-4">
@@ -430,7 +440,7 @@ function VehicleForm({
                     {/* Header: drag handle & index & angle title */}
                     <div className="bg-muted/40 px-3 py-1.5 flex items-center justify-between text-[10px] text-muted-foreground select-none font-medium border-b border-border/10">
                       <span className="flex items-center gap-1 min-w-0">
-                        {hasImage && <GripVertical className="h-3 w-3 flex-shrink-0" />}
+                        {hasImage && <GripVertical className="h-3 w-3 shrink-0" />}
                         <span className="truncate">{angleName}</span>
                       </span>
                       <span className="text-[10px] bg-background px-1.5 py-0.5 rounded border border-border">
@@ -527,20 +537,6 @@ function VehicleForm({
               })}
             </div>
           </div>
-
-          <details className="border border-border rounded-md">
-            <summary className="px-4 py-2 text-sm font-medium cursor-pointer">Spécifications techniques</summary>
-            <div className="p-4 grid sm:grid-cols-2 gap-3">
-              <Field label="Puissance (HP)"><input type="number" className={inputCls} value={v.specs.hp} onChange={(e) => set({ specs: { ...v.specs, hp: +e.target.value } })} /></Field>
-              <Field label="Sièges"><input type="number" className={inputCls} value={v.specs.seats} onChange={(e) => set({ specs: { ...v.specs, seats: +e.target.value } })} /></Field>
-              <Field label="Transmission"><input className={inputCls} value={v.specs.transmission} onChange={(e) => set({ specs: { ...v.specs, transmission: e.target.value } })} /></Field>
-              <Field label="Carburant"><input className={inputCls} value={v.specs.fuel} onChange={(e) => set({ specs: { ...v.specs, fuel: e.target.value } })} /></Field>
-              <Field label="0 à 100 km/h"><input className={inputCls} value={v.keyStats.zeroTo100} onChange={(e) => set({ keyStats: { ...v.keyStats, zeroTo100: e.target.value }, performance: { ...v.performance, zeroTo100: e.target.value } })} /></Field>
-              <Field label="Vitesse max"><input className={inputCls} value={v.keyStats.topSpeed} onChange={(e) => set({ keyStats: { ...v.keyStats, topSpeed: e.target.value }, performance: { ...v.performance, topSpeed: e.target.value } })} /></Field>
-              <Field label="Caution"><input className={inputCls} value={v.conditions.deposit} onChange={(e) => set({ conditions: { ...v.conditions, deposit: e.target.value } })} /></Field>
-              <Field label="Km/jour inclus"><input className={inputCls} value={v.conditions.dailyKm} onChange={(e) => set({ conditions: { ...v.conditions, dailyKm: e.target.value } })} /></Field>
-            </div>
-          </details>
         </div>
 
         <div className="sticky bottom-0 bg-card border-t border-border px-6 py-4 flex flex-col gap-2 rounded-b-2xl">

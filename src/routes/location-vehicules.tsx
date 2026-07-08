@@ -74,7 +74,7 @@ function FleetPagination({
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
           aria-label="Page précédente"
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-or-vif/40 hover:text-or-vif disabled:pointer-events-none disabled:opacity-30"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/3 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-or-vif/40 hover:text-or-vif disabled:pointer-events-none disabled:opacity-30"
         >
           <ChevronLeft className="h-4 w-4" />
           Précédent
@@ -102,7 +102,7 @@ function FleetPagination({
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
           aria-label="Page suivante"
-          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-or-vif/40 hover:text-or-vif disabled:pointer-events-none disabled:opacity-30"
+          className="inline-flex items-center gap-1.5 rounded-full border border-white/15 bg-white/3 px-4 py-2 text-xs uppercase tracking-[0.2em] text-white/80 transition hover:border-or-vif/40 hover:text-or-vif disabled:pointer-events-none disabled:opacity-30"
         >
           Suivant
           <ChevronRight className="h-4 w-4" />
@@ -199,7 +199,7 @@ function LocationVehicules() {
           ].map((s, i) => (
             <ScrollReveal key={s.u} delayMs={i * 70} className="text-center md:text-left">
               <p className="font-display text-3xl font-bold text-charbon md:text-4xl">{s.n}</p>
-              <p className="mt-1 text-sm text-[var(--yolo-muted)]">{s.u}</p>
+              <p className="mt-1 text-sm text-(--yolo-muted)">{s.u}</p>
             </ScrollReveal>
           ))}
         </div>
@@ -239,12 +239,12 @@ function LocationVehicules() {
                         {v.brand} {v.name}
                       </h3>
                     </Link>
-                    <p className="mt-1 text-sm text-[var(--yolo-muted)]">
-                      {v.specs.hp} ch · {v.specs.seats} places · {v.specs.transmission}
+                    <p className="mt-1 text-sm text-(--yolo-muted)">
+                      {v.specs.seats} places 
                     </p>
                     <p className="mt-3 font-display text-2xl font-bold text-charbon">
                       $ {formatPrice(v.pricePerDay)}
-                      <span className="text-sm font-normal text-[var(--yolo-muted)]"> / jour</span>
+                      <span className="text-sm font-normal text-(--yolo-muted)"> / jour</span>
                     </p>
                     <div className="mt-5 flex gap-2">
                       <button
@@ -314,7 +314,7 @@ function LocationVehicules() {
             <h2 className="text-[clamp(1.85rem,3vw,2.75rem)] font-bold text-charbon mb-4">
               Une conciergerie automobile de confiance
             </h2>
-            <p className="text-[var(--yolo-muted)] text-[17px] leading-relaxed">
+            <p className="text-(--yolo-muted) text-[17px] leading-relaxed">
               Prix transparents, livraison à domicile et support multilingue 24/7.
             </p>
           </ScrollReveal>
@@ -327,7 +327,7 @@ function LocationVehicules() {
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 6L9 17l-5-5" /></svg>
                   </div>
                   <h3 className="font-display text-xl font-semibold text-charbon mb-2">{r.title}</h3>
-                  <p className="text-sm text-[var(--yolo-muted)] leading-relaxed">{r.desc}</p>
+                  <p className="text-sm text-(--yolo-muted) leading-relaxed">{r.desc}</p>
                 </div>
               </ScrollReveal>
             ))}
