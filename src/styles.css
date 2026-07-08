@@ -266,6 +266,40 @@
   }
 }
 
+@keyframes dm-route-arrow {
+  0%,
+  100% {
+    transform: translateX(-3px);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateX(4px);
+    opacity: 1;
+  }
+}
+
+@keyframes dm-route-arrow-trail {
+  0% {
+    transform: translateX(-8px);
+    opacity: 0;
+  }
+  35% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateX(10px);
+    opacity: 0;
+  }
+}
+
+@utility animate-dm-route-arrow {
+  animation: dm-route-arrow 1.5s ease-in-out infinite;
+}
+
+@utility animate-dm-route-arrow-trail {
+  animation: dm-route-arrow-trail 1.5s ease-in-out infinite;
+}
+
 [data-demenagement-site] {
   --font-display-family: "Barlow", "Roboto", system-ui, sans-serif;
   --font-body-family: "Lato", system-ui, sans-serif;

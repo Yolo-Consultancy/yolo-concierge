@@ -70,8 +70,9 @@ export function DemenagementQuoteDetails({
                 {formatFloorInfo("", quote.departureFloor)}
               </p>
             </div>
-            <div className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full bg-or-vif/15 text-or-vif">
-              <ArrowRight className="h-4 w-4" />
+            <div className="relative hidden h-9 w-9 shrink-0 items-center justify-center overflow-visible rounded-full bg-or-vif/15 text-or-vif sm:flex">
+              <ArrowRight className="absolute h-4 w-4 animate-dm-route-arrow-trail" aria-hidden />
+              <ArrowRight className="relative h-4 w-4 animate-dm-route-arrow" aria-hidden />
             </div>
             <div className="min-w-0 sm:text-right">
               <p className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider text-blue-700 sm:justify-end">
