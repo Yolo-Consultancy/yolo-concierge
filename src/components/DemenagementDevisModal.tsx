@@ -20,6 +20,7 @@ import {
   emptyQuoteData,
   formatLocation,
   formatFloorInfo,
+  floorValidationMessage,
   type DemenagementQuoteData,
   type LocationAddress,
   type FloorInfo,
@@ -217,25 +218,41 @@ function FloorFields({
   value: FloorInfo;
   onChange: (v: FloorInfo) => void;
 }) {
+  const fieldId = title.toLowerCase().replace(/\s+/g, "-");
+
   return (
     <div className="space-y-3 pt-3 border-t border-black/8">
-      <p className="text-xs font-semibold text-charbon font-display uppercase tracking-wide">{title}</p>
-      <label className="flex items-center gap-2 text-sm text-charbon cursor-pointer">
-        <input
-          type="checkbox"
-          className="accent-or-vif"
-          checked={value.isElevated}
-          onChange={(e) =>
-            onChange({
-              ...value,
-              isElevated: e.target.checked,
-              floorLevel: e.target.checked ? Math.max(1, value.floorLevel) : 0,
-            })
-          }
-        />
-        Logement en étage (pas rez-de-chaussée)
-      </label>
-      {value.isElevated && (
+      <p className="text-xs font-semibold text-charbon font-display uppercase tracking-wide">
+        {title}
+      </p>
+      <p className="yolo-form-label" data-required>Type de logement</p>
+      <div className="space-y-2">
+        <label className="flex items-center gap-2 text-sm text-charbon cursor-pointer">
+          <input
+            type="radio"
+            name={`floor-type-${fieldId}`}
+            className="accent-or-vif"
+            checked={value.answered && !value.isElevated}
+            onChange={() =>
+              onChange({ answered: true, isElevated: false, floorLevel: 0, hasElevator: false })
+            }
+          />
+          Rez-de-chaussée / plain-pied
+        </label>
+        <label className="flex items-center gap-2 text-sm text-charbon cursor-pointer">
+          <input
+            type="radio"
+            name={`floor-type-${fieldId}`}
+            className="accent-or-vif"
+            checked={value.answered && value.isElevated}
+            onChange={() =>
+              onChange({ answered: true, isElevated: true, floorLevel: 0, hasElevator: false })
+            }
+          />
+          Logement en étage (pas rez-de-chaussée)
+        </label>
+      </div>
+      {value.answered && value.isElevated && (
         <>
           <div>
             <label className="yolo-form-label" data-required>Niveau / étage</label>
@@ -244,9 +261,13 @@ function FloorFields({
               min={1}
               max={50}
               className={inputCls}
+              placeholder="Ex. 2"
               value={value.floorLevel || ""}
               onChange={(e) =>
-                onChange({ ...value, floorLevel: Math.max(1, Number(e.target.value) || 1) })
+                onChange({
+                  ...value,
+                  floorLevel: e.target.value === "" ? 0 : Number(e.target.value),
+                })
               }
             />
           </div>
@@ -429,6 +450,16 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
       }
       if (!quote.bedrooms || quote.bedrooms < 1) {
         toast.error("Indiquez le nombre de chambres.");
+        return false;
+      }
+      const departureFloorError = floorValidationMessage(quote.departureFloor, "de départ");
+      if (departureFloorError) {
+        toast.error(departureFloorError);
+        return false;
+      }
+      const arrivalFloorError = floorValidationMessage(quote.arrivalFloor, "d'arrivée");
+      if (arrivalFloorError) {
+        toast.error(arrivalFloorError);
         return false;
       }
       return true;

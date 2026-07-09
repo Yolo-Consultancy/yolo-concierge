@@ -9,6 +9,8 @@ export type LocationAddress = {
 };
 
 export type FloorInfo = {
+  /** false tant que l'utilisateur n'a pas choisi explicitement */
+  answered: boolean;
   isElevated: boolean;
   floorLevel: number;
   hasElevator: boolean;
@@ -36,9 +38,32 @@ export function formatLocation(addr: LocationAddress): string {
 }
 
 export function formatFloorInfo(label: string, floor: FloorInfo): string {
-  if (!floor.isElevated) return `${label} : rez-de-chaussée / plain-pied`;
+  if (floor.answered === false) {
+    return label ? `${label} : non renseigné` : "Non renseigné";
+  }
+  if (!floor.isElevated) {
+    const text = "rez-de-chaussée / plain-pied";
+    return label ? `${label} : ${text}` : text;
+  }
   const elev = floor.hasElevator ? "avec ascenseur" : "sans ascenseur";
-  return `${label} : étage ${floor.floorLevel} (${elev})`;
+  const text = `étage ${floor.floorLevel} (${elev})`;
+  return label ? `${label} : ${text}` : text;
+}
+
+export function isFloorInfoComplete(floor: FloorInfo): boolean {
+  if (!floor.answered) return false;
+  if (floor.isElevated && (!floor.floorLevel || floor.floorLevel < 1)) return false;
+  return true;
+}
+
+export function floorValidationMessage(floor: FloorInfo, label: string): string | null {
+  if (!floor.answered) {
+    return `Indiquez le type de logement ${label} (rez-de-chaussée ou étage).`;
+  }
+  if (floor.isElevated && (!floor.floorLevel || floor.floorLevel < 1)) {
+    return `Indiquez le niveau / étage du logement ${label}.`;
+  }
+  return null;
 }
 
 export function buildDemenagementQuoteMessage(data: DemenagementQuoteData): string {
@@ -68,7 +93,7 @@ export function emptyLocation(): LocationAddress {
 }
 
 export function emptyFloor(): FloorInfo {
-  return { isElevated: false, floorLevel: 0, hasElevator: false };
+  return { answered: false, isElevated: false, floorLevel: 0, hasElevator: false };
 }
 
 export function emptyQuoteData(): DemenagementQuoteData {
@@ -88,10 +113,11 @@ export function emptyQuoteData(): DemenagementQuoteData {
 function parseFloorLine(line: string): FloorInfo {
   const text = line.replace(/^Niveau\s*:\s*/i, "").trim();
   if (/rez-de-chaussée|plain-pied/i.test(text)) {
-    return { isElevated: false, floorLevel: 0, hasElevator: false };
+    return { answered: true, isElevated: false, floorLevel: 0, hasElevator: false };
   }
   const level = text.match(/étage\s*(\d+)/i);
   return {
+    answered: true,
     isElevated: true,
     floorLevel: level ? Number(level[1]) : 1,
     hasElevator: /avec ascenseur/i.test(text),
