@@ -203,8 +203,8 @@ function Demenagement() {
         </div>
       </section>
 
-      {/* Intro */}
-      <section className="py-20 md:py-28">
+      {/* Intro — À propos */}
+      <section id="apropos" className="py-20 md:py-28">
         <div className="mx-auto grid max-w-6xl items-center gap-12 px-6 md:grid-cols-2 md:gap-16">
           <ScrollReveal>
             <SectionLabel>Qui sommes-nous</SectionLabel>

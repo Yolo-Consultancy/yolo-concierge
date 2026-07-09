@@ -16,6 +16,23 @@ import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/SiteFooter";
 import { YoloLogo } from "@/components/YoloLogo";
+import { useClientNavBadges } from "@/hooks/useNavBadges";
+import { requestNavBadgesRefresh } from "@/lib/nav-badges";
+import { NavCountBadge } from "@/components/NavCountBadge";
+
+function clientNavBadgeCount(
+  to: string,
+  badges: { activeReservations: number; demenagementUpdates: number; surMesureUpdates: number },
+): { count: number; alert?: boolean } {
+  if (to === "/client/reservations") return { count: badges.activeReservations };
+  if (to === "/client/demenagement") {
+    return { count: badges.demenagementUpdates, alert: badges.demenagementUpdates > 0 };
+  }
+  if (to === "/client/sur-mesure") {
+    return { count: badges.surMesureUpdates, alert: badges.surMesureUpdates > 0 };
+  }
+  return { count: 0 };
+}
 
 export const Route = createFileRoute("/client")({
   head: () => ({
@@ -44,6 +61,11 @@ function ClientShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const badges = useClientNavBadges(account);
+
+  useEffect(() => {
+    requestNavBadgesRefresh();
+  }, [path]);
 
   useEffect(() => {
     hydrateCurrentClient().then((acc) => {
@@ -129,6 +151,7 @@ function ClientShell() {
             {navigation.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.to, item.exact);
+              const { count: badgeCount, alert } = clientNavBadgeCount(item.to, badges);
               return (
                 <Link
                   key={item.to}
@@ -140,8 +163,9 @@ function ClientShell() {
                       : "text-white/60 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  <Icon className="h-4.5 w-4.5" />
-                  {item.label}
+                  <Icon className="h-4.5 w-4.5 shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                  <NavCountBadge count={badgeCount} alert={alert} active={active} />
                 </Link>
               );
             })}

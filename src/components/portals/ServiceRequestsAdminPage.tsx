@@ -11,6 +11,7 @@ import {
   type ServiceRequestStatus,
 } from "@/lib/portals/service-requests";
 import { DemenagementQuoteDetails, isDemenagementQuote } from "@/components/portals/DemenagementQuoteDetails";
+import { requestNavBadgesRefresh } from "@/lib/nav-badges";
 import { toast } from "sonner";
 
 export function ServiceRequestsAdminPage({ portalId }: { portalId: PortalId }) {
@@ -33,6 +34,7 @@ export function ServiceRequestsAdminPage({ portalId }: { portalId: PortalId }) {
       await updateServiceRequestStatus(id, status);
       toast.success("Statut mis à jour.");
       refresh();
+      requestNavBadgesRefresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Action impossible.");
     }

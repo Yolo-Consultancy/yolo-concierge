@@ -9,6 +9,22 @@ import { notifyAuthChange } from "@/lib/auth/session";
 import { getPortal, type PortalId } from "@/config/portals";
 import { SiteFooter } from "@/components/SiteFooter";
 import { YoloLogo } from "@/components/YoloLogo";
+import { usePortalAdminNavBadges } from "@/hooks/useNavBadges";
+import { requestNavBadgesRefresh } from "@/lib/nav-badges";
+import { NavCountBadge } from "@/components/NavCountBadge";
+
+function portalNavBadgeCount(
+  to: string,
+  badges: { newRequests: number; activeMissions: number },
+): { count: number; alert?: boolean } {
+  if (to.endsWith("/demandes")) {
+    return { count: badges.newRequests, alert: true };
+  }
+  if (to.endsWith("/missions")) {
+    return { count: badges.activeMissions };
+  }
+  return { count: 0 };
+}
 
 export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
   const portal = getPortal(portalId);
@@ -17,6 +33,11 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
   const [open, setOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
+  const badges = usePortalAdminNavBadges(portalId);
+
+  useEffect(() => {
+    requestNavBadgesRefresh();
+  }, [path]);
 
   useEffect(() => {
     getAdminSession().then((user) => {
@@ -85,6 +106,7 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
           {portal.adminNav.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.to, item.exact);
+            const { count: badgeCount, alert } = portalNavBadgeCount(item.to, badges);
             return (
               <Link
                 key={item.to}
@@ -94,8 +116,9 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
                   active ? accentActive : "text-white/55 hover:bg-white/5 hover:text-white"
                 }`}
               >
-                <Icon className="h-4 w-4" />
-                {item.label}
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="truncate">{item.label}</span>
+                <NavCountBadge count={badgeCount} alert={alert} active={active} />
               </Link>
             );
           })}

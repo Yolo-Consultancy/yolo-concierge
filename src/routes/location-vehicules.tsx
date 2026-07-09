@@ -12,7 +12,7 @@ import { BookingModal } from "@/components/BookingModal";
 import { PortalHeader } from "@/components/PortalHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ClientReviewsSection } from "@/components/ClientReviewsSection";
-import { ScrollReveal } from "@/components/portal-ui/ScrollReveal";
+import { contactSearch } from "@/lib/auth/redirect";
 import { SectionLabel } from "@/components/portal-ui/SectionLabel";
 import { PortalButton } from "@/components/portal-ui/PortalButton";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -181,7 +181,7 @@ function LocationVehicules() {
                   <ArrowRight className="h-4 w-4" />
                 </PortalButton>
               </a>
-              <Link to="/contact" search={{ portal: "vehicules" }}>
+              <Link to="/contact" search={contactSearch("vehicules")}>
                 <PortalButton variant="outline-light">Parler au concierge</PortalButton>
               </Link>
             </div>
@@ -307,7 +307,7 @@ function LocationVehicules() {
         </div>
       </section>
 
-      <section id="pourquoi" className="yolo-section-light py-20 md:py-28 px-6">
+      <section id="apropos" className="yolo-section-light py-20 md:py-28 px-6">
         <div className="mx-auto max-w-6xl">
           <ScrollReveal className="mb-12 text-center max-w-2xl mx-auto md:mb-16">
             <SectionLabel>Pourquoi YOLO</SectionLabel>

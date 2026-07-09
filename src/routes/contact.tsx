@@ -16,6 +16,7 @@ import {
   mapsDirectionsUrl,
   whatsappLink,
 } from "@/config/contact";
+import { getPortalContactContent } from "@/config/portal-contact";
 import { toast } from "sonner";
 import { ContactPhoneField } from "@/components/ContactPhoneField";
 import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
@@ -42,6 +43,7 @@ export const Route = createFileRoute("/contact")({
 function ContactPage() {
   const { portal: portalId } = Route.useSearch();
   const portal = portalId ? getPortal(portalId) : null;
+  const portalContent = getPortalContactContent(portalId);
   const { account, fields } = useClientContactPrefill();
 
   const inputCls = "yolo-form-input";
@@ -61,9 +63,17 @@ function ContactPage() {
     email: "",
     phone: "",
     countryCode: "+243",
-    subject: "Informations générales",
+    subject: portalContent.defaultSubject,
     message: "",
   });
+
+  useEffect(() => {
+    document.title = portalContent.pageTitle;
+  }, [portalContent.pageTitle]);
+
+  useEffect(() => {
+    setForm((prev) => ({ ...prev, subject: portalContent.defaultSubject }));
+  }, [portalId, portalContent.defaultSubject]);
 
   useEffect(() => {
     getSettings().then(setSettings).catch(() => undefined);
@@ -137,8 +147,7 @@ function ContactPage() {
               Contactez-nous
             </h1>
             <p className="text-[17px] leading-relaxed text-white/75">
-              Prêt à vivre le luxe ? Notre équipe à{" "}
-              <span className="text-or-vif">{contactConfig.city}</span> vous répond rapidement.
+              {portalContent.heroSubtitle}
             </p>
             <p className="mt-5 mx-auto max-w-xl flex items-start justify-center gap-2 text-sm text-white/70 text-left sm:text-center">
               <MapPin className="h-4 w-4 text-or-vif shrink-0 mt-0.5" />
@@ -292,7 +301,7 @@ function ContactPage() {
                       onChange={(e) => setForm({ ...form, subject: e.target.value })}
                       className={selectCls}
                     >
-                      {contactConfig.subjects.map((s) => (
+                      {portalContent.subjects.map((s) => (
                         <option key={s} value={s}>{s}</option>
                       ))}
                     </select>
@@ -306,7 +315,7 @@ function ContactPage() {
                       value={form.message}
                       onChange={(e) => setForm({ ...form, message: e.target.value })}
                       className={`${inputCls} resize-none`}
-                      placeholder="Décrivez votre demande (dates, véhicule, services...)"
+                      placeholder={portalContent.messagePlaceholder}
                     />
                   </div>
 
@@ -367,9 +376,11 @@ function ContactPage() {
 
               <ScrollReveal delayMs={220}>
                 <div className="yolo-portal-card bg-white border border-black/8 p-6">
-                  <h3 className="font-display text-xl font-semibold text-charbon mb-4">Pourquoi YOLO ?</h3>
+                  <h3 className="font-display text-xl font-semibold text-charbon mb-4">
+                    {portal ? `Pourquoi ${portal.name} ?` : "Pourquoi YOLO ?"}
+                  </h3>
                   <ul className="space-y-3">
-                    {contactConfig.whyChoose.map((item) => (
+                    {portalContent.whyChoose.map((item) => (
                       <li key={item} className="flex items-start gap-3 text-sm text-(--yolo-muted)">
                         <Check className="h-4 w-4 shrink-0 mt-0.5 text-or-bronze" />
                         {item}

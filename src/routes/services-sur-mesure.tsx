@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useClientContactPrefill } from "@/lib/client/form-prefill";
 import { ContactPhoneField } from "@/components/ContactPhoneField";
 import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
+import { contactSearch } from "@/lib/auth/redirect";
 
 export const Route = createFileRoute("/services-sur-mesure")({
   head: () => ({
@@ -259,6 +260,49 @@ function SurMesure() {
                   </PortalButton>
                 </form>
               )}
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      <section id="apropos" className="bg-charbon py-20 md:py-28 px-6 text-white">
+        <div className="mx-auto max-w-6xl grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <ScrollReveal>
+            <SectionLabel>À propos</SectionLabel>
+            <h2 className="text-[clamp(1.85rem,3vw,2.5rem)] font-bold leading-tight mb-5">
+              Votre concierge privé à Kinshasa
+            </h2>
+            <p className="text-[17px] leading-relaxed text-white/72 mb-6">
+              YOLO Sur Mesure coordonne pour vous l&apos;événementiel, les voyages et l&apos;assistance
+              professionnelle. Un seul interlocuteur, des partenaires triés sur le volet, une exécution
+              sans friction.
+            </p>
+            <ul className="space-y-3">
+              {[
+                "Réponse rapide et suivi personnalisé",
+                "Réseau local premium (hôtels, transport, lieux)",
+                "Discrétion et confidentialité garanties",
+                "Devis clair avant toute engagement",
+              ].map((item) => (
+                <li key={item} className="flex gap-3 text-[15px] text-white/85">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-or-vif" strokeWidth={2.5} />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </ScrollReveal>
+          <ScrollReveal delayMs={120}>
+            <div className="yolo-portal-card bg-white/5 border border-white/10 p-8 md:p-10">
+              <h3 className="font-display text-xl font-semibold mb-3">Une autre façon de nous joindre</h3>
+              <p className="text-sm text-white/65 mb-6">
+                Formulaire détaillé, WhatsApp ou téléphone — choisissez le canal qui vous convient.
+              </p>
+              <Link to="/contact" search={contactSearch("sur-mesure")}>
+                <PortalButton variant="primary" className="w-full sm:w-auto">
+                  Page contact Sur Mesure
+                  <ArrowRight className="h-4 w-4" />
+                </PortalButton>
+              </Link>
             </div>
           </ScrollReveal>
         </div>

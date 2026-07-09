@@ -57,7 +57,7 @@ export const PORTALS: Record<PortalId, PortalConfig> = {
     publicNav: [
       { type: "anchor", label: "Flotte", href: "#flotte" },
       { type: "anchor", label: "Destinations", href: "#destinations" },
-      { type: "anchor", label: "À propos", href: "#pourquoi" },
+      { type: "anchor", label: "À propos", href: "#apropos" },
       { type: "link", label: "Contact", to: "/contact" },
     ],
     clientNav: [
@@ -91,7 +91,8 @@ export const PORTALS: Record<PortalId, PortalConfig> = {
     publicNav: [
       { type: "anchor", label: "Services", href: "#services" },
       { type: "anchor", label: "Processus", href: "#processus" },
-      { type: "link", label: "Devis", to: "/contact" },
+      { type: "anchor", label: "À propos", href: "#apropos" },
+      { type: "link", label: "Contact", to: "/contact" },
     ],
     clientNav: [
       { to: "/client", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
@@ -122,7 +123,8 @@ export const PORTALS: Record<PortalId, PortalConfig> = {
     publicNav: [
       { type: "anchor", label: "Univers", href: "#univers" },
       { type: "anchor", label: "Demande", href: "#demande" },
-      { type: "link", label: "Composer", to: "/contact" },
+      { type: "anchor", label: "À propos", href: "#apropos" },
+      { type: "link", label: "Contact", to: "/contact" },
     ],
     clientNav: [
       { to: "/client", label: "Tableau de bord", icon: LayoutDashboard, exact: true },

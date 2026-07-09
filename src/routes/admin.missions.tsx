@@ -8,6 +8,7 @@ import {
   type Mission, type MissionStatus, type Booking, type Driver,
 } from "@/lib/admin/store";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
+import { requestNavBadgesRefresh } from "@/lib/nav-badges";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/missions")({ component: MissionsPage });
@@ -99,6 +100,7 @@ function MissionsPage() {
     setSaving(false);
     setEditing(null);
     refresh();
+    requestNavBadgesRefresh();
   };
 
   return (
@@ -138,7 +140,10 @@ function MissionsPage() {
                     title: "Supprimer cette mission ?",
                     description: "Cette action est définitive. La mission sera retirée du suivi terrain.",
                     confirmLabel: "Supprimer",
-                    onConfirm: () => deleteMission(m.id).then(refresh),
+                    onConfirm: () => deleteMission(m.id).then(() => {
+                      refresh();
+                      requestNavBadgesRefresh();
+                    }),
                   })}
                   className="p-1.5 rounded text-destructive hover:bg-destructive/10"
                 ><Trash2 className="h-4 w-4" /></button>

@@ -14,6 +14,9 @@ import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
 import { SiteFooter } from "@/components/SiteFooter";
 import { YoloLogo } from "@/components/YoloLogo";
+import { useDriverNavBadges } from "@/hooks/useNavBadges";
+import { requestNavBadgesRefresh } from "@/lib/nav-badges";
+import { NavCountBadge } from "@/components/NavCountBadge";
 
 export const Route = createFileRoute("/driver")({
   head: () => ({
@@ -39,6 +42,11 @@ function DriverShell() {
   const path = useRouterState({ select: (s) => s.location.pathname });
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const badges = useDriverNavBadges();
+
+  useEffect(() => {
+    requestNavBadgesRefresh();
+  }, [path]);
 
   useEffect(() => {
     hydrateCurrentDriver().then((acc) => {
@@ -115,6 +123,8 @@ function DriverShell() {
             {navigation.map((item) => {
               const Icon = item.icon;
               const active = isActive(item.to, item.exact);
+              const badgeCount = badges.activeMissions;
+              const alert = badges.pendingReports > 0;
               return (
                 <Link
                   key={item.to}
@@ -126,8 +136,9 @@ function DriverShell() {
                       : "text-white/60 hover:text-white hover:bg-white/5"
                   }`}
                 >
-                  <Icon className="h-4.5 w-4.5" />
-                  {item.label}
+                  <Icon className="h-4.5 w-4.5 shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                  <NavCountBadge count={badgeCount} alert={alert} active={active} />
                 </Link>
               );
             })}

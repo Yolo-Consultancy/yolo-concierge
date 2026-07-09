@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useDriverAccount } from "@/routes/driver";
 import { listDriverMissions, submitTripReport, type DriverMission } from "@/lib/driver/store";
+import { requestNavBadgesRefresh } from "@/lib/nav-badges";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/driver/")({ component: DriverDashboard });
@@ -131,6 +132,7 @@ function DriverDashboard() {
       setReporting(null);
       setTab("historique");
       refresh();
+      requestNavBadgesRefresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Envoi impossible.");
     } finally {

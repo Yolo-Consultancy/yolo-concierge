@@ -9,11 +9,12 @@ import { adminConfig } from "@/config/admin";
 import { logout } from "@/lib/admin/auth";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { useAdminNavBadges } from "@/hooks/useAdminNavBadges";
-import { requestAdminBadgesRefresh } from "@/lib/admin/badges";
+import { requestNavBadgesRefresh } from "@/lib/nav-badges";
 import { SiteFooter } from "@/components/SiteFooter";
 import { YoloLogo } from "@/components/YoloLogo";
+import { NavCountBadge } from "@/components/NavCountBadge";
 
-type NavBadgeKey = "pendingBookings" | "unreadReports";
+type NavBadgeKey = "pendingBookings" | "unreadReports" | "activeMissions";
 
 type NavItem = {
   to: string;
@@ -30,39 +31,11 @@ const nav: NavItem[] = [
   { to: "/admin/reservations", label: "Réservations", icon: CalendarCheck, badge: "pendingBookings", alert: true },
   { to: "/admin/clients", label: "Clients", icon: Users },
   { to: "/admin/chauffeurs", label: "Chauffeurs", icon: IdCard },
-  { to: "/admin/missions", label: "Missions", icon: ClipboardList },
+  { to: "/admin/missions", label: "Missions", icon: ClipboardList, badge: "activeMissions" },
   { to: "/admin/rapports", label: "Rapports", icon: FileText, badge: "unreadReports", alert: true },
   { to: "/admin/utilisateurs", label: "Équipe YOLO", icon: UserCog },
   { to: "/admin/parametres", label: "Paramètres", icon: Settings },
 ];
-
-function NavBadge({
-  count,
-  alert,
-  active,
-}: {
-  count: number;
-  alert?: boolean;
-  active: boolean;
-}) {
-  if (count <= 0) return null;
-
-  return (
-    <span
-      className={`ml-auto min-w-5 h-5 px-1.5 rounded-full text-[10px] font-bold flex items-center justify-center tabular-nums ${
-        active
-          ? alert
-            ? "bg-black/25 text-black"
-            : "bg-black/15 text-black/80"
-          : alert
-            ? "bg-amber-500 text-black"
-            : "bg-white/15 text-white"
-      }`}
-    >
-      {count > 99 ? "99+" : count}
-    </span>
-  );
-}
 
 export function AdminLayout({ children }: { children: ReactNode }) {
   const path = useRouterState({ select: (s) => s.location.pathname });
@@ -71,7 +44,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
   const badges = useAdminNavBadges();
 
   useEffect(() => {
-    requestAdminBadgesRefresh();
+    requestNavBadgesRefresh();
   }, [path]);
 
   const handleLogout = () => {
@@ -137,7 +110,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
                 >
                   <Icon className="h-4 w-4 shrink-0" />
                   <span className="truncate">{item.label}</span>
-                  <NavBadge count={badgeCount} alert={item.alert} active={active} />
+                  <NavCountBadge count={badgeCount} alert={item.alert} active={active} />
                 </Link>
               );
             })}

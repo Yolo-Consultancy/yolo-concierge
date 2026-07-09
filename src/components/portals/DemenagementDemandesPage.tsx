@@ -15,6 +15,7 @@ import {
   type ServiceRequestStatus,
 } from "@/lib/portals/service-requests";
 import { DemenagementQuoteDetails, isDemenagementQuote } from "@/components/portals/DemenagementQuoteDetails";
+import { requestNavBadgesRefresh } from "@/lib/nav-badges";
 import { toast } from "sonner";
 
 const STATUS_STYLES: Record<
@@ -108,6 +109,7 @@ export function DemenagementDemandesPage() {
       await updateServiceRequestStatus(id, status);
       toast.success("Statut mis à jour.");
       refresh();
+      requestNavBadgesRefresh();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Action impossible.");
     }
