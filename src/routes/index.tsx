@@ -66,9 +66,9 @@ function Index() {
       </header>
 
       {/* Intro */}
-      <section className="mx-auto max-w-7xl px-6 pt-24 md:pt-28 pb-10">
-        <p className="text-xs text-center uppercase tracking-[0.4em] text-gold mb-4">Choisissez votre portail</p>
-        <h1 className="font-display text-5xl text-center md:text-7xl font-semibold leading-[0.95] max-w-4xl">
+      <section className="mx-auto max-w-7xl px-6 pt-24 md:pt-28 pb-10 text-center">
+        <p className="text-xs uppercase tracking-[0.4em] text-gold mb-4">Choisissez votre portail</p>
+        <h1 className="font-display text-5xl md:text-7xl font-semibold leading-[0.95] max-w-4xl mx-auto">
           Une seule plateforme,<br />
           <span className="italic text-muted-foreground">tous vos services.</span>
         </h1>
