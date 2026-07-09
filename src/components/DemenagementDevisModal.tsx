@@ -1,4 +1,6 @@
 /* eslint-disable prettier/prettier */
+/* eslint-disable react-hooks/exhaustive-deps */
+/* eslint-disable prettier/prettier */
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -21,12 +23,14 @@ import {
   type FloorInfo,
 } from "@/lib/demenagement/quote";
 import { submitServiceRequest } from "@/lib/portals/service-requests";
+import { ClientAuthModal } from "@/components/ClientAuthModal";
+import { type ClientAccount } from "@/lib/client/auth";
 import { ContactPhoneField } from "@/components/ContactPhoneField";
 import { formatPhoneSummary, phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 import {
-  useClientContactPrefill,
   emptyClientContactFields,
   clientContactFieldsFromAccount,
+  resolveClientAccount,
   type ClientContactFormFields,
 } from "@/lib/client/form-prefill";
 
@@ -215,7 +219,8 @@ function isBusyMoveDate(moveDate: string, busySet: Set<string>) {
 }
 
 export function DemenagementDevisModal({ open, onClose }: Props) {
-  const { account } = useClientContactPrefill();
+  const [clientAccount, setClientAccount] = useState<ClientAccount | "guest" | null>(null);
+  const [authChecked, setAuthChecked] = useState(false);
   const [step, setStep] = useState(0);
   const [contact, setContact] = useState<ClientContactFormFields>(emptyClientContactFields());
   const [quote, setQuote] = useState<DemenagementQuoteData>(emptyQuoteData());
@@ -226,6 +231,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
 
   const busyDates = useMemo(() => parseBusyDateStrings(busyDateStrings), [busyDateStrings]);
   const busyDateSet = useMemo(() => new Set(busyDateStrings), [busyDateStrings]);
+  const account = clientAccount && clientAccount !== "guest" ? clientAccount : null;
   const selectedMoveDate = useMemo(
     () => (quote.moveDate ? parseLocalDate(quote.moveDate) : undefined),
     [quote.moveDate],
@@ -251,6 +257,20 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
   );
 
   useEffect(() => {
+    void resolveClientAccount().then((acc) => {
+      if (acc) {
+        setClientAccount(acc);
+      }
+      setAuthChecked(true);
+    });
+  }, []);
+
+  const handleAuthSuccess = (acc: ClientAccount) => {
+    setClientAccount(acc);
+    setContact(clientContactFieldsFromAccount(acc));
+  };
+
+  useEffect(() => {
     if (!open) return;
     setLoadingBusyDates(true);
     getMovingBusyDates()
@@ -270,10 +290,23 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
   useEffect(() => {
     if (!open || !account?.id) return;
     setContact(clientContactFieldsFromAccount(account));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+  
   }, [open, account?.id]);
 
   if (!open) return null;
+
+  if (!authChecked) return null;
+
+  if (clientAccount === null) {
+    return (
+      <ClientAuthModal
+        onClose={onClose}
+        onSuccess={handleAuthSuccess}
+        onContinueAsGuest={() => setClientAccount("guest")}
+        portal="demenagement"
+      />
+    );
+  }
 
   const validateStep = (): boolean => {
     if (step === 0) {
@@ -360,6 +393,14 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
             <p className="font-display text-xl font-bold text-charbon leading-tight">Demande de devis</p>
             <p className="text-[11px] yolo-form-muted uppercase tracking-[0.15em] mt-1 font-medium">
               Déménagement Kinshasa · {STEPS[step]}
+              {account ? (
+                <span className="normal-case tracking-normal text-or-bronze">
+                  {" "}
+                  · {account.firstName} {account.lastName}
+                </span>
+              ) : (
+                <span className="normal-case tracking-normal"> · Mode invité</span>
+              )}
             </p>
           </div>
           <button
