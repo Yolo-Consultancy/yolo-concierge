@@ -17,6 +17,7 @@ import {
   clientContactFieldsFromAccount,
   emptyClientContactFields,
   resolveClientAccount,
+  CIVILITY_OPTIONS,
 } from "@/lib/client/form-prefill";
 import { ContactPhoneField } from "@/components/ContactPhoneField";
 import { formatPhoneSummary, phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
@@ -117,14 +118,6 @@ const STEPS = [
   "Vérifier",
 ] as const;
 
-const CIVILITY_OPTIONS = [
-  { value: "M.", label: "M." },
-  { value: "Mme", label: "Mme" },
-  { value: "Mlle", label: "Mlle" },
-  { value: "Dr", label: "Dr" },
-  { value: "Pr", label: "Pr" },
-] as const;
-
 const CALENDAR_CLASS_NAMES = {
   caption_label: "text-charbon font-semibold font-display",
   button_previous: "text-charbon hover:bg-black/5",
@@ -200,7 +193,7 @@ function LocationAutocomplete({ value, onChange, placeholder, inputCls }: Locati
                 onChange(location);
                 setIsOpen(false);
               }}
-              className="w-full px-4 py-3 text-left text-sm text-charbon hover:bg-[var(--yolo-cream)] border-b border-black/5 last:border-b-0 transition"
+              className="w-full px-4 py-3 text-left text-sm text-charbon hover:bg-(--yolo-cream) border-b border-black/5 last:border-b-0 transition"
             >
               {location}
             </button>
@@ -439,7 +432,7 @@ export function BookingModal({
       onClick={onClose}
     >
       <div
-        className="bg-[var(--yolo-cream)] border border-black/10 rounded-2xl w-full max-w-2xl my-8 shadow-2xl"
+        className="bg-(--yolo-cream) border border-black/10 rounded-2xl w-full max-w-2xl my-8 shadow-2xl"
         data-yolo-form
         onClick={(e) => e.stopPropagation()}
       >
@@ -548,7 +541,7 @@ export function BookingModal({
                   <PopoverContent
                     align="start"
                     data-yolo-form
-                    className="w-auto border-black/10 bg-[var(--yolo-cream)] p-0 text-charbon shadow-2xl"
+                    className="w-auto border-black/10 bg-(--yolo-cream) p-0 text-charbon shadow-2xl"
                   >
                     <Calendar
                       mode="range"
@@ -559,7 +552,7 @@ export function BookingModal({
                       disabled={[{ before: new Date() }, ...occupiedDates]}
                       modifiers={{ occupied: occupiedDates }}
                       modifiersClassNames={CALENDAR_MODIFIERS_CLASS_NAMES}
-                      className="bg-[var(--yolo-cream)] text-charbon"
+                      className="bg-(--yolo-cream) text-charbon"
                       classNames={CALENDAR_CLASS_NAMES}
                     />
                     <p className="border-t border-black/8 px-4 py-2.5 text-xs yolo-form-muted">

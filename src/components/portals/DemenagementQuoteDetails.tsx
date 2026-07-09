@@ -6,6 +6,7 @@ import {
   type DemenagementQuoteData,
 } from "@/lib/demenagement/quote";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function isDemenagementQuote(
   data: unknown,
 ): data is DemenagementQuoteData {
@@ -90,7 +91,7 @@ export function DemenagementQuoteDetails({
         </div>
 
         {quote.additionalNotes?.trim() && (
-          <div className="rounded-xl border border-dashed border-black/12 bg-[var(--yolo-cream)]/50 px-3 py-2.5">
+          <div className="rounded-xl border border-dashed border-black/12 bg-(--yolo-cream)/50 px-3 py-2.5">
             <p className="text-[10px] font-semibold uppercase tracking-wider text-charbon/45">
               Notes client
             </p>

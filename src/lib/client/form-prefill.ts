@@ -14,6 +14,14 @@ export type ClientContactFormFields = {
   confirmPassword: string;
 };
 
+export const CIVILITY_OPTIONS = [
+  { value: "M.", label: "M." },
+  { value: "Mme", label: "Mme" },
+  { value: "Mlle", label: "Mlle" },
+  { value: "Dr", label: "Dr" },
+  { value: "Pr", label: "Pr" },
+] as const;
+
 export function emptyClientContactFields(): ClientContactFormFields {
   return {
     civility: "M.",

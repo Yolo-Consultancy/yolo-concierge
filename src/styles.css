@@ -570,7 +570,7 @@ label[data-required]::after {
 [data-yolo-form] [data-slot="calendar"] .rdp-occupied button {
   background-color: rgba(59, 130, 246, 0.28) !important;
   color: #1e40af !important;
-  text-decoration: line-through;
+  cursor: pointer !important;
 }
 
 [data-yolo-form] [data-slot="calendar"] button[data-range-start="true"],

@@ -114,7 +114,7 @@ export function PortalServiceAdminShell({ portalId }: { portalId: PortalId }) {
         </div>
       </aside>
       {open && <div className="lg:hidden fixed inset-0 z-30 bg-black/40" onClick={() => setOpen(false)} />}
-      <main className="flex-1 min-w-0 p-4 lg:p-8 pt-[3.75rem] lg:pt-8 yolo-space-main flex flex-col">
+      <main className="flex-1 min-w-0 p-4 lg:p-8 pt-15 lg:pt-8 yolo-space-main flex flex-col">
         <div className="flex-1">
           <Outlet />
         </div>

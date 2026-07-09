@@ -3,6 +3,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { registerClient } from "@/lib/client/auth";
+import { CIVILITY_OPTIONS } from "@/lib/client/form-prefill";
 import { loginUnified, resolvePostLoginPath, welcomeMessage } from "@/lib/auth/unified-login";
 import { notifyAuthChange } from "@/lib/auth/session";
 import { toast } from "sonner";
@@ -47,6 +48,7 @@ function ConnexionPage() {
   const [loginPassword, setLoginPassword] = useState("");
 
   const [reg, setReg] = useState({
+    civility: "M.",
     firstName: "",
     lastName: "",
     email: "",
@@ -106,12 +108,14 @@ function ConnexionPage() {
 
     setLoading(true);
     const result = await registerClient({
+      civility: reg.civility,
       firstName: reg.firstName,
       lastName: reg.lastName,
       email: reg.email,
       phone: reg.phone,
       countryCode: reg.countryCode,
       password: reg.password,
+      ...(portalId ? { portal: portalId } : {}),
     });
     setLoading(false);
 
@@ -208,6 +212,23 @@ function ConnexionPage() {
             </form>
           ) : (
             <form onSubmit={handleRegister} className="space-y-4">
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-white/50 font-medium mb-1.5" data-required>
+                  Civilité
+                </label>
+                <select
+                  value={reg.civility}
+                  onChange={(e) => setReg({ ...reg, civility: e.target.value })}
+                  className={`${inputCls} cursor-pointer`}
+                >
+                  {CIVILITY_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value} className="bg-charbon text-white">
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs uppercase tracking-wider text-white/50 font-medium mb-1.5" data-required>

@@ -1,17 +1,19 @@
 /* eslint-disable prettier/prettier */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable prettier/prettier */
-import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { X, ChevronLeft, ChevronRight, Check, MapPin, User, Calendar as CalendarIcon, Home, type LucideIcon } from "lucide-react";
+import { X, ChevronLeft, ChevronRight, Check, MapPin, User, Calendar as CalendarIcon, Home, Users, type LucideIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Calendar } from "@/components/ui/calendar";
 import { KINSHASA_COMMUNES } from "@/config/kinshasa-communes";
 import {
-  getMovingBusyDates,
+  getMovingBusyDays,
+  busyDateStringsFromSummaries,
   parseBusyDateStrings,
   startOfToday,
+  type MovingBusyDaySummary,
 } from "@/lib/demenagement/busy-dates";
 import {
   buildDemenagementQuoteMessage,
@@ -31,6 +33,7 @@ import {
   emptyClientContactFields,
   clientContactFieldsFromAccount,
   resolveClientAccount,
+  CIVILITY_OPTIONS,
   type ClientContactFormFields,
 } from "@/lib/client/form-prefill";
 
@@ -55,6 +58,63 @@ const CALENDAR_MODIFIERS_CLASS_NAMES = {
   selected: "rdp-selected",
   enCours: "rdp-enCours",
 } as const;
+
+const MISSION_STATUS_LABELS: Record<MovingBusyDaySummary["missions"][number]["status"], string> = {
+  a_affecter: "Planifiée",
+  en_cours: "En cours",
+};
+
+function BusyDayPanel({
+  day,
+  onClose,
+}: {
+  day: MovingBusyDaySummary;
+  onClose: () => void;
+}) {
+  return (
+    <div className="rounded-xl border border-blue-200 bg-blue-50/80 p-4 space-y-3 shadow-sm">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm font-semibold text-charbon font-display capitalize">
+            {format(parseLocalDate(day.date), "EEEE d MMMM yyyy", { locale: fr })}
+          </p>
+          <p className="text-xs text-blue-800/80 mt-0.5">Date indisponible — mission(s) en cours</p>
+        </div>
+        <button
+          type="button"
+          onClick={onClose}
+          className="p-1 rounded-md hover:bg-blue-100 text-charbon/50 hover:text-charbon transition shrink-0"
+          aria-label="Fermer"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+      <div className="space-y-2.5">
+        {day.missions.map((mission, i) => (
+          <div key={i} className="rounded-lg border border-blue-100 bg-white p-3 text-sm space-y-1.5">
+            <p>
+              <span className="text-xs yolo-form-muted uppercase tracking-wide">Client :</span>{" "}
+              <span className="font-medium text-charbon">{mission.clientName}</span>
+            </p>
+            <p className="flex items-center gap-1.5">
+              <Users className="h-3.5 w-3.5 text-or-bronze shrink-0" />
+              <span>
+                <span className="text-xs yolo-form-muted uppercase tracking-wide">Équipe :</span>{" "}
+                <span className="text-charbon">
+                  {mission.moverCount} déménageur{mission.moverCount > 1 ? "s" : ""}
+                  {mission.moverNames.length > 0 ? ` — ${mission.moverNames.join(", ")}` : ""}
+                </span>
+              </span>
+            </p>
+            <p className="text-xs text-blue-700/90">
+              Statut : {MISSION_STATUS_LABELS[mission.status]}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 type Props = {
   open: boolean;
@@ -219,6 +279,7 @@ function isBusyMoveDate(moveDate: string, busySet: Set<string>) {
 }
 
 export function DemenagementDevisModal({ open, onClose }: Props) {
+  const contentRef = useRef<HTMLDivElement>(null);
   const [clientAccount, setClientAccount] = useState<ClientAccount | "guest" | null>(null);
   const [authChecked, setAuthChecked] = useState(false);
   const [step, setStep] = useState(0);
@@ -226,34 +287,43 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
   const [quote, setQuote] = useState<DemenagementQuoteData>(emptyQuoteData());
   const [sending, setSending] = useState(false);
   const [done, setDone] = useState(false);
-  const [busyDateStrings, setBusyDateStrings] = useState<string[]>([]);
+  const [busyDays, setBusyDays] = useState<MovingBusyDaySummary[]>([]);
+  const [selectedBusyDay, setSelectedBusyDay] = useState<MovingBusyDaySummary | null>(null);
   const [loadingBusyDates, setLoadingBusyDates] = useState(false);
 
+  const busyDateStrings = useMemo(() => busyDateStringsFromSummaries(busyDays), [busyDays]);
   const busyDates = useMemo(() => parseBusyDateStrings(busyDateStrings), [busyDateStrings]);
   const busyDateSet = useMemo(() => new Set(busyDateStrings), [busyDateStrings]);
+  const busyDayByDate = useMemo(
+    () => new Map(busyDays.map((d) => [d.date, d])),
+    [busyDays],
+  );
   const account = clientAccount && clientAccount !== "guest" ? clientAccount : null;
   const selectedMoveDate = useMemo(
     () => (quote.moveDate ? parseLocalDate(quote.moveDate) : undefined),
     [quote.moveDate],
   );
   const todayStart = useMemo(() => startOfToday(), [open]);
-  const calendarDisabled = useMemo(
-    () => [{ before: todayStart }, ...busyDates],
-    [todayStart, busyDates],
-  );
+  const calendarDisabled = useMemo(() => [{ before: todayStart }], [todayStart]);
   const calendarModifiers = useMemo(() => ({ enCours: busyDates }), [busyDates]);
+
+  const scrollContentToTop = useCallback(() => {
+    contentRef.current?.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
 
   const handleMoveDateSelect = useCallback(
     (date: Date | undefined) => {
       if (!date) return;
       const iso = format(date, "yyyy-MM-dd");
       if (busyDateSet.has(iso)) {
-        toast.error("Déménagement en cours ce jour — date indisponible.");
+        const day = busyDayByDate.get(iso);
+        if (day) setSelectedBusyDay(day);
         return;
       }
+      setSelectedBusyDay(null);
       setQuote((prev) => (prev.moveDate === iso ? prev : { ...prev, moveDate: iso }));
     },
-    [busyDateSet],
+    [busyDateSet, busyDayByDate],
   );
 
   useEffect(() => {
@@ -273,9 +343,9 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
   useEffect(() => {
     if (!open) return;
     setLoadingBusyDates(true);
-    getMovingBusyDates()
-      .then(setBusyDateStrings)
-      .catch(() => setBusyDateStrings([]))
+    getMovingBusyDays()
+      .then(setBusyDays)
+      .catch(() => setBusyDays([]))
       .finally(() => setLoadingBusyDates(false));
   }, [open]);
 
@@ -283,9 +353,18 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
     if (!open) return;
     setStep(0);
     setDone(false);
+    setSelectedBusyDay(null);
     setQuote(emptyQuoteData());
     setContact(emptyClientContactFields());
   }, [open]);
+
+  useEffect(() => {
+    scrollContentToTop();
+  }, [step, scrollContentToTop]);
+
+  useEffect(() => {
+    if (step !== 2) setSelectedBusyDay(null);
+  }, [step]);
 
   useEffect(() => {
     if (!open || !account?.id) return;
@@ -310,6 +389,10 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
 
   const validateStep = (): boolean => {
     if (step === 0) {
+      if (!contact.civility) {
+        toast.error("La civilité est obligatoire.");
+        return false;
+      }
       if (!contact.firstName.trim()) {
         toast.error("Le prénom est obligatoire.");
         return false;
@@ -344,8 +427,8 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
         toast.error("Cette date a déjà un déménagement en cours. Choisissez une autre date.");
         return false;
       }
-      if (quote.bedrooms < 1) {
-        toast.error("Indiquez au moins une chambre.");
+      if (!quote.bedrooms || quote.bedrooms < 1) {
+        toast.error("Indiquez le nombre de chambres.");
         return false;
       }
       return true;
@@ -362,7 +445,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
     if (!validateStep()) return;
     setSending(true);
     try {
-      const name = `${contact.firstName} ${contact.lastName}`.trim();
+      const name = `${contact.civility} ${contact.firstName} ${contact.lastName}`.replace(/\s+/g, " ").trim();
       const phone = `${contact.countryCode} ${contact.phone}`.trim();
       await submitServiceRequest({
         name,
@@ -426,7 +509,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
           </p>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-6">
+        <div ref={contentRef} className="flex-1 overflow-y-auto px-5 py-6">
           {done ? (
             <div className="text-center py-8 space-y-4">
               <div className="mx-auto h-14 w-14 bg-or-vif flex items-center justify-center">
@@ -447,6 +530,20 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                   </span>
                 )}
               </SectionTitle>
+              <div>
+                <label className="yolo-form-label" data-required>Civilité</label>
+                <select
+                  className={selectCls}
+                  value={contact.civility}
+                  onChange={(e) => setContact({ ...contact, civility: e.target.value })}
+                >
+                  {CIVILITY_OPTIONS.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
               <div className="grid sm:grid-cols-2 gap-3">
                 <div>
                   <label className="yolo-form-label" data-required>Prénom</label>
@@ -530,9 +627,12 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                   <p className="border-t border-black/8 px-4 py-2.5 text-xs yolo-form-muted">
                     {loadingBusyDates
                       ? "Chargement des disponibilités…"
-                      : "Dates bleues : déménagement en cours (non sélectionnables)."}
+                      : "Dates bleues : missions planifiées — cliquez pour voir les détails."}
                   </p>
                 </div>
+                {selectedBusyDay && (
+                  <BusyDayPanel day={selectedBusyDay} onClose={() => setSelectedBusyDay(null)} />
+                )}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
@@ -542,8 +642,14 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                     min={1}
                     max={20}
                     className={inputCls}
-                    value={quote.bedrooms}
-                    onChange={(e) => setQuote({ ...quote, bedrooms: Number(e.target.value) || 1 })}
+                    placeholder="Ex. 3"
+                    value={quote.bedrooms || ""}
+                    onChange={(e) =>
+                      setQuote({
+                        ...quote,
+                        bedrooms: e.target.value === "" ? 0 : Number(e.target.value),
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -553,8 +659,14 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                     min={0}
                     max={10}
                     className={inputCls}
-                    value={quote.livingRooms}
-                    onChange={(e) => setQuote({ ...quote, livingRooms: Number(e.target.value) || 0 })}
+                    placeholder="Ex. 1"
+                    value={quote.livingRooms || ""}
+                    onChange={(e) =>
+                      setQuote({
+                        ...quote,
+                        livingRooms: e.target.value === "" ? 0 : Number(e.target.value),
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -585,7 +697,10 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
             <div className="space-y-4">
               <SectionTitle icon={CalendarIcon}>Récapitulatif</SectionTitle>
               <div className="rounded-xl border border-black/8 bg-white p-4 space-y-2.5 text-sm shadow-sm">
-                <RecapRow label="Client" value={`${contact.firstName} ${contact.lastName}`} />
+                <RecapRow
+                  label="Client"
+                  value={`${contact.civility} ${contact.firstName} ${contact.lastName}`.replace(/\s+/g, " ").trim()}
+                />
                 <RecapRow
                   label="Contact"
                   value={`${contact.email} · ${formatPhoneSummary(contact.countryCode, contact.phone)}`}
@@ -604,7 +719,7 @@ export function DemenagementDevisModal({ open, onClose }: Props) {
                 <p className="text-xs yolo-form-muted pl-1">{formatFloorInfo("Arrivée", quote.arrivalFloor)}</p>
                 <RecapRow
                   label="Volume"
-                  value={`${quote.bedrooms} chambre(s), ${quote.livingRooms} salon(s)`}
+                  value={`${quote.bedrooms} chambre(s)${quote.livingRooms > 0 ? `, ${quote.livingRooms} salon(s)` : ""}`}
                 />
                 {quote.additionalNotes && (
                   <RecapRow label="Notes" value={quote.additionalNotes} />

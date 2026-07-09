@@ -79,8 +79,8 @@ export function emptyQuoteData(): DemenagementQuoteData {
     arrival: emptyLocation(),
     departureFloor: emptyFloor(),
     arrivalFloor: emptyFloor(),
-    bedrooms: 1,
-    livingRooms: 1,
+    bedrooms: 0,
+    livingRooms: 0,
     additionalNotes: "",
   };
 }

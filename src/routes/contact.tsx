@@ -194,7 +194,7 @@ function ContactPage() {
                       <Icon className={`h-7 w-7 ${card.iconColor}`} />
                     </div>
                     <h2 className="font-display text-xl font-semibold text-charbon mb-1">{card.title}</h2>
-                    <p className="text-sm text-[var(--yolo-muted)] mb-5 break-all">{card.desc}</p>
+                    <p className="text-sm text-(--yolo-muted) mb-5 break-all">{card.desc}</p>
                     <a
                       href={card.href}
                       target={card.external ? "_blank" : undefined}
@@ -221,7 +221,7 @@ function ContactPage() {
                     <Check className="h-8 w-8 text-charbon" strokeWidth={3} />
                   </div>
                   <h3 className="font-display text-2xl font-bold text-charbon mb-3">Message envoyé</h3>
-                  <p className="text-sm text-[var(--yolo-muted)] max-w-md mx-auto">
+                  <p className="text-sm text-(--yolo-muted) max-w-md mx-auto">
                     Notre équipe à {contactConfig.city} a bien reçu votre demande et vous répondra dans les plus brefs délais.
                   </p>
                 </div>
@@ -324,7 +324,7 @@ function ContactPage() {
                     <MapPin className="h-5 w-5 text-or-bronze" />
                     <h3 className="font-display text-xl font-semibold text-charbon">Visitez-nous</h3>
                   </div>
-                  <p className="text-sm text-[var(--yolo-muted)] leading-relaxed">
+                  <p className="text-sm text-(--yolo-muted) leading-relaxed">
                     {physicalAddress}
                   </p>
                   <div className="mt-4 overflow-hidden border border-black/8">
@@ -357,7 +357,7 @@ function ContactPage() {
                   <ul className="space-y-3">
                     {contactConfig.openingHours.map((row) => (
                       <li key={row.days} className="flex items-center justify-between gap-4 text-sm">
-                        <span className="text-[var(--yolo-muted)]">{row.days}</span>
+                        <span className="text-(--yolo-muted)">{row.days}</span>
                         <span className="text-charbon font-medium">{row.hours}</span>
                       </li>
                     ))}
@@ -370,7 +370,7 @@ function ContactPage() {
                   <h3 className="font-display text-xl font-semibold text-charbon mb-4">Pourquoi YOLO ?</h3>
                   <ul className="space-y-3">
                     {contactConfig.whyChoose.map((item) => (
-                      <li key={item} className="flex items-start gap-3 text-sm text-[var(--yolo-muted)]">
+                      <li key={item} className="flex items-start gap-3 text-sm text-(--yolo-muted)">
                         <Check className="h-4 w-4 shrink-0 mt-0.5 text-or-bronze" />
                         {item}
                       </li>
@@ -385,7 +385,7 @@ function ContactPage() {
                     <AlertCircle className="h-5 w-5 text-amber-600" />
                     <h3 className="font-display text-xl font-semibold text-charbon">Support d&apos;urgence</h3>
                   </div>
-                  <p className="text-sm text-[var(--yolo-muted)] mb-4">
+                  <p className="text-sm text-(--yolo-muted) mb-4">
                     Besoin d&apos;assistance immédiate ? Notre ligne de support est disponible 24/7 à {contactConfig.city}.
                   </p>
                   <a

@@ -25,8 +25,10 @@ export const Route = createFileRoute("/driver")({
   component: DriverShell,
 });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const DriverContext = createContext<{ account: DriverAccount | null }>({ account: null });
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useDriverAccount() {
   return useContext(DriverContext);
 }
@@ -94,7 +96,7 @@ function DriverShell() {
             <YoloLogo variant="white" size="md" to="/" subtitle="Chauffeur" />
           </div>
 
-          <div className="p-6 border-b border-white/5 bg-white/[0.01]">
+          <div className="p-6 border-b border-white/5 bg-white/1">
             <div className="flex items-center gap-4">
               <div className="h-10 w-10 rounded-full bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-amber-400 font-bold">
                 {account.firstName[0].toUpperCase()}
@@ -156,7 +158,7 @@ function DriverShell() {
           />
         )}
 
-        <main className="flex-1 min-w-0 p-6 lg:p-10 pt-[5.5rem] lg:pt-10 flex flex-col yolo-space-main relative overflow-y-auto">
+        <main className="flex-1 min-w-0 p-6 lg:p-10 pt-22 lg:pt-10 flex flex-col yolo-space-main relative overflow-y-auto">
           <div className="relative z-10 flex-1 flex flex-col">
             <Outlet />
           </div>
