@@ -12,6 +12,7 @@ import { BookingModal } from "@/components/BookingModal";
 import { PortalHeader } from "@/components/PortalHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ClientReviewsSection } from "@/components/ClientReviewsSection";
+import { ScrollReveal } from "@/components/portal-ui/ScrollReveal";
 import { contactSearch } from "@/lib/auth/redirect";
 import { SectionLabel } from "@/components/portal-ui/SectionLabel";
 import { PortalButton } from "@/components/portal-ui/PortalButton";
