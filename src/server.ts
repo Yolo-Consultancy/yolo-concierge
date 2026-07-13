@@ -1,6 +1,9 @@
 /* eslint-disable prettier/prettier */
 import "./lib/error-capture";
 
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
 import { consumeLastCapturedError } from "./lib/error-capture";
 import { renderErrorPage } from "./lib/error-page";
 
@@ -38,9 +41,63 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
   });
 }
 
+function getPublicDir() {
+  const cwd = process.cwd();
+  return path.resolve(cwd, ".output/public");
+}
+
+async function tryServeStaticAsset(request: Request): Promise<Response | null> {
+  const url = new URL(request.url);
+  const pathname = decodeURIComponent(url.pathname);
+
+  if (!pathname.startsWith("/assets/")) {
+    return null;
+  }
+
+  const publicDir = getPublicDir();
+  const relativePath = pathname.slice("/".length);
+  const filePath = path.resolve(publicDir, relativePath);
+
+  if (!filePath.startsWith(publicDir)) {
+    return null;
+  }
+
+  try {
+    const fileBuffer = await readFile(filePath);
+    const ext = path.extname(filePath).toLowerCase();
+    const mimeTypes: Record<string, string> = {
+      ".js": "application/javascript; charset=utf-8",
+      ".css": "text/css; charset=utf-8",
+      ".svg": "image/svg+xml",
+      ".png": "image/png",
+      ".jpg": "image/jpeg",
+      ".jpeg": "image/jpeg",
+      ".webp": "image/webp",
+      ".ico": "image/x-icon",
+      ".json": "application/json; charset=utf-8",
+      ".txt": "text/plain; charset=utf-8",
+    };
+
+    return new Response(fileBuffer, {
+      status: 200,
+      headers: {
+        "content-type": mimeTypes[ext] ?? "application/octet-stream",
+        "cache-control": "public, max-age=31536000, immutable",
+      },
+    });
+  } catch {
+    return null;
+  }
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const staticAssetResponse = await tryServeStaticAsset(request);
+      if (staticAssetResponse) {
+        return staticAssetResponse;
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);
