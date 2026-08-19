@@ -3,9 +3,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import carHero from "@/assets/car-hero.jpg";
-import destDakar from "@/assets/dest-dakar.jpg";
-import destAbidjan from "@/assets/dest-abidjan.jpg";
-import destSaly from "@/assets/dest-saly.jpg";
 import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehicles";
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
@@ -17,6 +14,7 @@ import { contactSearch } from "@/lib/auth/redirect";
 import { SectionLabel } from "@/components/portal-ui/SectionLabel";
 import { PortalButton } from "@/components/portal-ui/PortalButton";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { POPULAR_KINSHASA_DESTINATIONS } from "@/config/kinshasa-destinations";
 
 export const Route = createFileRoute("/location-vehicules")({
   head: () => ({
@@ -29,12 +27,6 @@ export const Route = createFileRoute("/location-vehicules")({
   }),
   component: LocationVehicules,
 });
-
-const destinations = [
-  { name: "Gombe", image: destDakar },
-  { name: "Aéroport de N'djili", image: destAbidjan },
-  { name: "Ngaliema / Ma Campagne", image: destSaly },
-];
 
 const reasons = [
   { title: "Prix 100% Transparents", desc: "Pas de frais cachés. Le prix affiché est celui que vous payez." },
@@ -195,7 +187,7 @@ function LocationVehicules() {
             { n: "24/7", u: "concierge disponible" },
             { n: "0", u: "frais cachés" },
             { n: "100%", u: "assurance incluse" },
-            { n: "Gombe", u: "livraison partout" },
+            { n: "24", u: "communes couvertes" },
           ].map((s, i) => (
             <ScrollReveal key={s.u} delayMs={i * 70} className="text-center md:text-left">
               <p className="font-display text-3xl font-bold text-charbon md:text-4xl">{s.n}</p>
@@ -277,11 +269,14 @@ function LocationVehicules() {
           <ScrollReveal className="mb-12 text-center md:mb-16">
             <SectionLabel>Kinshasa</SectionLabel>
             <h2 className="text-[clamp(1.85rem,3vw,2.75rem)] font-bold">Destinations populaires</h2>
+            <p className="mt-4 max-w-2xl mx-auto text-[15px] leading-relaxed text-white/60">
+              Livraison avec chauffeur dans les communes et quartiers les plus demandés de Kinshasa.
+            </p>
           </ScrollReveal>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {destinations.map((d, i) => (
-              <ScrollReveal key={d.name} delayMs={i * 80}>
+            {POPULAR_KINSHASA_DESTINATIONS.map((d, i) => (
+              <ScrollReveal key={d.id} delayMs={i * 80}>
                 <button
                   type="button"
                   onClick={() => openBooking()}
@@ -289,16 +284,17 @@ function LocationVehicules() {
                 >
                   <img
                     src={d.image}
-                    alt={d.name}
+                    alt={`Location avec chauffeur — ${d.name}, Kinshasa`}
                     loading="lazy"
                     className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-linear-to-t from-charbon via-charbon/30 to-transparent" />
+                  <div className="absolute inset-0 bg-linear-to-t from-charbon via-charbon/50 to-charbon/20" />
                   <div className="absolute bottom-0 left-0 p-7">
                     <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-or-vif mb-2">
-                      Location premium
+                      {d.commune}
                     </p>
-                    <p className="font-display text-3xl font-semibold">{d.name}</p>
+                    <p className="font-display text-2xl sm:text-3xl font-semibold">{d.name}</p>
+                    <p className="mt-2 text-sm text-white/70 leading-relaxed max-w-xs">{d.description}</p>
                   </div>
                 </button>
               </ScrollReveal>
