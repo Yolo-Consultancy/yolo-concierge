@@ -171,9 +171,8 @@ function LocationVehicules() {
               <br />
               <span className="text-or-vif">là où vous êtes.</span>
             </h1>
-            <p className="mt-5 max-w-lg text-[17px] leading-relaxed text-white/78">
-              Ferrari, Porsche, Mercedes, Range Rover — avec ou sans chauffeur, livrée à Gombe,
-              Ngaliema, à l&apos;aéroport ou à votre hôtel.
+            <p className="mt-5 max-w-lg text-lg md:text-xl leading-relaxed text-white/85 font-medium">
+              Avec chauffeur.
             </p>
             <div className="yolo-hero-actions mt-9">
               <a href="#flotte">
