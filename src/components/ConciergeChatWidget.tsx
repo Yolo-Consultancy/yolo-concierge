@@ -325,7 +325,9 @@ export function ConciergeChatProvider({ children }: { children: React.ReactNode 
 
   const hidden =
     pathname.startsWith("/admin") ||
-    pathname.startsWith("/driver");
+    pathname.startsWith("/driver") ||
+    pathname === "/demenagement" ||
+    pathname === "/services-sur-mesure";
 
   const value: ConciergeChatContextValue = {
     openChat: () => setOpen(true),
