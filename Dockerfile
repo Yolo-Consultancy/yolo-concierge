@@ -7,6 +7,7 @@ COPY package.json package-lock.json ./
 RUN npm ci
 
 COPY . .
+ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN npm run build
 
 # Production (serveur Node TanStack Start — toutes les routes SSR)
