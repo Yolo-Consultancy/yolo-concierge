@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { VehicleHeroSlideshow } from "@/components/portal-ui/VehicleHeroSlideshow";
-import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehicles";
+import { formatPrice, type Vehicle } from "@/lib/vehicles";
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
 import { PortalHeader } from "@/components/PortalHeader";
@@ -111,10 +111,13 @@ function LocationVehicules() {
   const [page, setPage] = useState(1);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [prefilledVehicle, setPrefilledVehicle] = useState<string>("");
-  const [vehicles, setVehicles] = useState<Vehicle[]>(seedVehicles);
+  const [vehicles, setVehicles] = useState<Vehicle[]>([]);
+  const [loadingFleet, setLoadingFleet] = useState(true);
 
   useEffect(() => {
-    listVehicles().then(setVehicles);
+    listVehicles()
+      .then(setVehicles)
+      .finally(() => setLoadingFleet(false));
   }, []);
 
   const totalPages = Math.max(1, Math.ceil(vehicles.length / pageSize));
@@ -201,7 +204,22 @@ function LocationVehicules() {
           </ScrollReveal>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {paginatedVehicles.map((v, idx) => (
+            {loadingFleet
+              ? Array.from({ length: pageSize }, (_, i) => (
+                  <div
+                    key={i}
+                    className="overflow-hidden rounded-lg border border-black/8 bg-white"
+                    aria-hidden
+                  >
+                    <div className="aspect-5/4 animate-pulse bg-charbon/10" />
+                    <div className="space-y-3 p-5">
+                      <div className="h-5 w-2/3 animate-pulse rounded bg-charbon/10" />
+                      <div className="h-4 w-1/3 animate-pulse rounded bg-charbon/10" />
+                      <div className="h-8 w-1/2 animate-pulse rounded bg-charbon/10" />
+                    </div>
+                  </div>
+                ))
+              : paginatedVehicles.map((v, idx) => (
               <ScrollReveal key={v.id} delayMs={idx * 70}>
                 <article className="yolo-portal-card group overflow-hidden bg-white border border-black/8">
                   <Link to="/location-vehicules/$vehicleId" params={{ vehicleId: v.id }} className="block">
@@ -254,7 +272,9 @@ function LocationVehicules() {
             ))}
           </div>
 
-          <FleetPagination page={page} totalPages={totalPages} onPageChange={goToPage} />
+          {!loadingFleet && (
+            <FleetPagination page={page} totalPages={totalPages} onPageChange={goToPage} />
+          )}
         </div>
       </section>
 
