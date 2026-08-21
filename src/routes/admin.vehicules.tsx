@@ -67,10 +67,20 @@ function VehiculesAdmin() {
   };
   const remove = (id: string, name: string) => {
     ask({
-      title: "Supprimer ce véhicule ?",
-      description: `${name} sera retiré du catalogue public. Cette action est irréversible.`,
-      confirmLabel: "Supprimer",
-      onConfirm: async () => { await deleteVehicle(id); refresh(); },
+      title: "Supprimer définitivement ce véhicule ?",
+      description: `${name} sera effacé de la base de données et retiré du catalogue public. Cette action est irréversible.`,
+      confirmLabel: "Supprimer définitivement",
+      variant: "destructive",
+      onConfirm: async () => {
+        try {
+          await deleteVehicle(id);
+          toast.success("Véhicule supprimé définitivement.");
+          refresh();
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : "Suppression impossible.";
+          toast.error(msg);
+        }
+      },
     });
   };
 

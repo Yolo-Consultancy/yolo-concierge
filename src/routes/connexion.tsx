@@ -2,7 +2,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Mail, Lock } from "lucide-react";
-import { registerClient } from "@/lib/client/auth";
+import { registerClient, requestClientPasswordReset, resetClientPassword } from "@/lib/client/auth";
 import { CIVILITY_OPTIONS } from "@/lib/client/form-prefill";
 import { loginUnified, resolvePostLoginPath, welcomeMessage } from "@/lib/auth/unified-login";
 import { notifyAuthChange } from "@/lib/auth/session";
@@ -14,12 +14,13 @@ import { YoloLogo } from "@/components/YoloLogo";
 import { ContactPhoneField } from "@/components/ContactPhoneField";
 import { phoneDigitsOnly, phoneMaxLength } from "@/lib/phone-field";
 
-type Mode = "login" | "register";
+type Mode = "login" | "register" | "forgot" | "reset";
 
 const connexionSearchSchema = z.object({
   redirect: z.string().optional().catch(undefined),
   portal: z.enum(["vehicules", "demenagement", "sur-mesure"]).optional().catch(undefined),
-  mode: z.enum(["login", "register"]).optional().catch(undefined),
+  mode: z.enum(["login", "register", "forgot", "reset"]).optional().catch(undefined),
+  token: z.string().optional().catch(undefined),
 });
 
 export const Route = createFileRoute("/connexion")({
@@ -37,15 +38,27 @@ const inputCls =
   "w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-or-vif focus:ring-1 focus:ring-or-vif/50 transition-all";
 
 function ConnexionPage() {
-  const { redirect, portal: portalId, mode: initialMode } = Route.useSearch();
+  const { redirect, portal: portalId, mode: initialMode, token: resetToken } = Route.useSearch();
   const portal = portalId ? getPortal(portalId) : null;
   const navigate = useNavigate();
-  const [mode, setMode] = useState<Mode>(initialMode === "register" ? "register" : "login");
+  const initialConnexionMode: Mode =
+    initialMode === "reset" && resetToken
+      ? "reset"
+      : initialMode === "forgot"
+        ? "forgot"
+        : initialMode === "register"
+          ? "register"
+          : "login";
+  const [mode, setMode] = useState<Mode>(initialConnexionMode);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [info, setInfo] = useState("");
 
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
 
   const [reg, setReg] = useState({
     civility: "M.",
@@ -57,6 +70,65 @@ function ConnexionPage() {
     password: "",
     confirmPassword: "",
   });
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setInfo("");
+    setLoading(true);
+    const result = await requestClientPasswordReset(forgotEmail);
+    setLoading(false);
+    if (result.ok) {
+      setInfo(result.message);
+    } else {
+      setError(result.error);
+    }
+  };
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setInfo("");
+
+    if (!resetToken) {
+      setError("Lien de réinitialisation invalide.");
+      return;
+    }
+    if (newPassword.length < 6) {
+      setError("Le mot de passe doit contenir au moins 6 caractères.");
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setError("Les mots de passe ne correspondent pas.");
+      return;
+    }
+
+    setLoading(true);
+    const result = await resetClientPassword(resetToken, newPassword);
+    setLoading(false);
+
+    if (result.ok) {
+      toast.success("Mot de passe mis à jour. Vous pouvez vous connecter.");
+      navigate({ to: "/connexion", search: { portal: portalId, mode: "login" } });
+    } else {
+      setError(result.error);
+    }
+  };
+
+  const switchMode = (next: Mode) => {
+    setMode(next);
+    setError("");
+    setInfo("");
+  };
+
+  const modeTitle =
+    mode === "login"
+      ? "Connexion"
+      : mode === "register"
+        ? "Créer un compte client"
+        : mode === "forgot"
+          ? "Mot de passe oublié"
+          : "Nouveau mot de passe";
 
   const goAfterLogin = (result: Extract<Awaited<ReturnType<typeof loginUnified>>, { ok: true }>) => {
     notifyAuthChange();
@@ -144,26 +216,39 @@ function ConnexionPage() {
         </div>
 
         <div className="bg-charbon/80 border border-white/10 rounded-2xl p-6 md:p-8 backdrop-blur-xl shadow-2xl">
-          <div className="flex border-b border-white/10 mb-6 pb-2">
-            <button
-              type="button"
-              onClick={() => { setMode("login"); setError(""); }}
-              className={`flex-1 text-center pb-2 text-sm font-medium ${
-                mode === "login" ? "text-or-vif" : "text-white/40 hover:text-white/60"
-              }`}
-            >
-              Connexion
-            </button>
-            <button
-              type="button"
-              onClick={() => { setMode("register"); setError(""); }}
-              className={`flex-1 text-center pb-2 text-sm font-medium ${
-                mode === "register" ? "text-or-vif" : "text-white/40 hover:text-white/60"
-              }`}
-            >
-              Créer un compte client
-            </button>
-          </div>
+          {(mode === "login" || mode === "register") && (
+            <div className="flex border-b border-white/10 mb-6 pb-2">
+              <button
+                type="button"
+                onClick={() => switchMode("login")}
+                className={`flex-1 text-center pb-2 text-sm font-medium ${
+                  mode === "login" ? "text-or-vif" : "text-white/40 hover:text-white/60"
+                }`}
+              >
+                Connexion
+              </button>
+              <button
+                type="button"
+                onClick={() => switchMode("register")}
+                className={`flex-1 text-center pb-2 text-sm font-medium ${
+                  mode === "register" ? "text-or-vif" : "text-white/40 hover:text-white/60"
+                }`}
+              >
+                Créer un compte client
+              </button>
+            </div>
+          )}
+
+          {(mode === "forgot" || mode === "reset") && (
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-white">{modeTitle}</h2>
+              <p className="mt-2 text-xs text-white/50 leading-relaxed">
+                {mode === "forgot"
+                  ? "Compte client uniquement. Les comptes admin conservent le mot de passe par défaut ou celui défini par l'équipe."
+                  : "Choisissez un nouveau mot de passe pour votre compte client."}
+              </p>
+            </div>
+          )}
 
           {mode === "login" ? (
             <form onSubmit={handleLogin} className="space-y-4">
@@ -182,7 +267,19 @@ function ConnexionPage() {
                 </div>
               </div>
               <div className="space-y-1">
-                <label className="block text-xs uppercase tracking-wider text-white/50 font-medium">Mot de passe</label>
+                <div className="flex items-center justify-between gap-3">
+                  <label className="block text-xs uppercase tracking-wider text-white/50 font-medium">Mot de passe</label>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setForgotEmail(loginEmail);
+                      switchMode("forgot");
+                    }}
+                    className="text-xs text-or-vif hover:text-white transition-colors"
+                  >
+                    Mot de passe oublié ?
+                  </button>
+                </div>
                 <div className="relative">
                   <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
                   <input
@@ -207,8 +304,95 @@ function ConnexionPage() {
               </button>
               <p className="text-center text-xs text-white/35 pt-1">
                 Compte client : accès à la location, au déménagement et au sur mesure.
-                {portal ? " Agents et chauffeurs : connectez-vous depuis le portail concerné." : ""}
+                {portal ? " Admins et chauffeurs : utilisez vos identifiants portail." : ""}
               </p>
+            </form>
+          ) : mode === "forgot" ? (
+            <form onSubmit={handleForgotPassword} className="space-y-4">
+              <div className="space-y-1">
+                <label className="block text-xs uppercase tracking-wider text-white/50 font-medium">E-mail du compte client</label>
+                <div className="relative">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-white/30" />
+                  <input
+                    type="email"
+                    required
+                    value={forgotEmail}
+                    onChange={(e) => setForgotEmail(e.target.value)}
+                    placeholder="vous@exemple.com"
+                    className={`${inputCls} pl-11`}
+                  />
+                </div>
+              </div>
+              {error && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs">{error}</div>
+              )}
+              {info && (
+                <div className="p-3 bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 rounded-xl text-xs">{info}</div>
+              )}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3.5 mt-2 rounded-xl bg-or-vif text-black text-sm font-semibold hover:bg-white transition disabled:opacity-50"
+              >
+                {loading ? "Envoi..." : "Envoyer le lien"}
+              </button>
+              <button
+                type="button"
+                onClick={() => switchMode("login")}
+                className="w-full text-center text-xs text-white/50 hover:text-or-vif transition-colors"
+              >
+                ← Retour à la connexion
+              </button>
+            </form>
+          ) : mode === "reset" ? (
+            <form onSubmit={handleResetPassword} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-white/50 font-medium mb-1.5">
+                    Nouveau mot de passe
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="6 caractères minimum"
+                    className={inputCls}
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs uppercase tracking-wider text-white/50 font-medium mb-1.5">
+                    Confirmation
+                  </label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    placeholder="Confirmer"
+                    className={inputCls}
+                  />
+                </div>
+              </div>
+              {error && (
+                <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl text-xs">{error}</div>
+              )}
+              <button
+                type="submit"
+                disabled={loading || !resetToken}
+                className="w-full py-3.5 mt-2 rounded-xl bg-or-vif text-black text-sm font-semibold hover:bg-white transition disabled:opacity-50"
+              >
+                {loading ? "Enregistrement..." : "Enregistrer le mot de passe"}
+              </button>
+              <button
+                type="button"
+                onClick={() => switchMode("login")}
+                className="w-full text-center text-xs text-white/50 hover:text-or-vif transition-colors"
+              >
+                ← Retour à la connexion
+              </button>
             </form>
           ) : (
             <form onSubmit={handleRegister} className="space-y-4">

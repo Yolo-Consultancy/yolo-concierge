@@ -126,7 +126,7 @@ export function LoginGate({ onSuccess }: { onSuccess: () => void }) {
                         autoFocus
                         value={loginEmail}
                         onChange={(e) => { setLoginEmail(e.target.value); setLoginError(""); }}
-                        placeholder="admin@yolo.cd"
+                        placeholder="admin.vehicule@yolo.com"
                         className={inputCls}
                       />
                     </div>

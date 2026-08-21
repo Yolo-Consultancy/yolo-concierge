@@ -75,3 +75,26 @@ export function logoutClient() {
   setClientAccessToken(null);
   cachedAccount = null;
 }
+
+export async function requestClientPasswordReset(
+  email: string,
+): Promise<{ ok: true; message: string } | { ok: false; error: string }> {
+  try {
+    const result = await publicApi.post<{ message: string }>("/auth/client/forgot-password", { email });
+    return { ok: true, message: result.message };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "Demande impossible" };
+  }
+}
+
+export async function resetClientPassword(
+  token: string,
+  password: string,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  try {
+    await publicApi.post("/auth/client/reset-password", { token, password });
+    return { ok: true };
+  } catch (err) {
+    return { ok: false, error: err instanceof Error ? err.message : "Réinitialisation impossible" };
+  }
+}

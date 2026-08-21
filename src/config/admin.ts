@@ -3,7 +3,7 @@
 
 export const adminConfig = {
   // Identifiants bootstrap (utilisés uniquement si apiBaseUrl est vide)
-  username: "admin@yolo.cd",
+  username: "admin.vehicule@yolo.com",
   password: "yolo2026",
 
   // URL de base du backend Express (sans /api/v1 — ajouté automatiquement par le client)
