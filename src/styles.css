@@ -357,6 +357,17 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes vehicle-hero-slide-zoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.04); }
+}
+
+.vehicle-hero-slide-zoom {
+  animation: vehicle-hero-slide-zoom 6s ease-out forwards;
+  will-change: transform;
+  transform-origin: center center;
+}
+
 @keyframes yolo-hero-image {
   from { transform: scale(1.06); }
   to { transform: scale(1); }

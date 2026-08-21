@@ -2,7 +2,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
-import carHero from "@/assets/car-hero.jpg";
+import { VehicleHeroSlideshow } from "@/components/portal-ui/VehicleHeroSlideshow";
 import { vehicles as seedVehicles, formatPrice, type Vehicle } from "@/lib/vehicles";
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
@@ -146,16 +146,10 @@ function LocationVehicules() {
   return (
     <main className="min-h-screen font-sans antialiased" data-yolo-portal data-yolo-portal-vehicules>
       <PortalHeader portalId="vehicules" />
-      <section className="relative min-h-[88vh] flex flex-col overflow-hidden bg-charbon text-white">
-        <img
-          src={carHero}
-          alt="Supercar de luxe à Kinshasa"
-          className="yolo-hero-image absolute inset-0 h-full w-full object-cover"
-          width={1920}
-          height={1080}
-        />
-        <div className="absolute inset-0 bg-linear-to-r from-charbon/92 via-charbon/50 to-charbon/25" />
-        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-16 pt-28 md:pb-24">
+      <section className="relative min-h-screen flex flex-col overflow-hidden bg-charbon text-white">
+        <VehicleHeroSlideshow />
+        <div className="absolute inset-0 bg-linear-to-t from-charbon/95 via-charbon/40 to-charbon/5" />
+        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-28 pt-28 md:justify-center md:pb-28">
           <ScrollReveal className="yolo-hero-content">
             <SectionLabel>Kinshasa · Location premium</SectionLabel>
             <h1 className="max-w-2xl text-[clamp(2.4rem,5vw,3.75rem)] font-bold leading-[1.08]">
