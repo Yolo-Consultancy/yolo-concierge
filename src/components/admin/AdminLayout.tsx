@@ -2,7 +2,7 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import {
   LayoutDashboard, Car, CalendarCheck, Users, UserCog,
-  ClipboardList, Settings, LogOut, Menu, IdCard, FileText,
+  ClipboardList, Settings, LogOut, Menu, IdCard, FileText, BarChart3,
 } from "lucide-react";
 import { useState, type ReactNode, useEffect } from "react";
 import { adminConfig } from "@/config/admin";
@@ -27,6 +27,7 @@ type NavItem = {
 
 const nav: NavItem[] = [
   { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+  { to: "/admin/statistiques", label: "Statistiques", icon: BarChart3 },
   { to: "/admin/vehicules", label: "Véhicules", icon: Car },
   { to: "/admin/reservations", label: "Réservations", icon: CalendarCheck, badge: "pendingBookings", alert: true },
   { to: "/admin/clients", label: "Clients", icon: Users },

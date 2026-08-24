@@ -11,6 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 import { Toaster } from "@/components/ui/sonner";
 import { ConciergeChatProvider } from "@/components/ConciergeChatWidget";
+import { AnalyticsTracker } from "@/components/analytics/AnalyticsTracker";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
@@ -135,6 +136,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <ConciergeChatProvider>
+        <AnalyticsTracker />
         <Outlet />
         <Toaster richColors position="top-center" />
       </ConciergeChatProvider>

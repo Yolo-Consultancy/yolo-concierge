@@ -41,6 +41,7 @@ import { Route as ClientReservationsRouteImport } from './routes/client.reservat
 import { Route as ClientDemenagementRouteImport } from './routes/client.demenagement'
 import { Route as AdminVehiculesRouteImport } from './routes/admin.vehicules'
 import { Route as AdminUtilisateursRouteImport } from './routes/admin.utilisateurs'
+import { Route as AdminStatistiquesRouteImport } from './routes/admin.statistiques'
 import { Route as AdminReservationsRouteImport } from './routes/admin.reservations'
 import { Route as AdminRapportsRouteImport } from './routes/admin.rapports'
 import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
@@ -222,6 +223,11 @@ const AdminUtilisateursRoute = AdminUtilisateursRouteImport.update({
   path: '/utilisateurs',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminStatistiquesRoute = AdminStatistiquesRouteImport.update({
+  id: '/statistiques',
+  path: '/statistiques',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminReservationsRoute = AdminReservationsRouteImport.update({
   id: '/reservations',
   path: '/reservations',
@@ -327,6 +333,7 @@ export interface FileRoutesByFullPath {
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/reservations': typeof AdminReservationsRoute
+  '/admin/statistiques': typeof AdminStatistiquesRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/client/demenagement': typeof ClientDemenagementRoute
@@ -368,6 +375,7 @@ export interface FileRoutesByTo {
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/reservations': typeof AdminReservationsRoute
+  '/admin/statistiques': typeof AdminStatistiquesRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/client/demenagement': typeof ClientDemenagementRoute
@@ -417,6 +425,7 @@ export interface FileRoutesById {
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/rapports': typeof AdminRapportsRoute
   '/admin/reservations': typeof AdminReservationsRoute
+  '/admin/statistiques': typeof AdminStatistiquesRoute
   '/admin/utilisateurs': typeof AdminUtilisateursRoute
   '/admin/vehicules': typeof AdminVehiculesRoute
   '/client/demenagement': typeof ClientDemenagementRoute
@@ -467,6 +476,7 @@ export interface FileRouteTypes {
     | '/admin/parametres'
     | '/admin/rapports'
     | '/admin/reservations'
+    | '/admin/statistiques'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/client/demenagement'
@@ -508,6 +518,7 @@ export interface FileRouteTypes {
     | '/admin/parametres'
     | '/admin/rapports'
     | '/admin/reservations'
+    | '/admin/statistiques'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/client/demenagement'
@@ -556,6 +567,7 @@ export interface FileRouteTypes {
     | '/admin/parametres'
     | '/admin/rapports'
     | '/admin/reservations'
+    | '/admin/statistiques'
     | '/admin/utilisateurs'
     | '/admin/vehicules'
     | '/client/demenagement'
@@ -823,6 +835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminUtilisateursRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/statistiques': {
+      id: '/admin/statistiques'
+      path: '/statistiques'
+      fullPath: '/admin/statistiques'
+      preLoaderRoute: typeof AdminStatistiquesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/reservations': {
       id: '/admin/reservations'
       path: '/reservations'
@@ -931,6 +950,7 @@ interface AdminRouteChildren {
   AdminParametresRoute: typeof AdminParametresRoute
   AdminRapportsRoute: typeof AdminRapportsRoute
   AdminReservationsRoute: typeof AdminReservationsRoute
+  AdminStatistiquesRoute: typeof AdminStatistiquesRoute
   AdminUtilisateursRoute: typeof AdminUtilisateursRoute
   AdminVehiculesRoute: typeof AdminVehiculesRoute
   AdminIndexRoute: typeof AdminIndexRoute
@@ -943,6 +963,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminParametresRoute: AdminParametresRoute,
   AdminRapportsRoute: AdminRapportsRoute,
   AdminReservationsRoute: AdminReservationsRoute,
+  AdminStatistiquesRoute: AdminStatistiquesRoute,
   AdminUtilisateursRoute: AdminUtilisateursRoute,
   AdminVehiculesRoute: AdminVehiculesRoute,
   AdminIndexRoute: AdminIndexRoute,

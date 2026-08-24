@@ -8,6 +8,7 @@ import {
   Settings,
   FileText,
   Truck,
+  BarChart3,
 } from "lucide-react";
 
 export type PortalId = "vehicules" | "demenagement" | "sur-mesure";
@@ -68,6 +69,7 @@ export const PORTALS: Record<PortalId, PortalConfig> = {
     ],
     adminNav: [
       { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+      { to: "/admin/statistiques", label: "Statistiques", icon: BarChart3 },
       { to: "/admin/vehicules", label: "Véhicules", icon: FileText },
       { to: "/admin/reservations", label: "Réservations", icon: CalendarCheck },
       { to: "/admin/clients", label: "Clients", icon: Users },
