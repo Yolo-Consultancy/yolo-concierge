@@ -10,6 +10,8 @@ import { useState } from "react";
 import { getVehicleById } from "@/lib/admin/store";
 import { formatPrice, type Vehicle } from "@/lib/vehicles";
 import { BookingModal } from "@/components/BookingModal";
+import { RichTextContent } from "@/components/RichTextContent";
+import { stripHtml } from "@/lib/sanitize-html";
 
 export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
   loader: async ({ params }): Promise<{ vehicle: Vehicle }> => {
@@ -23,9 +25,9 @@ export const Route = createFileRoute("/location-vehicules_/$vehicleId")({
       meta: v
         ? [
             { title: `${v.brand} ${v.name} — YOLO Le Concierge` },
-            { name: "description", content: v.description || `Location ${v.brand} ${v.name} — YOLO Le Concierge` },
+            { name: "description", content: stripHtml(v.description) || `Location ${v.brand} ${v.name} — YOLO Le Concierge` },
             { property: "og:title", content: `${v.brand} ${v.name}` },
-            { property: "og:description", content: v.description || `Location ${v.brand} ${v.name} — YOLO Le Concierge` },
+            { property: "og:description", content: stripHtml(v.description) || `Location ${v.brand} ${v.name} — YOLO Le Concierge` },
             { property: "og:image", content: v.image },
             { property: "twitter:image", content: v.image },
           ]
@@ -162,9 +164,11 @@ function VehicleDetail() {
           <div className="mt-16 grid lg:grid-cols-2 gap-12">
             <ScrollReveal>
               <h2 className="font-display text-2xl font-bold text-charbon mb-4">Description</h2>
-              <p className="text-(--yolo-muted) leading-relaxed text-[17px]">
-                {vehicle.description || "Aucune description disponible pour ce véhicule."}
-              </p>
+              <RichTextContent
+                html={vehicle.description}
+                className="text-[17px]"
+                emptyFallback="Aucune description disponible pour ce véhicule."
+              />
             </ScrollReveal>
             {vehicle.conditions.deposit?.trim() && (
               <ScrollReveal delayMs={80}>

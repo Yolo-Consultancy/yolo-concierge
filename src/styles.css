@@ -618,3 +618,96 @@ label[data-required]::after {
   color: var(--yolo-ink) !important;
 }
 
+/* TipTap — éditeur description véhicule */
+.tiptap {
+  outline: none;
+}
+
+.tiptap p.is-editor-empty:first-child::before {
+  color: var(--muted-foreground);
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}
+
+.tiptap ul,
+.tiptap ol {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.tiptap ul {
+  list-style: disc;
+}
+
+.tiptap ol {
+  list-style: decimal;
+}
+
+.tiptap blockquote {
+  border-left: 3px solid var(--border);
+  margin: 0.75rem 0;
+  padding-left: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.tiptap pre {
+  background: var(--muted);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  overflow-x: auto;
+  font-family: var(--font-mono-family);
+  font-size: 0.8125rem;
+}
+
+.tiptap hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
+.tiptap img {
+  max-width: 100%;
+  border-radius: 0.5rem;
+}
+
+.tiptap a {
+  color: var(--primary);
+  text-decoration: underline;
+}
+
+.rich-text ul,
+.rich-text ol {
+  padding-left: 1.25rem;
+  margin: 0.5rem 0;
+}
+
+.rich-text ul {
+  list-style: disc;
+}
+
+.rich-text ol {
+  list-style: decimal;
+}
+
+.rich-text blockquote {
+  border-left: 3px solid var(--or-bronze);
+  padding-left: 0.75rem;
+  margin: 0.75rem 0;
+  font-style: italic;
+}
+
+.rich-text pre {
+  background: color-mix(in srgb, var(--charbon) 6%, transparent);
+  border-radius: 0.375rem;
+  padding: 0.75rem;
+  overflow-x: auto;
+}
+
+.rich-text hr {
+  border: none;
+  border-top: 1px solid color-mix(in srgb, var(--charbon) 15%, transparent);
+  margin: 1rem 0;
+}
+

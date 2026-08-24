@@ -9,6 +9,7 @@ import {
 } from "@/lib/admin/store";
 import { formatPrice, type Vehicle } from "@/lib/vehicles";
 import { useConfirmDialog } from "@/hooks/useConfirmDialog";
+import { VehicleDescriptionEditor } from "@/components/admin/VehicleDescriptionEditor";
 
 export const Route = createFileRoute("/admin/vehicules")({
   component: VehiculesAdmin,
@@ -363,7 +364,11 @@ function VehicleForm({
           </div>
 
           <Field label="Description">
-            <textarea rows={3} className={inputCls} value={v.description} onChange={(e) => set({ description: e.target.value })} />
+            <VehicleDescriptionEditor
+              value={v.description}
+              onChange={(description) => set({ description })}
+              placeholder="Décrivez le véhicule, ses équipements, son expérience de conduite…"
+            />
           </Field>
 
           <Field label="Caution">
