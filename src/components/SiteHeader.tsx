@@ -44,7 +44,7 @@ export function SiteHeader() {
     <header className="fixed top-0 inset-x-0 z-50 border-b border-white/10 bg-charbon/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6 md:py-4">
         <div className="flex items-center gap-3">
-          <YoloLogo variant="yellow" size="md" to="/" subtitle="Le Concierge" />
+          <YoloLogo variant="yellow" size="md" to="/" />
           <PortalHomeLink variant="pill" accentClass="text-gold" />
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm text-white/90">

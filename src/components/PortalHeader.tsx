@@ -126,7 +126,6 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
             variant="yellow"
             size="md"
             to={portal.publicPath as "/location-vehicules"}
-            subtitle={portal.name}
           />
           <PortalHomeLink variant="pill" accentClass={portal.accentClass} />
         </div>
@@ -195,7 +194,7 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
           </SheetTrigger>
           <SheetContent side="right" className="border-white/10 bg-charbon text-white">
             <SheetTitle className="sr-only">YOLO Le Concierge — {portal.name}</SheetTitle>
-            <YoloLogo variant="yellow" size="md" subtitle={portal.name} />
+            <YoloLogo variant="yellow" size="md" />
             <nav className="mt-8 flex flex-col gap-2">
               <SheetClose asChild>
                 <Link

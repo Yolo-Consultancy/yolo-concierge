@@ -87,8 +87,6 @@ function Index() {
             variant="yellow"
             size="md"
             to="/"
-            subtitle="Le Concierge"
-            subtitleClassName="hidden sm:inline text-[10px] uppercase tracking-[0.35em] text-muted-foreground"
           />
           <div className="hidden md:flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
