@@ -29,7 +29,24 @@ export const contactConfig = {
     "Service sur mesure",
     "Autre",
   ],
+  /** Numéro officiel contact / WhatsApp (format international sans +) */
+  whatsappNumber: "243830538687",
 };
+
+const LEGACY_WHATSAPP_NUMBERS = new Set([
+  "243828863897",
+  "0828863897",
+  "828863897",
+]);
+
+/** Utilise le numéro API sauf si l'ancien numéro est encore en base (prod non migrée). */
+export function resolveContactWhatsAppNumber(fromApi?: string) {
+  const digits = String(fromApi || "").replace(/\D/g, "");
+  if (!digits || LEGACY_WHATSAPP_NUMBERS.has(digits) || digits.endsWith("828863897")) {
+    return contactConfig.whatsappNumber;
+  }
+  return digits;
+}
 
 export function formatPhoneDisplay(raw: string) {
   const digits = raw.replace(/\D/g, "");

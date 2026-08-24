@@ -14,6 +14,7 @@ import {
   formatPhoneDisplay,
   mapsEmbedUrl,
   mapsDirectionsUrl,
+  resolveContactWhatsAppNumber,
   whatsappLink,
 } from "@/config/contact";
 import { getPortalContactContent } from "@/config/portal-contact";
@@ -50,7 +51,7 @@ function ContactPage() {
   const selectCls = `${inputCls} yolo-form-select`;
 
   const [settings, setSettings] = useState({
-    whatsappNumber: "243830538687",
+    whatsappNumber: contactConfig.whatsappNumber,
     contactEmail: "contact@yololeconcierge.com",
     address: contactConfig.defaultAddress,
     companyName: "YOLO Le Concierge",
@@ -76,7 +77,15 @@ function ContactPage() {
   }, [portalId, portalContent.defaultSubject]);
 
   useEffect(() => {
-    getSettings().then(setSettings).catch(() => undefined);
+    getSettings()
+      .then((data) =>
+        setSettings((prev) => ({
+          ...prev,
+          ...data,
+          whatsappNumber: resolveContactWhatsAppNumber(data.whatsappNumber),
+        })),
+      )
+      .catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -103,8 +112,9 @@ function ContactPage() {
     });
   }, [account?.id, fields]);
 
-  const phoneDisplay = formatPhoneDisplay(settings.whatsappNumber);
-  const telHref = `tel:+${settings.whatsappNumber.replace(/\D/g, "")}`;
+  const contactWhatsApp = resolveContactWhatsAppNumber(settings.whatsappNumber);
+  const phoneDisplay = formatPhoneDisplay(contactWhatsApp);
+  const telHref = `tel:+${contactWhatsApp.replace(/\D/g, "")}`;
   const physicalAddress = contactConfig.defaultAddress;
   const mapsUrl = mapsDirectionsUrl(contactConfig.mapsQuery);
   const serviceType =
@@ -166,7 +176,7 @@ function ContactPage() {
                 title: "WhatsApp",
                 desc: "Réponses rapides garanties",
                 btn: "Chat sur WhatsApp",
-                href: whatsappLink(settings.whatsappNumber, "Bonjour YOLO Le Concierge,"),
+                href: whatsappLink(contactWhatsApp, "Bonjour YOLO Le Concierge,"),
                 external: true,
                 iconBg: "bg-emerald-500/10",
                 iconColor: "text-emerald-600",
