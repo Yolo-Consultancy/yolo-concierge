@@ -50,7 +50,7 @@ function ContactPage() {
   const selectCls = `${inputCls} yolo-form-select`;
 
   const [settings, setSettings] = useState({
-    whatsappNumber: "243828863897",
+    whatsappNumber: "243830538687",
     contactEmail: "contact@yololeconcierge.com",
     address: contactConfig.defaultAddress,
     companyName: "YOLO Le Concierge",
