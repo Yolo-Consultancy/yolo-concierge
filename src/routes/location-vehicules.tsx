@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
 import { VehicleHeroSlideshow } from "@/components/portal-ui/VehicleHeroSlideshow";
+import { HeroChauffeurTagline } from "@/components/portal-ui/HeroChauffeurTagline";
 import { formatPrice, type Vehicle } from "@/lib/vehicles";
 import { listVehicles } from "@/lib/admin/store";
 import { BookingModal } from "@/components/BookingModal";
@@ -160,9 +161,7 @@ function LocationVehicules() {
               <br />
               <span className="text-or-vif">là où vous êtes.</span>
             </h1>
-            <p className="mt-5 max-w-lg text-lg md:text-xl leading-relaxed text-white/85 font-medium">
-              Avec chauffeur.
-            </p>
+            <HeroChauffeurTagline />
             <div className="yolo-hero-actions mt-9">
               <a href="#flotte">
                 <PortalButton variant="primary">

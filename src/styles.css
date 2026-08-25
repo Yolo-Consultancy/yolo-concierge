@@ -408,6 +408,94 @@
   gap: 1rem;
 }
 
+@keyframes yolo-tagline-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes yolo-tagline-timer-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+[data-yolo-portal] .yolo-hero-tagline {
+  min-height: 1.5em;
+}
+
+[data-yolo-portal] .yolo-hero-tagline-word {
+  display: inline-block;
+  animation: yolo-tagline-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both;
+}
+
+[data-yolo-portal] .yolo-hero-tagline-accent {
+  display: inline-block;
+  position: relative;
+  color: var(--or-vif);
+  animation: yolo-tagline-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) 0.85s both;
+}
+
+[data-yolo-portal] .yolo-hero-tagline-timer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.06em;
+  height: 3px;
+  border-radius: 999px;
+  overflow: hidden;
+  opacity: 0;
+  animation: yolo-tagline-rise 0.5s ease 1.35s forwards;
+}
+
+[data-yolo-portal] .yolo-hero-tagline-timer-track {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.14);
+  border-radius: inherit;
+}
+
+[data-yolo-portal] .yolo-hero-tagline-timer-spin {
+  position: absolute;
+  inset: -220% -40%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 250deg,
+    var(--or-vif) 300deg,
+    #fff6d0 330deg,
+    transparent 360deg
+  );
+  animation: yolo-tagline-timer-rotate 2.8s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-yolo-portal] .yolo-hero-tagline-word,
+  [data-yolo-portal] .yolo-hero-tagline-accent {
+    animation: none;
+    opacity: 1;
+    filter: none;
+  }
+
+  [data-yolo-portal] .yolo-hero-tagline-timer {
+    animation: none;
+    opacity: 1;
+  }
+
+  [data-yolo-portal] .yolo-hero-tagline-timer-spin {
+    animation: none;
+    inset: 0;
+    background: var(--or-vif);
+    border-radius: inherit;
+  }
+}
+
 [data-yolo-portal-light] {
   background: var(--yolo-cream);
   color: var(--yolo-ink);
