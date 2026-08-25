@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Link } from "@tanstack/react-router";
-import { Menu, LogOut, User, Shield, LayoutGrid } from "lucide-react";
+import { Menu, LogOut, User, Shield } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   getClientSession,
@@ -20,9 +20,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { PortalHomeLink } from "@/components/PortalHomeLink";
 import { YoloLogo } from "@/components/YoloLogo";
-
 type PortalHeaderProps = {
   portalId: PortalId;
   onAction?: (action: "contact" | "devis") => void;
@@ -127,7 +125,6 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
             size="md"
             to={portal.publicPath as "/location-vehicules"}
           />
-          <PortalHomeLink variant="pill" accentClass={portal.accentClass} />
         </div>
 
         <nav className="hidden md:flex items-center gap-6 text-sm text-white/90">
@@ -196,15 +193,6 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
             <SheetTitle className="sr-only">YOLO Le Concierge — {portal.name}</SheetTitle>
             <YoloLogo variant="yolo" size="md" />
             <nav className="mt-8 flex flex-col gap-2">
-              <SheetClose asChild>
-                <Link
-                  to="/"
-                  className="inline-flex items-center gap-2 rounded-lg border border-or-vif/30 bg-or-vif/10 px-3 py-3 text-base font-medium text-white"
-                >
-                  <LayoutGrid className={`h-4 w-4 ${portal.accentClass}`} />
-                  Tous les portails
-                </Link>
-              </SheetClose>
               {portal.publicNav.map((item) => renderNavItem(item, true))}
               <div className="border-t border-white/10 my-4" />
               {client ? (

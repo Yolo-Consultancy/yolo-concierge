@@ -1,7 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SiteFooter } from "@/components/SiteFooter";
-import { YoloLogo } from "@/components/YoloLogo";
+import logoYellow from "@/assets/logos/logo-yellow.png";
 import vehiculesImg from "@/assets/portal-vehicules.jpg";
 import comingSoonDemenagement from "@/assets/logos/coming.jpg";
 import comingSoonSurMesure from "@/assets/logos/Coming_s.jpg";
@@ -83,11 +83,13 @@ function Index() {
     <main className="min-h-screen bg-background">
       <header className="fixed top-0 inset-x-0 z-50 border-b border-border bg-background/95 backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:py-5">
-          <YoloLogo
-            variant="yolo"
-            size="md"
-            to="/"
-          />
+          <Link to="/" className="block shrink-0">
+            <img
+              src={logoYellow}
+              alt="YOLO Le Concierge"
+              className="h-9 w-auto max-w-[min(220px,48vw)] object-contain object-left"
+            />
+          </Link>
           <div className="hidden md:flex items-center gap-2 text-xs uppercase tracking-widest text-muted-foreground">
             <span className="h-1.5 w-1.5 rounded-full bg-gold animate-pulse" />
             Conciergerie disponible 24/7

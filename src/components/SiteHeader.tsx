@@ -1,7 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Link } from "@tanstack/react-router";
-import { Menu, LogOut, User, Shield, LayoutGrid } from "lucide-react";
-import { PortalHomeLink } from "@/components/PortalHomeLink";
+import { Menu, LogOut, User, Shield } from "lucide-react";
 import { YoloLogo } from "@/components/YoloLogo";
 import { useEffect, useState } from "react";
 import {
@@ -45,10 +44,8 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 md:px-6 md:py-4">
         <div className="flex items-center gap-3">
           <YoloLogo variant="yolo" size="md" to="/" />
-          <PortalHomeLink variant="pill" accentClass="text-gold" />
         </div>
         <nav className="hidden md:flex items-center gap-6 text-sm text-white/90">
-          <PortalHomeLink variant="nav" accentClass="text-gold" />
           <Link to="/location-vehicules" className="hover:text-gold transition-colors">Véhicules</Link>
           <Link to="/demenagement" className="hover:text-gold transition-colors">Déménagement</Link>
           <Link to="/services-sur-mesure" className="hover:text-gold transition-colors">Sur Mesure</Link>
@@ -108,12 +105,6 @@ export function SiteHeader() {
             <SheetTitle className="sr-only">YOLO Le Concierge</SheetTitle>
             <YoloLogo variant="yolo" size="md" />
             <nav className="mt-10 flex flex-col gap-3">
-              <SheetClose asChild>
-                <Link to="/" className="inline-flex items-center gap-2 rounded-lg border border-gold/30 bg-gold/10 px-3 py-3 text-base font-medium text-white">
-                  <LayoutGrid className="h-4 w-4 text-gold" />
-                  Tous les portails
-                </Link>
-              </SheetClose>
               <SheetClose asChild>
                 <Link to="/location-vehicules" className="rounded-lg px-3 py-3 text-base text-white/80 hover:bg-white/10 hover:text-white">
                   Véhicules
