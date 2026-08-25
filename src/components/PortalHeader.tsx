@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 import { Link } from "@tanstack/react-router";
-import { Menu, LogOut, User, Shield } from "lucide-react";
+import { Menu, LogOut } from "lucide-react";
 import { useEffect, useState } from "react";
 import {
   getClientSession,
@@ -9,7 +9,6 @@ import {
 } from "@/lib/auth/session";
 import type { ClientAccount } from "@/lib/client/auth";
 import { getAdminSession, type AdminUser } from "@/lib/admin/auth";
-import { adminCanAccessPortal } from "@/lib/auth/admin-portal";
 import { getPortal, type PortalId } from "@/config/portals";
 import { connexionSearch, contactSearch } from "@/lib/auth/redirect";
 import { useRouterState } from "@tanstack/react-router";
@@ -46,14 +45,13 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
     return subscribeAuth(refreshAuth);
   }, []);
 
-  const showAdminLink = adminUser && adminCanAccessPortal(adminUser, portalId);
+  const isLoggedIn = !!client || !!adminUser;
 
   const handleLogout = () => {
     logoutSession("all");
     refreshAuth();
   };
 
-  const accentDot = portal.accentClass;
   const loginSearch = connexionSearch(portalId, "login");
   const registerSearch = connexionSearch(portalId, "register");
 
@@ -131,14 +129,15 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
           {portal.publicNav.map((item) => renderNavItem(item))}
 
           <div className="flex items-center gap-2 ml-2 pl-4 border-l border-white/15">
-            {client ? (
-              <Link
-                to={portal.clientPath as "/client"}
-                className="inline-flex items-center gap-2 rounded-full border border-or-vif/40 bg-or-vif/10 px-4 py-1.5 text-white transition-colors hover:bg-or-vif/20"
+            {isLoggedIn ? (
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-4 py-1.5 text-sm text-white/80 hover:bg-white/10 hover:text-white transition-colors"
               >
-                <User className={`h-3.5 w-3.5 ${portal.accentClass}`} />
-                <span>{client.firstName}</span>
-              </Link>
+                <LogOut className="h-3.5 w-3.5" />
+                Déconnexion
+              </button>
             ) : (
               <>
                 <Link
@@ -146,35 +145,16 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
                   search={registerSearch}
                   className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-4 py-1.5 text-white hover:bg-white/15 transition-colors text-sm"
                 >
-                  Créer un compte
+                  Inscription
                 </Link>
                 <Link
                   to="/connexion"
                   search={loginSearch}
                   className="inline-flex items-center gap-2 rounded-full bg-or-vif px-4 py-1.5 text-sm font-medium text-charbon transition-colors hover:bg-white"
                 >
-                  Se connecter
+                  Connexion
                 </Link>
               </>
-            )}
-            {showAdminLink && (
-              <Link
-                to={portal.adminPath as "/admin"}
-                className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-white/80 hover:text-white transition-colors text-xs"
-                title="Back-office"
-              >
-                <Shield className="h-3.5 w-3.5" />
-                Admin
-              </Link>
-            )}
-            {(client || showAdminLink) && (
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/5 px-3 py-1.5 text-white/70 hover:text-white transition-colors text-xs"
-              >
-                <LogOut className="h-3.5 w-3.5" />
-              </button>
             )}
           </div>
         </nav>
@@ -195,35 +175,28 @@ export function PortalHeader({ portalId, onAction }: PortalHeaderProps) {
             <nav className="mt-8 flex flex-col gap-2">
               {portal.publicNav.map((item) => renderNavItem(item, true))}
               <div className="border-t border-white/10 my-4" />
-              {client ? (
-                <SheetClose asChild>
-                  <Link
-                    to={portal.clientPath as "/client"}
-                    className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base"
-                  >
-                    <User className="h-4 w-4" /> Mon espace ({client.firstName})
-                  </Link>
-                </SheetClose>
+              {isLoggedIn ? (
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="inline-flex items-center gap-2 rounded-lg border border-white/15 px-3 py-3 text-base text-red-300 hover:bg-red-500/10 w-full text-left"
+                >
+                  <LogOut className="h-4 w-4" />
+                  Déconnexion
+                </button>
               ) : (
                 <>
                   <SheetClose asChild>
-                    <Link to="/connexion" search={registerSearch} className="rounded-lg border border-white/15 px-3 py-3 text-base">
-                      Créer un compte
+                    <Link to="/connexion" search={registerSearch} className="rounded-lg border border-white/15 px-3 py-3 text-base block">
+                      Inscription
                     </Link>
                   </SheetClose>
                   <SheetClose asChild>
-                    <Link to="/connexion" search={loginSearch} className="rounded-lg bg-gold text-gold-foreground px-3 py-3 text-base font-medium">
-                      Se connecter
+                    <Link to="/connexion" search={loginSearch} className="rounded-lg bg-gold text-gold-foreground px-3 py-3 text-base font-medium block">
+                      Connexion
                     </Link>
                   </SheetClose>
                 </>
-              )}
-              {showAdminLink && (
-                <SheetClose asChild>
-                  <Link to={portal.adminPath as "/admin"} className="rounded-lg border border-white/15 px-3 py-3 text-base">
-                    Back-office
-                  </Link>
-                </SheetClose>
               )}
             </nav>
           </SheetContent>
