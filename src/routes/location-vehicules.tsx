@@ -152,7 +152,7 @@ function LocationVehicules() {
       <section className="relative min-h-screen flex flex-col overflow-hidden bg-charbon text-white">
         <VehicleHeroSlideshow />
         <div className="absolute inset-0 bg-linear-to-t from-charbon/95 via-charbon/40 to-charbon/5" />
-        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-36 pt-28 md:justify-center md:pb-44">
+        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-24 pt-28 md:justify-center md:pb-32">
           <ScrollReveal className="yolo-hero-content">
             <SectionLabel>Kinshasa · Location premium</SectionLabel>
             <h1 className="max-w-2xl text-[clamp(2.4rem,5vw,3.75rem)] font-bold leading-[1.08]">
@@ -163,7 +163,7 @@ function LocationVehicules() {
             <HeroChauffeurTagline />
           </ScrollReveal>
         </div>
-        <div className="yolo-hero-cta-bar absolute inset-x-0 bottom-0 z-20">
+        <div className="yolo-hero-cta-bar absolute inset-x-0 bottom-28 z-20 md:bottom-36">
           <PortalButton
             variant="primary"
             onClick={() => openBooking()}
