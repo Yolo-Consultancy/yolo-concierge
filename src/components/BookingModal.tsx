@@ -311,6 +311,27 @@ export function BookingModal({
     setForm({ ...form, dateRange: formatDateRange(range) });
   };
 
+  const handleSingleDateSelect = (date?: Date) => {
+    if (!date) {
+      setSelectedDateRange(undefined);
+      setForm({ ...form, dateRange: "" });
+      return;
+    }
+    const singleDay = { from: date, to: date };
+    setSelectedDateRange(singleDay);
+    setForm({ ...form, dateRange: format(date, "dd/MM/yyyy") });
+  };
+
+  const handleTripTypeChange = (tripType: TripType) => {
+    if (tripType !== "course" && selectedDateRange?.from) {
+      const singleDay = { from: selectedDateRange.from, to: selectedDateRange.from };
+      setSelectedDateRange(singleDay);
+      setForm({ ...form, tripType, dateRange: format(singleDay.from, "dd/MM/yyyy") });
+      return;
+    }
+    setForm({ ...form, tripType });
+  };
+
   const canNext = () => {
     if (step === 0) return !!selectedDateRange?.from;
     if (step === 1) return !!form.pickupLocation && (form.sameDropoff || !!form.dropoffLocation);
@@ -328,12 +349,15 @@ export function BookingModal({
     return true;
   };
 
+  const isSingleDayTrip = form.tripType !== "course";
+
   const days = useMemo(() => {
     if (!selectedDateRange?.from) return 0;
+    if (isSingleDayTrip) return 1;
     const end = selectedDateRange.to ?? selectedDateRange.from;
     const ms = end.getTime() - selectedDateRange.from.getTime();
     return Math.max(1, Math.round(ms / 86400000));
-  }, [selectedDateRange]);
+  }, [selectedDateRange, isSingleDayTrip]);
 
   const vehicleTotal = selectedVehicle ? days * selectedVehicle.pricePerDay : 0;
   const grandTotal = vehicleTotal;
@@ -344,7 +368,9 @@ export function BookingModal({
 
   const buildBooking = (activeAccount?: ClientAccount | null): Booking | null => {
     if (!selectedVehicle || !selectedDateRange?.from) return null;
-    const endDateObj = selectedDateRange.to ?? selectedDateRange.from;
+    const endDateObj = isSingleDayTrip
+      ? selectedDateRange.from
+      : (selectedDateRange.to ?? selectedDateRange.from);
     const startDate = selectedDateRange.from.toISOString().slice(0, 10);
     const endDate = endDateObj.toISOString().slice(0, 10);
     return {
@@ -543,7 +569,7 @@ export function BookingModal({
                 <label className="yolo-form-label" data-required>Type de course</label>
                 <select
                   value={form.tripType}
-                  onChange={(e) => setForm({ ...form, tripType: e.target.value as TripType })}
+                  onChange={(e) => handleTripTypeChange(e.target.value as TripType)}
                   className={selectCls}
                 >
                   {TRIP_TYPE_OPTIONS.map((option) => (
@@ -555,7 +581,9 @@ export function BookingModal({
               </div>
 
               <div>
-                <label className="yolo-form-label" data-required>Sélectionnez vos dates de location</label>
+                <label className="yolo-form-label" data-required>
+                  {isSingleDayTrip ? "Sélectionnez votre date" : "Sélectionnez vos dates de location"}
+                </label>
                 <Popover>
                   <PopoverTrigger asChild>
                     <button
@@ -571,7 +599,7 @@ export function BookingModal({
                         </svg>
                       )}
                       <span className={form.dateRange ? "text-charbon" : "text-charbon/40"}>
-                        {form.dateRange || "Sélectionner une ou plusieurs dates"}
+                        {form.dateRange || (isSingleDayTrip ? "Sélectionner une date" : "Sélectionner une ou plusieurs dates")}
                       </span>
                     </button>
                   </PopoverTrigger>
@@ -580,21 +608,38 @@ export function BookingModal({
                     data-yolo-form
                     className="w-auto border-black/10 bg-(--yolo-cream) p-0 text-charbon shadow-2xl"
                   >
-                    <Calendar
-                      mode="range"
-                      selected={selectedDateRange}
-                      onSelect={handleDateRangeSelect}
-                      numberOfMonths={1}
-                      locale={fr}
-                      disabled={[{ before: new Date() }, ...occupiedDates]}
-                      modifiers={{ occupied: occupiedDates }}
-                      modifiersClassNames={CALENDAR_MODIFIERS_CLASS_NAMES}
-                      className="bg-(--yolo-cream) text-charbon"
-                      classNames={CALENDAR_CLASS_NAMES}
-                    />
+                    {isSingleDayTrip ? (
+                      <Calendar
+                        mode="single"
+                        selected={selectedDateRange?.from}
+                        onSelect={handleSingleDateSelect}
+                        numberOfMonths={1}
+                        locale={fr}
+                        disabled={[{ before: new Date() }, ...occupiedDates]}
+                        modifiers={{ occupied: occupiedDates }}
+                        modifiersClassNames={CALENDAR_MODIFIERS_CLASS_NAMES}
+                        className="bg-(--yolo-cream) text-charbon"
+                        classNames={CALENDAR_CLASS_NAMES}
+                      />
+                    ) : (
+                      <Calendar
+                        mode="range"
+                        selected={selectedDateRange}
+                        onSelect={handleDateRangeSelect}
+                        numberOfMonths={1}
+                        locale={fr}
+                        disabled={[{ before: new Date() }, ...occupiedDates]}
+                        modifiers={{ occupied: occupiedDates }}
+                        modifiersClassNames={CALENDAR_MODIFIERS_CLASS_NAMES}
+                        className="bg-(--yolo-cream) text-charbon"
+                        classNames={CALENDAR_CLASS_NAMES}
+                      />
+                    )}
                     <p className="border-t border-black/8 px-4 py-2.5 text-xs yolo-form-muted space-y-1">
                       <span className="block">
-                        1 clic = une journée · 2 clics = plusieurs jours (ex. 15/06/2026 – 20/06/2026)
+                        {isSingleDayTrip
+                          ? "Sélectionnez une seule date (ex. 15/06/2026)"
+                          : "1 clic = une journée · 2 clics = plusieurs jours (ex. 15/06/2026 – 20/06/2026)"}
                       </span>
                       <span className="block">
                         {loadingOccupied
@@ -609,7 +654,7 @@ export function BookingModal({
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <rect x="3" y="4" width="18" height="18" rx="2" />
                     </svg>
-                    ex. 15/06/2026 ou 15/06/2026 – 20/06/2026
+                    {isSingleDayTrip ? "ex. 15/06/2026" : "ex. 15/06/2026 ou 15/06/2026 – 20/06/2026"}
                   </p>
                 )}
               </div>
@@ -617,8 +662,13 @@ export function BookingModal({
               <div className={`grid grid-cols-1 gap-4 ${showReturnTime ? "sm:grid-cols-2" : ""}`}>
                 <div>
                   <label className="yolo-form-label">
-                    Heure de prise en charge{" "}
-                    <span className="font-semibold text-or-vif">premier jour</span>
+                    Heure de prise en charge
+                    {!isSingleDayTrip && (
+                      <>
+                        {" "}
+                        <span className="font-semibold text-or-vif">premier jour</span>
+                      </>
+                    )}
                   </label>
                   <select
                     value={form.pickupTime}
@@ -814,8 +864,14 @@ export function BookingModal({
                   Type : <span className="text-charbon font-medium">{TRIP_TYPE_LABELS[form.tripType]}</span>
                 </p>
                 <p className="text-sm yolo-form-muted">
-                  Prise en charge{" "}
-                  <span className="font-medium text-or-vif">premier jour</span> :{" "}
+                  Prise en charge
+                  {!isSingleDayTrip && (
+                    <>
+                      {" "}
+                      <span className="font-medium text-or-vif">premier jour</span>
+                    </>
+                  )}
+                  {" : "}
                   <span className="text-charbon">{form.pickupTime}</span>
                   {showReturnTime && (
                     <>
