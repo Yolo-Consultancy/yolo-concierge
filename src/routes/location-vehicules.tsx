@@ -163,12 +163,10 @@ function LocationVehicules() {
             </h1>
             <HeroChauffeurTagline />
             <div className="yolo-hero-actions mt-9">
-              <a href="#flotte">
-                <PortalButton variant="primary">
-                  Voir la flotte
-                  <ArrowRight className="h-4 w-4" />
-                </PortalButton>
-              </a>
+              <PortalButton variant="primary" onClick={() => openBooking()}>
+                Réservation
+                <ArrowRight className="h-4 w-4" />
+              </PortalButton>
               <Link to="/contact" search={contactSearch("vehicules")}>
                 <PortalButton variant="outline-light">Parler au concierge</PortalButton>
               </Link>
