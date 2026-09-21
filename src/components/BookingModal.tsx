@@ -333,7 +333,7 @@ export function BookingModal({
   };
 
   const canNext = () => {
-    if (step === 0) return !!selectedDateRange?.from;
+    if (step === 0) return !!selectedVehicle && !!selectedDateRange?.from;
     if (step === 1) return !!form.pickupLocation && (form.sameDropoff || !!form.dropoffLocation);
     if (step === 2) {
       if (!form.civility || !form.firstName.trim() || !form.lastName.trim() || !form.email.trim()) {
@@ -427,6 +427,16 @@ export function BookingModal({
 
       const booking = buildBooking(activeAccount);
       if (!booking) {
+        if (!selectedVehicle) {
+          toast.error("Veuillez sélectionner un véhicule.");
+          setStep(0);
+          return;
+        }
+        if (!selectedDateRange?.from) {
+          toast.error("Veuillez sélectionner une date.");
+          setStep(0);
+          return;
+        }
         toast.error("Veuillez compléter les étapes précédentes.");
         return;
       }
@@ -565,6 +575,26 @@ export function BookingModal({
           {/* Step 1 — Dates */}
           {step === 0 && (
             <div className="space-y-5">
+              {!selectedVehicle && vehicles.length > 0 && (
+                <div>
+                  <label className="yolo-form-label" data-required>Véhicule</label>
+                  <select
+                    value={form.vehicleId}
+                    onChange={(e) => setForm({ ...form, vehicleId: e.target.value })}
+                    className={selectCls}
+                  >
+                    <option value="" className={SELECT_OPTION_CLS}>
+                      — Choisir un véhicule —
+                    </option>
+                    {vehicles.map((v) => (
+                      <option key={v.id} className={SELECT_OPTION_CLS} value={v.id}>
+                        {v.brand} {v.name} — ${formatPrice(v.pricePerDay)}/jour
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <div>
                 <label className="yolo-form-label" data-required>Type de course</label>
                 <select

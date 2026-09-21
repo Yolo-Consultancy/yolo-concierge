@@ -363,7 +363,13 @@ function LocationVehicules() {
 
       <SiteFooter portalId="vehicules" />
 
-      {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={prefilledVehicle} />}
+      {bookingOpen && (
+        <BookingModal
+          onClose={() => setBookingOpen(false)}
+          initialVehicle={prefilledVehicle}
+          vehicles={vehicles}
+        />
+      )}
     </main>
   );
 }

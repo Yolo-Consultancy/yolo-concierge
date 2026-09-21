@@ -182,7 +182,13 @@ function VehicleDetail() {
 
       <SiteFooter portalId="vehicules" />
 
-      {bookingOpen && <BookingModal onClose={() => setBookingOpen(false)} initialVehicle={vehicle.id} />}
+      {bookingOpen && (
+        <BookingModal
+          onClose={() => setBookingOpen(false)}
+          initialVehicle={vehicle.id}
+          vehicles={[vehicle]}
+        />
+      )}
     </main>
   );
 }
