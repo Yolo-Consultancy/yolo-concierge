@@ -111,6 +111,20 @@ const KINSHASA_LOCATION_SUGGESTIONS = [
   "City Market Gombe",
 ] as const;
 
+const TRIP_TYPE_OPTIONS = [
+  { value: "aeroport_aller", label: "Aéroport aller" },
+  { value: "aeroport_retour", label: "Aéroport retour" },
+  { value: "course", label: "Course" },
+] as const;
+
+type TripType = (typeof TRIP_TYPE_OPTIONS)[number]["value"];
+
+const TRIP_TYPE_LABELS: Record<TripType, string> = {
+  aeroport_aller: "Aéroport aller",
+  aeroport_retour: "Aéroport retour",
+  course: "Course",
+};
+
 const STEPS = [
   "Dates & Durée",
   "Lieu",
@@ -244,6 +258,7 @@ export function BookingModal({
   const [form, setForm] = useState({
     vehicleId: initialVehicle,
     dateRange: "",
+    tripType: "course" as TripType,
     pickupTime: "06:00",
     returnTime: "12:00",
     pickupLocation: "",
@@ -286,8 +301,9 @@ export function BookingModal({
   const formatDateRange = (range?: DateRange) => {
     if (!range?.from) return "";
     const from = format(range.from, "dd/MM/yyyy");
-    if (!range.to) return from;
-    return `${from} – ${format(range.to, "dd/MM/yyyy")}`;
+    const end = range.to ?? range.from;
+    if (end.getTime() === range.from.getTime()) return from;
+    return `${from} – ${format(end, "dd/MM/yyyy")}`;
   };
 
   const handleDateRangeSelect = (range?: DateRange) => {
@@ -296,7 +312,7 @@ export function BookingModal({
   };
 
   const canNext = () => {
-    if (step === 0) return !!selectedDateRange?.from && !!selectedDateRange?.to;
+    if (step === 0) return !!selectedDateRange?.from;
     if (step === 1) return !!form.pickupLocation && (form.sameDropoff || !!form.dropoffLocation);
     if (step === 2) {
       if (!form.civility || !form.firstName.trim() || !form.lastName.trim() || !form.email.trim()) {
@@ -313,21 +329,24 @@ export function BookingModal({
   };
 
   const days = useMemo(() => {
-    if (!selectedDateRange?.from || !selectedDateRange?.to) return 0;
-    const ms = selectedDateRange.to.getTime() - selectedDateRange.from.getTime();
+    if (!selectedDateRange?.from) return 0;
+    const end = selectedDateRange.to ?? selectedDateRange.from;
+    const ms = end.getTime() - selectedDateRange.from.getTime();
     return Math.max(1, Math.round(ms / 86400000));
   }, [selectedDateRange]);
 
   const vehicleTotal = selectedVehicle ? days * selectedVehicle.pricePerDay : 0;
   const grandTotal = vehicleTotal;
   const C = bookingConfig.currencySymbol;
+  const showReturnTime = form.tripType === "course";
 
   const [submitting, setSubmitting] = useState(false);
 
   const buildBooking = (activeAccount?: ClientAccount | null): Booking | null => {
-    if (!selectedVehicle || !selectedDateRange?.from || !selectedDateRange?.to) return null;
+    if (!selectedVehicle || !selectedDateRange?.from) return null;
+    const endDateObj = selectedDateRange.to ?? selectedDateRange.from;
     const startDate = selectedDateRange.from.toISOString().slice(0, 10);
-    const endDate = selectedDateRange.to.toISOString().slice(0, 10);
+    const endDate = endDateObj.toISOString().slice(0, 10);
     return {
       id: newId("b"),
       vehicleId: selectedVehicle.id,
@@ -341,6 +360,9 @@ export function BookingModal({
       days,
       pickupLocation: form.pickupLocation,
       dropoffLocation: form.sameDropoff ? form.pickupLocation : form.dropoffLocation,
+      tripType: form.tripType,
+      pickupTime: form.pickupTime,
+      returnTime: showReturnTime ? form.returnTime : undefined,
       totalPrice: grandTotal,
       withChauffeur: false,
       driverId: "",
@@ -518,6 +540,21 @@ export function BookingModal({
           {step === 0 && (
             <div className="space-y-5">
               <div>
+                <label className="yolo-form-label" data-required>Type de course</label>
+                <select
+                  value={form.tripType}
+                  onChange={(e) => setForm({ ...form, tripType: e.target.value as TripType })}
+                  className={selectCls}
+                >
+                  {TRIP_TYPE_OPTIONS.map((option) => (
+                    <option key={option.value} className={SELECT_OPTION_CLS} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
                 <label className="yolo-form-label" data-required>Sélectionnez vos dates de location</label>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -534,7 +571,7 @@ export function BookingModal({
                         </svg>
                       )}
                       <span className={form.dateRange ? "text-charbon" : "text-charbon/40"}>
-                        {form.dateRange || "Sélectionner la plage de dates"}
+                        {form.dateRange || "Sélectionner une ou plusieurs dates"}
                       </span>
                     </button>
                   </PopoverTrigger>
@@ -555,10 +592,15 @@ export function BookingModal({
                       className="bg-(--yolo-cream) text-charbon"
                       classNames={CALENDAR_CLASS_NAMES}
                     />
-                    <p className="border-t border-black/8 px-4 py-2.5 text-xs yolo-form-muted">
-                      {loadingOccupied
-                        ? "Chargement des disponibilités…"
-                        : "Cases bleu YOLO : véhicule déjà réservé (non sélectionnable)."}
+                    <p className="border-t border-black/8 px-4 py-2.5 text-xs yolo-form-muted space-y-1">
+                      <span className="block">
+                        1 clic = une journée · 2 clics = plusieurs jours (ex. 15/06/2026 – 20/06/2026)
+                      </span>
+                      <span className="block">
+                        {loadingOccupied
+                          ? "Chargement des disponibilités…"
+                          : "Cases bleu YOLO : véhicule déjà réservé (non sélectionnable)."}
+                      </span>
                     </p>
                   </PopoverContent>
                 </Popover>
@@ -567,12 +609,12 @@ export function BookingModal({
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <rect x="3" y="4" width="18" height="18" rx="2" />
                     </svg>
-                    ex. 15/06/2026 – 20/06/2026
+                    ex. 15/06/2026 ou 15/06/2026 – 20/06/2026
                   </p>
                 )}
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className={`grid grid-cols-1 gap-4 ${showReturnTime ? "sm:grid-cols-2" : ""}`}>
                 <div>
                   <label className="yolo-form-label">
                     Heure de prise en charge{" "}
@@ -586,19 +628,21 @@ export function BookingModal({
                     {timeOptions()}
                   </select>
                 </div>
-                <div>
-                  <label className="yolo-form-label">
-                    Heure de retour{" "}
-                    <span className="font-semibold text-or-vif">dernier jour</span>
-                  </label>
-                  <select
-                    value={form.returnTime}
-                    onChange={(e) => setForm({ ...form, returnTime: e.target.value })}
-                    className={selectCls}
-                  >
-                    {timeOptions()}
-                  </select>
-                </div>
+                {showReturnTime && (
+                  <div>
+                    <label className="yolo-form-label">
+                      Heure de retour{" "}
+                      <span className="font-semibold text-or-vif">dernier jour</span>
+                    </label>
+                    <select
+                      value={form.returnTime}
+                      onChange={(e) => setForm({ ...form, returnTime: e.target.value })}
+                      className={selectCls}
+                    >
+                      {timeOptions()}
+                    </select>
+                  </div>
+                )}
               </div>
             </div>
           )}
@@ -767,13 +811,20 @@ export function BookingModal({
                   {form.dateRange} {days > 0 && <span className="text-charbon font-medium">({days} jour{days > 1 ? "s" : ""})</span>}
                 </p>
                 <p className="text-sm yolo-form-muted">
+                  Type : <span className="text-charbon font-medium">{TRIP_TYPE_LABELS[form.tripType]}</span>
+                </p>
+                <p className="text-sm yolo-form-muted">
                   Prise en charge{" "}
                   <span className="font-medium text-or-vif">premier jour</span> :{" "}
                   <span className="text-charbon">{form.pickupTime}</span>
-                  {" · "}
-                  Retour{" "}
-                  <span className="font-medium text-or-vif">dernier jour</span> :{" "}
-                  <span className="text-charbon">{form.returnTime}</span>
+                  {showReturnTime && (
+                    <>
+                      {" · "}
+                      Retour{" "}
+                      <span className="font-medium text-or-vif">dernier jour</span> :{" "}
+                      <span className="text-charbon">{form.returnTime}</span>
+                    </>
+                  )}
                 </p>
               </SummaryCard>
 

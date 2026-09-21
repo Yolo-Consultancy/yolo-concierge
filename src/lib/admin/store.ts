@@ -101,6 +101,9 @@ export type Booking = {
   days: number;
   pickupLocation: string;
   dropoffLocation?: string;
+  tripType?: "aeroport_aller" | "aeroport_retour" | "course";
+  pickupTime?: string;
+  returnTime?: string;
   totalPrice: number;
   withChauffeur: boolean;
   driverId: string;
@@ -157,6 +160,9 @@ function toBookingPayload(b: Booking) {
     days: b.days,
     pickupLocation: b.pickupLocation,
     dropoffLocation: b.dropoffLocation,
+    tripType: b.tripType,
+    pickupTime: b.pickupTime,
+    returnTime: b.returnTime,
     withChauffeur: b.withChauffeur,
     driverId: b.driverId || undefined,
     status: b.status,
