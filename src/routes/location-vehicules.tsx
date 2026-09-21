@@ -11,7 +11,6 @@ import { PortalHeader } from "@/components/PortalHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ClientReviewsSection } from "@/components/ClientReviewsSection";
 import { ScrollReveal } from "@/components/portal-ui/ScrollReveal";
-import { contactSearch } from "@/lib/auth/redirect";
 import { SectionLabel } from "@/components/portal-ui/SectionLabel";
 import { PortalButton } from "@/components/portal-ui/PortalButton";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -167,9 +166,6 @@ function LocationVehicules() {
                 Réservation
                 <ArrowRight className="h-4 w-4" />
               </PortalButton>
-              <Link to="/contact" search={contactSearch("vehicules")}>
-                <PortalButton variant="outline-light">Parler au concierge</PortalButton>
-              </Link>
             </div>
           </ScrollReveal>
         </div>
