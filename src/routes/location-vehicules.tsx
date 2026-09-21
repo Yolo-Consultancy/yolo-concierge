@@ -152,7 +152,7 @@ function LocationVehicules() {
       <section className="relative min-h-screen flex flex-col overflow-hidden bg-charbon text-white">
         <VehicleHeroSlideshow />
         <div className="absolute inset-0 bg-linear-to-t from-charbon/95 via-charbon/40 to-charbon/5" />
-        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-28 pt-28 md:justify-center md:pb-28">
+        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-36 pt-28 md:justify-center md:pb-44">
           <ScrollReveal className="yolo-hero-content">
             <SectionLabel>Kinshasa · Location premium</SectionLabel>
             <h1 className="max-w-2xl text-[clamp(2.4rem,5vw,3.75rem)] font-bold leading-[1.08]">
@@ -161,13 +161,17 @@ function LocationVehicules() {
               <span className="text-or-vif">là où vous êtes.</span>
             </h1>
             <HeroChauffeurTagline />
-            <div className="yolo-hero-actions mt-9">
-              <PortalButton variant="primary" onClick={() => openBooking()}>
-                Réservation
-                <ArrowRight className="h-4 w-4" />
-              </PortalButton>
-            </div>
           </ScrollReveal>
+        </div>
+        <div className="yolo-hero-cta-bar absolute inset-x-0 bottom-0 z-20">
+          <PortalButton
+            variant="primary"
+            onClick={() => openBooking()}
+            className="yolo-hero-cta w-full max-w-md px-10 py-4 text-base shadow-[0_12px_40px_rgba(0,0,0,0.45)] ring-2 ring-white/25 hover:ring-white/40 sm:min-w-[260px] sm:w-auto"
+          >
+            Réservation
+            <ArrowRight className="h-5 w-5" />
+          </PortalButton>
         </div>
       </section>
 

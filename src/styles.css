@@ -401,11 +401,29 @@
   width: 100%;
 }
 
-[data-yolo-portal] .yolo-hero-actions {
+[data-yolo-portal] .yolo-hero-cta-bar {
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  gap: 1rem;
+  padding: 1.25rem 1.5rem 1.75rem;
+  background: linear-gradient(
+    to top,
+    rgba(15, 15, 15, 0.96) 0%,
+    rgba(15, 15, 15, 0.88) 55%,
+    rgba(15, 15, 15, 0) 100%
+  );
+  backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+[data-yolo-portal] .yolo-hero-cta {
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+}
+
+@media (min-width: 768px) {
+  [data-yolo-portal] .yolo-hero-cta-bar {
+    padding: 1.5rem 2rem 2.25rem;
+  }
 }
 
 @keyframes yolo-tagline-rise {
