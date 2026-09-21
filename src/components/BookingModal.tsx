@@ -112,17 +112,17 @@ const KINSHASA_LOCATION_SUGGESTIONS = [
 ] as const;
 
 const TRIP_TYPE_OPTIONS = [
-  { value: "aeroport_aller", label: "Aéroport aller" },
-  { value: "aeroport_retour", label: "Aéroport retour" },
-  { value: "course", label: "Course" },
+  { value: "aeroport_aller", label: "Accueil Aéroport" },
+  { value: "aeroport_retour", label: "Départ Aéroport" },
+  { value: "course", label: "Course Journalière" },
 ] as const;
 
 type TripType = (typeof TRIP_TYPE_OPTIONS)[number]["value"];
 
 const TRIP_TYPE_LABELS: Record<TripType, string> = {
-  aeroport_aller: "Aéroport aller",
-  aeroport_retour: "Aéroport retour",
-  course: "Course",
+  aeroport_aller: "Accueil Aéroport",
+  aeroport_retour: "Départ Aéroport",
+  course: "Course Journalière",
 };
 
 const STEPS = [
@@ -618,17 +618,22 @@ export function BookingModal({
                   <PopoverTrigger asChild>
                     <button
                       type="button"
-                      className={`${inputCls} text-left relative w-full ${form.dateRange ? "" : "pl-11"}`}
+                      className={`${inputCls} text-left w-full flex items-center gap-3`}
                     >
-                      {!form.dateRange && (
-                        <svg
-                          className="absolute left-4 top-1/2 -translate-y-1/2 text-charbon/40 pointer-events-none"
-                          width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                        >
-                          <rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" />
-                        </svg>
-                      )}
-                      <span className={form.dateRange ? "text-charbon" : "text-charbon/40"}>
+                      <svg
+                        className="shrink-0 text-charbon/40 pointer-events-none"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        aria-hidden
+                      >
+                        <rect x="3" y="4" width="18" height="18" rx="2" />
+                        <path d="M16 2v4M8 2v4M3 10h18" />
+                      </svg>
+                      <span className={`min-w-0 flex-1 ${form.dateRange ? "text-charbon" : "text-charbon/40"}`}>
                         {form.dateRange || (isSingleDayTrip ? "Sélectionner une date" : "Sélectionner une ou plusieurs dates")}
                       </span>
                     </button>
