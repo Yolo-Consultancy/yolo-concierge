@@ -151,27 +151,26 @@ function LocationVehicules() {
       <PortalHeader portalId="vehicules" />
       <section className="relative min-h-screen flex flex-col overflow-hidden bg-charbon text-white">
         <VehicleHeroSlideshow />
-        <div className="absolute inset-0 bg-linear-to-t from-charbon/95 via-charbon/40 to-charbon/5" />
-        <div className="relative z-10 mx-auto flex flex-1 w-full max-w-6xl flex-col items-center justify-end px-6 pb-24 pt-28 md:justify-center md:pb-32">
+        <div className="absolute inset-0 bg-linear-to-t from-charbon via-charbon/70 to-transparent md:from-charbon/95 md:via-charbon/40 md:to-charbon/5" />
+        <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-end px-6 pb-20 pt-24 md:justify-center md:pb-32 md:pt-28">
           <ScrollReveal className="yolo-hero-content">
             <SectionLabel>Kinshasa · Location premium</SectionLabel>
-            <h1 className="max-w-2xl text-[clamp(2.4rem,5vw,3.75rem)] font-bold leading-[1.08]">
-              La voiture qu&apos;il vous faut,
-              <br />
-              <span className="text-or-vif">là où vous êtes.</span>
+            <h1 className="max-w-2xl text-[clamp(1.5rem,7.5vw,1.875rem)] font-bold leading-[1.15] md:text-[clamp(2.4rem,5vw,3.75rem)] md:leading-[1.08]">
+              <span className="block">La voiture qu&apos;il vous faut,</span>
+              <span className="block text-or-vif">là où vous êtes.</span>
             </h1>
-            <HeroChauffeurTagline />
+            <HeroChauffeurTagline className="mt-3 md:mt-5" />
           </ScrollReveal>
-        </div>
-        <div className="yolo-hero-cta-bar absolute inset-x-0 bottom-28 z-20 md:bottom-36">
-          <PortalButton
-            variant="primary"
-            onClick={() => openBooking()}
-            className="yolo-hero-cta w-full max-w-md px-10 py-4 text-base shadow-[0_12px_40px_rgba(0,0,0,0.45)] ring-2 ring-white/25 hover:ring-white/40 sm:min-w-[260px] sm:w-auto"
-          >
-            Réservation
-            <ArrowRight className="h-5 w-5" />
-          </PortalButton>
+          <div className="yolo-hero-cta-bar relative z-20 mt-6 w-full md:absolute md:inset-x-0 md:bottom-36 md:mt-0">
+            <PortalButton
+              variant="primary"
+              onClick={() => openBooking()}
+              className="yolo-hero-cta w-full max-w-md px-10 py-4 text-base shadow-[0_12px_40px_rgba(0,0,0,0.45)] ring-2 ring-white/25 hover:ring-white/40 sm:min-w-[260px] sm:w-auto"
+            >
+              Réservation
+              <ArrowRight className="h-5 w-5" />
+            </PortalButton>
+          </div>
         </div>
       </section>
 
